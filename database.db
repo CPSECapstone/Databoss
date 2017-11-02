@@ -1,0 +1,9 @@
+import sqlite3
+
+connection = sqlite3.connect('database.db')
+print "Database connection is successful"
+
+connection.execute('CREATE TABLE users(name TEXT, dbName TEXT, logInfo TEXT, metricInfo TEXT)')
+print "Table has been created successfully"
+
+connection.close()
