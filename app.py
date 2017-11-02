@@ -21,6 +21,7 @@ def list():
 
 @app.route('/adduserecord', methods=['POST', 'GET'])
 def addrec():
+    print("entering add rec method")
     if request.method == 'POST':
         try:
             name = request.form['name']
@@ -29,6 +30,7 @@ def addrec():
             metricInfo = request.form['metricInfo']
 
             with sqlite3.connect('database.db') as con:
+                print("trying to execute insert")
                 cur = con.cursor()
 
                 cur.execute('INSERT INTO users (name,dbName,logInfo,metricInfo) VALUES(?, ?, ?, ?)',
@@ -50,5 +52,16 @@ def addrec():
 def new_entry():
     return render_template('user.html')
 
+@app.before_first_request
+def sqlite_setup():
+    print("Running sqlite setup")
+    conn = sqlite3.connect('database.db')
+    print("Opened database successfully")
+
+    conn.execute(
+        'CREATE TABLE if not exists users (name TEXT, dbName TEXT, logInfo TEXT, metricInfo TEXT)')
+    print("Table created successfully")
+    conn.close()
+
 if __name__ == "__main__":
-        app.run(debug=True)
+    app.run(debug=True)
