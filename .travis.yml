@@ -1,10 +1,11 @@
 language: python
 matrix:
   include:
-  - python: "3.2"
-    env: TEST_SUITE=tests/suite_3_2.py
-  - python: "3.3"
-    env: TEST_SUITE=tests/suite_3_3.py
+# Not supporting 3.2 and 3.3
+#  - python: "3.2"
+#    env: TEST_SUITE=tests/suite_3_2.py
+#  - python: "3.3"
+#    env: TEST_SUITE=tests/suite_3_3.py
   - python: "3.4"
     env: TEST_SUITE=tests/suite_3_4.py
   - python: "3.5"
