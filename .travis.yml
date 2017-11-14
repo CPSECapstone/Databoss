@@ -1,19 +1,19 @@
 language: python
-python:
-  - "3.2"
-  - "3.3"
-  - "3.4"
-  - "3.5"
-  - "3.6"
-# command to install dependencies
 matrix:
   include:
+  - python: "3.2"
+    env: TEST_SUITE=suite_3_2.py
   - python: "3.3"
-    env: TEST_SUITE=suite_3_3
+    env: TEST_SUITE=suite_3_3.py
   - python: "3.4"
-    env: TEST_SUITE=suite_3_4
+    env: TEST_SUITE=suite_3_4.py
+  - python: "3.5"
+    env: TEST_SUITE=suite_3_5.py
+  - python: "3.6"
+    env: TEST_SUITE=suite_3_6.py
+# command to install dependencies
 install:
   - pip install -r requirements.txt
 # command to run tests
 script:
-  - pytest test.py $TEST_SUITE # or py.test for Python versions 3.5 and below
+  - pytest $TEST_SUITE # or py.test for Python versions 3.5 and below
