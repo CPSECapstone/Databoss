@@ -1,11 +1,11 @@
 import sqlite3
-from flask import Flask, render_template, request
+from flask import Flask, render_template, request, send_file
 
 app = Flask(__name__)
 
 @app.route('/')
-def hello():
-    return "Hello World!"
+def main():
+    return send_file('static/app/index.html')
 
 @app.route('/viewList')
 def list():
