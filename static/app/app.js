@@ -2,6 +2,24 @@
 
 var app = angular.module('MyCRT', ['ngRoute']);
 
+//Models the href functionality of a link but for Angular routing.
+//Use go-click="somewhere" in code to jump to a new view
+app.directive('goClick', function ( $location ) {
+   return function ( scope, element, attrs ) {
+      var path;
+
+      attrs.$observe('goClick', function (val) {
+         path = val;
+      });
+
+      element.bind('click', function () {
+         scope.$apply( function () {
+            $location.path( path );
+         });
+      });
+   };
+});
+
 //This is how Angular determines what page to display based on the URL.
 //Note: The controller will be in the same parent folder as the templateUrl but in the js folder
 //"css" value is optional
@@ -11,6 +29,9 @@ app.config(['$routeProvider', function($routeProvider) {
     .when('/', {
        templateUrl: 'static/home/home.html',
        controller: 'home',
+    })
+    .when('/capture', {
+      templateUrl: 'static/capture/capture.html'
     })
     //If none of the "when"s are matched then it defaults to the home page.
     .otherwise({
