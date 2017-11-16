@@ -31,7 +31,8 @@ app.config(['$routeProvider', function($routeProvider) {
        controller: 'home',
     })
     .when('/capture', {
-      templateUrl: 'static/capture/capture.html'
+        templateUrl: 'static/capture/capture.html',
+        controller: 'capture'
     })
     //If none of the "when"s are matched then it defaults to the home page.
     .otherwise({
