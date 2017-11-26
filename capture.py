@@ -28,7 +28,7 @@ rds = boto3.client(
     region_name=loc
 )
 
-# Creating 2 buckets
+# Creating 2 buckets if they don't already exist
 def createBucket(bucketName):
     if (s3_resource.Bucket(bucketName) in s3_resource.buckets.all()):
         print("Found " + bucketName + " bucket")
@@ -79,15 +79,13 @@ print("SUCCESS: Connection to RDS MySQL instance succeeded")
 
 print("Adding value to database table 'Student'")
 id = input("Enter student id: ")
-name = input("Enter student name: ")
+student_name = str(input("Enter student name: "))
 
 numItems = 0
 
 with conn.cursor() as cur:
-    cur.execute("create table Student ( StudentID  int NOT NULL, Name varchar(255) NOT NULL, PRIMARY KEY (StudentID))")
-    cur.execute('insert into Student (StudentID, Name) values(1, "Joe")')
-    cur.execute('insert into Student (StudentID, Name) values(2, "Bob")')
-    cur.execute('insert into Student (StudentID, Name) values(3, "Mary")')
+    cur.execute("create table IF NOT EXISTS Student ( StudentID  int NOT NULL, Name varchar(255) NOT NULL, PRIMARY KEY (StudentID))")
+    cur.execute('insert into Student (StudentID, Name) values(5, "random")')
     conn.commit()
     cur.execute("select * from Student")
     for row in cur:
