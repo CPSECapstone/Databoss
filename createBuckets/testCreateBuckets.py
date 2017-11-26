@@ -5,8 +5,30 @@ def getLocation(num):
         return "us-west-1";
     elif num == "2":
         return "us-west-2";
+    elif num == "3":
+        return "eu-west-1";
+    elif num == "4":
+        return "eu-west-2";
+    elif num == "5":
+        return "eu-central-1";
+    elif num == "6":
+        return "ap-south-1";
+    elif num == "7":
+        return "ap-southeast-1";
+    elif num == "8":
+        return "ap-southeast-2";
+    elif num == "9":
+        return "ap=northeast-1";
+    elif num == "10":
+        return "ap-northeast-2";
+    elif num == "11":
+        return "sa-east-1";
+    elif num == "12":
+        return " "; #if US East then input for login constraints needs to be an empty string
+    elif num == "13":
+        return "us-east-2";
     else:
-        return "WORKS!";
+        return "ERROR";
 
 
 user_key = input("Enter access key: ")
@@ -36,11 +58,13 @@ Where should bucket for log files be located?\n 1 - us-west-1\n 2 - us-west-2\n 
 
 
 log_location = getLocation(log_location_num);
-print(log_location);
+if (log_location != "ERROR"):
+    s3_resource.create_bucket(Bucket='saloneetest',
+                              CreateBucketConfiguration={
+                            'LocationConstraint': log_location});
+else:
+    print("Not a possible location\n");
 
-#s3_resource.create_bucket(Bucket='saloneetest',
-#                          CreateBucketConfiguration={
-#                            'LocationConstraint': 'us-west-1'});
 #bucket = s3_resource.Bucket('temp');
 #print(bucket.name);
 
