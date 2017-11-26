@@ -109,10 +109,10 @@ all_log_files = rds.describe_db_log_files(
     DBInstanceIdentifier= db_name
 )
 print(all_log_files)
-
+'''
 rds_logfile = rds.download_db_log_file_portion(
     DBInstanceIdentifier= db_name,
     LogFileName="general/mysql-general.log.0"
 )
 
-print(rds_logfile)
+print(rds_logfile)'''
