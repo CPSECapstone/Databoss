@@ -100,7 +100,6 @@ print(stop_response)
 all_log_files = rds.describe_db_log_files(
     DBInstanceIdentifier= db_name
 )
-
 print(all_log_files)
 
 '''
