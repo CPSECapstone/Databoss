@@ -85,8 +85,7 @@ numItems = 0
 
 with conn.cursor() as cur:
     cur.execute("create table IF NOT EXISTS Student ( StudentID  int NOT NULL, Name varchar(255) NOT NULL, PRIMARY KEY (StudentID))")
-    #cur.execute('insert into Student (StudentID, Name) values('+id+', "'+student_name+'")')
-    cur.execute('insert into Student (StudentID, Name) values(6, "sally")')
+    cur.execute('insert into Student (StudentID, Name) values(5, "random")')
     conn.commit()
     cur.execute("select * from Student")
     for row in cur:
@@ -110,12 +109,11 @@ all_log_files = rds.describe_db_log_files(
     DBInstanceIdentifier= db_name
 )
 print(all_log_files)
+
 '''
 rds_logfile = rds.download_db_log_file_portion(
     DBInstanceIdentifier= db_name,
-    LogFileName="general/mysql-general.log.0",
-    Maker='string',
+    LogFileName='testing log file',
+    Marker='string',
     NumberOfLines=123
-)
-
-print(rds_logfile)'''
+)'''
