@@ -73,7 +73,7 @@ endpoint = str(input("RDS MySQL endpoint: "))
 
 print("Connecting...")
 
-conn = pymysql.connect(host=endpoint, user=username, passwd=password, db=db_name)
+conn = pymysql.connect(host=endpoint, port=3306, user=username, passwd=password, db=db_name)
 
 print("SUCCESS: Connection to RDS MySQL instance succeeded")
 
