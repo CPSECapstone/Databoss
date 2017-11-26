@@ -112,7 +112,9 @@ print(all_log_files)
 '''
 rds_logfile = rds.download_db_log_file_portion(
     DBInstanceIdentifier= db_name,
-    LogFileName="general/mysql-general.log.0"
+    LogFileName="general/mysql-general.log.0",
+    Maker='string',
+    NumberOfLines=123
 )
 
 print(rds_logfile)'''
