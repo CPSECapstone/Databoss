@@ -85,7 +85,8 @@ numItems = 0
 
 with conn.cursor() as cur:
     cur.execute("create table IF NOT EXISTS Student ( StudentID  int NOT NULL, Name varchar(255) NOT NULL, PRIMARY KEY (StudentID))")
-    cur.execute('insert into Student (StudentID, Name) values('+id+', "'+student_name+'")')
+    #cur.execute('insert into Student (StudentID, Name) values('+id+', "'+student_name+'")')
+    cur.execute('insert into Student (StudentID, Name) values(6, "sally")')
     conn.commit()
     cur.execute("select * from Student")
     for row in cur:
