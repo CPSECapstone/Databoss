@@ -40,21 +40,19 @@ def list_buckets():
     for i in bucket_list:
         print(i)
 
-print("Printing buckets...")
-list_buckets()
-
 # Creating 2 buckets if they don't already exist
 def createBucket(bucketName):
     if (s3_resource.Bucket(bucketName) in s3_resource.buckets.all()):
         print("Found " + bucketName + " bucket")
         return s3_resource.Bucket(bucketName)
     else :
+        print("Created " + bucketName + " bucket")
         return s3.create_bucket(
-        Bucket=bucketName,
-        CreateBucketConfiguration={
+            Bucket=bucketName,
+            CreateBucketConfiguration={
             'LocationConstraint': loc}
     )
-    print("Created " + bucketName + " bucket")
+
 
 
     #creating bucket names
@@ -85,12 +83,9 @@ while (metricBucket == -1):
 db_name = str(input("Enter RDS database name: "))
 allotted_time = input("Enter duration of capture (in minutes): ")
 
-list_db_instances()
-
 list_of_instances = rds.describe_db_instances(
     DBInstanceIdentifier= db_name
 )
-print(list_of_instances)
 
 # Starting the database instance
 status_of_db = list_of_instances['DBInstances'][0]['DBInstanceStatus']
@@ -103,7 +98,6 @@ else :
     start_response = "Starting"
 
 print("Starting RDS database instance: " + db_name)
-print(start_response)
 
 # Testing RDS Database
 username = str(input("Enter username: "))
@@ -157,7 +151,6 @@ print("Printing location...")
 for key in bucket.objects.all():
     print(key.key)
 
-
 rds_logfile = rds.download_db_log_file_portion(
   DBInstanceIdentifier=db_name,
   LogFileName="general/mysql-general.log",
@@ -168,10 +161,6 @@ print(rds_logfile)
 name_of_file = input("Enter file name: ")
 
 s3_resource.Object(captureReplayBucket, name_of_file).put(Body=rds_logfile['LogFileData'], Metadata={'foo':'bar'})
-
-
-print("Printing log file data...")
-print(rds_logfile['LogFileData'])
 
 rds_logfile = rds.describe_db_log_files(
     DBInstanceIdentifier= db_name
