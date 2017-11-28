@@ -28,6 +28,7 @@ rds = boto3.client(
     region_name=loc
 )
 
+
 #Function that prints all of a user's database instances
 def list_db_instances():
     all_instances = rds.describe_db_instances()
@@ -67,6 +68,7 @@ def createBucketName(bucketName):
 
 name = input("Enter name for capture and replay: ")
 captureReplayBucket = createBucketName(name)
+
 while (captureReplayBucket == -1):
     print("Change name of bucket")
     name = input("Enter name for capture and replay bucket: ")
@@ -79,7 +81,6 @@ while (metricBucket == -1):
     print("Change name of bucket")
     name = input("Enter name for metrics bucket: ")
     metricBucket = createBucketName(name)
-
 
 db_name = str(input("Enter RDS database name: "))
 allotted_time = input("Enter duration of capture (in minutes): ")
@@ -162,10 +163,18 @@ rds_logfile = rds.download_db_log_file_portion(
   LogFileName="general/mysql-general.log",
   Marker='0'
 )
+print(rds_logfile)
+
+name_of_file = input("Enter file name: ")
+
+s3_resource.Object(captureReplayBucket, name_of_file).put(Body=rds_logfile['LogFileData'], Metadata={'foo':'bar'})
+
+
 print("Printing log file data...")
 print(rds_logfile['LogFileData'])
 
 rds_logfile = rds.describe_db_log_files(
     DBInstanceIdentifier= db_name
 )
+
 
