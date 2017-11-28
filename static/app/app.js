@@ -39,6 +39,10 @@ app.config(['$routeProvider', function($routeProvider) {
       templateUrl: 'static/home/home.html',
       controller: 'home'
    })
+   .when('/information', {
+      templateUrl: 'static/home/information.html',
+      controller: 'information'
+   })
    //If none of the "when"s are matched then it defaults to the home page.
    .otherwise({
       redirectTo: '/'
