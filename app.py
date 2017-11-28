@@ -1,6 +1,9 @@
 import sqlite3
+
+from flask import Flask, send_file
 from flask_sqlalchemy import SQLAlchemy
-from flask import Flask, send_file, render_template, request
+
+import views.dbConnections
 
 # Create the Flask application
 app = Flask(__name__)
@@ -11,6 +14,8 @@ sqlite = 'sqlite:///database.db'
 app.config['SQLALCHEMY_DATABASE_URI'] = sqlite
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.debug = True
+
+app.register_blueprint(views.dbConnections.dbConnection_api, url_prefix="/db")
 
 db = SQLAlchemy(app)
 
