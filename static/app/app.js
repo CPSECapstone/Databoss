@@ -1,6 +1,6 @@
 'use strict';
 
-var app = angular.module('MyCRT', ['ngRoute']);
+var app = angular.module('MyCRT', ['ngRoute', 'ui.bootstrap']);
 
 //Models the href functionality of a link but for Angular routing.
 //Use go-click="somewhere" in code to jump to a new view
@@ -24,18 +24,23 @@ app.directive('goClick', function ( $location ) {
 //Note: The controller will be in the same parent folder as the templateUrl but in the js folder
 //"css" value is optional
 app.config(['$routeProvider', function($routeProvider) {
-    $routeProvider
-    //This is the home page
-    .when('/', {
-       templateUrl: 'static/home/home.html',
-       controller: 'home',
-    })
-    .when('/capture', {
-        templateUrl: 'static/capture/capture.html',
-        controller: 'capture'
-    })
-    //If none of the "when"s are matched then it defaults to the home page.
-    .otherwise({
-       redirectTo: '/'
-    });
+   $routeProvider
+   //This is the home page
+   .when('/', {
+      templateUrl: 'static/app/login.html',
+      controller: 'login',
+      css: 'static/css/login.css'
+   })
+   .when('/capture', {
+      templateUrl: 'static/capture/capture.html',
+      controller: 'capture'
+   })
+   .when('/home', {
+      templateUrl: 'static/home/home.html',
+      controller: 'home'
+   })
+   //If none of the "when"s are matched then it defaults to the home page.
+   .otherwise({
+      redirectTo: '/'
+   });
 }]);

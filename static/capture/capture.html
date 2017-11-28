@@ -1,3 +1,15 @@
-<div> Capture </div>
-
-<button ng-click="newCapture()" type="button" class="btn btn-primary">New Capture</button>
+<div>
+    <p>Capture</p>
+    <button ng-click="open()">Add DB Connection</button>
+    <p>Select Database:</p>
+    <select id="databaseSelector">
+        <option disabled selected value> -- select a database -- </option>
+        <option value="db">db</option>
+    </select>
+    <form action="">
+        <input type="radio" name="captureMode" value=""> Interactive
+        <input type="radio" name="captureMode" value=""> Time-Constrained
+        <input type="radio" name="captureMode" value=""> Storage-Constrained
+    </form>
+    <button>Capture</button>
+</div>
