@@ -38,6 +38,7 @@ def createBucket(bucketName):
         Bucket=bucketName,
         CreateBucketConfiguration={
             'LocationConstraint': loc}
+        print("Created " + bucketName + " bucket")
     )
 
 #creating bucket names
@@ -52,9 +53,9 @@ name = input("Enter name for capture and replay: ")
 captureReplayBucket = createBucketName(name)
 while (captureReplayBucket == -1):
     print("Change name of bucket")
-    name = input("Enter name for capture and replay: ")
+    name = input("Enter name for capture and replay bucket: ")
     captureReplayBucket = createBucketName(name)
-print("Created " + name + " bucket")
+
 
 name = input("Enter name for metrics bucket: ")
 metricBucket = createBucketName(name)
@@ -62,7 +63,6 @@ while (metricBucket == -1):
     print("Change name of bucket")
     name = input("Enter name for metrics bucket: ")
     metricBucket = createBucketName(name)
-print("Created " + name + " bucket")
 
 
 db_name = str(input("Enter RDS database name: "))
