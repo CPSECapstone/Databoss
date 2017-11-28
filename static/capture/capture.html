@@ -5,38 +5,40 @@
     <button type="button" class="text-center btn btn-primary" ng-click="open()">Add DB Connection</button>
 
     <!-- Dropdown menu -->
-    <h5>Database:</h5>
-    <div class="dropdown">
-      <button class="btn btn-default dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
-          -- Select Database --
-        <span class="caret"></span>
-      </button>
-      <ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
-        <li><a href="#">db</a></li>
-      </ul>
+    <!--<h5>Database:</h5>-->
+    <!--<div class="dropdown">-->
+      <!--<button class="btn btn-default dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">-->
+          <!--&#45;&#45; Select Database &#45;&#45;-->
+        <!--<span class="caret"></span>-->
+      <!--</button>-->
+      <!--<ul class="dropdown-menu" aria-labelledby="dropdownMenu1">-->
+        <!--<li><a href="#">db</a></li>-->
+      <!--</ul>-->
+    <!--</div>-->
+
+    <div class="form-group">
+        <label for="dbSelect">Database:</label>
+        <select class="form-control" id="dbSelect">
+            <option disabled selected value> -- Select Database -- </option>
+            <option>1</option>
+            <option>2</option>
+            <option>3</option>
+        </select>
     </div>
 
-    <!-- <select id="databaseSelector">
-        <option disabled selected value>  select a database  </option>
-        <option value="db">db</option>
-    </select> -->
-    <!-- <form action=""> -->
     <h5>Capture Mode:</h5>
       <div class="btn-group" name="captureMode" data-toggle="buttons">
         <label class="btn btn-success active">
-          <input type="checkbox" checked autocomplete="off"> Interactive
+          <input type="radio" name="mode" autocomplete="off" checked > Interactive
         </label>
         <label class="btn btn-success">
-          <input type="checkbox" autocomplete="off"> Time-Constrained
+          <input type="radio" name="mode" autocomplete="off"> Time-Constrained
         </label>
         <label class="btn btn-success">
-          <input type="checkbox" autocomplete="off"> Storage-Constrained
+          <input type="radio" name="mode" autocomplete="off"> Storage-Constrained
         </label>
       </div>
-        <!-- <input type="radio" name="captureMode" value=""> Interactive
-        <input type="radio" name="captureMode" value=""> Time-Constrained
-        <input type="radio" name="captureMode" value=""> Storage-Constrained
-    </form>-->
+
     <div>
       <button type="button" class="btn btn-primary">Capture</button>
     </div>

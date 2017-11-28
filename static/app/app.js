@@ -27,7 +27,7 @@ app.config(['$routeProvider', function($routeProvider) {
    $routeProvider
    //This is the home page
    .when('/', {
-      templateUrl: 'static/app/login.html',
+      templateUrl: 'static/login/login.html',
       controller: 'login',
       css: 'static/css/login.css'
    })
