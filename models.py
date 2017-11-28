@@ -1,4 +1,5 @@
-from app import db
+from web_app import db
+
 
 class DBConnection(db.Model):
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)

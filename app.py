@@ -1,27 +1,17 @@
 import sqlite3
 
 from flask import Flask, send_file
-from flask_sqlalchemy import SQLAlchemy
+from web_app import app, db
 
-import views.dbConnections
+import views.dbConnection
 
-# Create the Flask application
-app = Flask(__name__)
+app.register_blueprint(views.dbConnection.dbc_api, url_prefix="/dbc")
 
-# Connect the MyCRT SQLite DB to the Flask app
-sqlite = 'sqlite:///database.db'
-
-app.config['SQLALCHEMY_DATABASE_URI'] = sqlite
-app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-app.debug = True
-
-app.register_blueprint(views.dbConnections.dbConnection_api, url_prefix="/db")
-
-db = SQLAlchemy(app)
 
 @app.route('/')
 def main():
     return send_file('static/app/index.html')
+
 
 @app.before_first_request
 def sqlite_setup():
@@ -36,6 +26,7 @@ def sqlite_setup():
     conn.close()
 
     db.create_all()
+
 
 if __name__ == "__main__":
     app.run(debug=True)

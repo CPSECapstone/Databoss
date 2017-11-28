@@ -11,7 +11,7 @@ app.controller('capture', function ($scope, $location, $uibModal, $http) {
             $scope.add = function () {
                $http({
                   method: 'POST',
-                  url: '/add',
+                  url: '/dbc/add',
                   headers: {
                      'Content-Type': 'application/json'
                   },
@@ -44,7 +44,7 @@ app.controller('capture', function ($scope, $location, $uibModal, $http) {
 
       $http({
          method: 'GET',
-         url: '/get',
+         url: '/dbc/get',
          headers: {
             'Content-Type': 'application/json'
          },
