@@ -34,6 +34,13 @@ def list_db_instances():
     for i in all_instances['DBInstances']:
         print(i['DBInstanceIdentifier'])
 
+def list_buckets():
+    bucket_list = [bucket.name for bucket in s3.buckets.all()]
+    for i in bucket_list:
+        print(i)
+
+print("Printing buckets...")
+list_buckets()
 
 # Creating 2 buckets if they don't already exist
 def createBucket(bucketName):
@@ -45,13 +52,15 @@ def createBucket(bucketName):
         Bucket=bucketName,
         CreateBucketConfiguration={
             'LocationConstraint': loc}
-        print("Created " + bucketName + " bucket")
     )
+    print("Created " + bucketName + " bucket")
 
-#creating bucket names
+
+    #creating bucket names
 def createBucketName(bucketName):
     try:
         captureReplayBucket=createBucket(bucketName)
+        return bucketName
     except:
         return -1
 
@@ -140,12 +149,21 @@ all_log_files = rds.describe_db_log_files(
 print(all_log_files)
 
 '''
+
+bucket = s3.Bucket(captureReplayBucket)
+print("Printing location...")
+
+for key in bucket.objects.all():
+    print(key.key)
+
+
 rds_logfile = rds.download_db_log_file_portion(
-    DBInstanceIdentifier= db_name,
-    LogFileName="general/mysql-general.log",
-    Marker='string'
+  DBInstanceIdentifier=db_name,
+  LogFileName="general/mysql-general.log",
+  Marker='0'
 )
-print(rds_logfile)
+print("Printing log file data...")
+print(rds_logfile['LogFileData'])
 
 rds_logfile = rds.describe_db_log_files(
     DBInstanceIdentifier= db_name
