@@ -3,4 +3,9 @@ var app = angular.module('MyCRT');
 
 app.controller('home', function($scope, $location) {
 
+    $scope.goCapture = function () {
+        console.log("HERE")
+        $location.path('/capture');
+    }
+
 });

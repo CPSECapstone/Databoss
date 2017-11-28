@@ -19,10 +19,15 @@
     <!-- Angular controllers -->
     <script src="static/home/home.js"></script>
     <script src="static/capture/capture.js"></script>
+    <script src="static/login/login.js"></script>
+    <script src="static/information/information.js"></script>
 
     <!-- Angular services -->
 
-    <!-- CSS Bootstrap -->
+    <!-- Bootstrap -->
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"
+            integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa"
+            crossorigin="anonymous"></script>
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
 
     <!-- CSS files for static pages -->
@@ -37,8 +42,9 @@
             <ul class="nav navbar-nav">
                 <li><a ng-href="{{'#!'}}">Home</a></li>
                 <li><a ng-href="{{'#!/capture'}}">Capture</a></li>
-                <li><a ng-href="{{'#!'}}">Replay</a></li>
-                <li><a ng-href="{{'#!'}}">Metrics</a></li>
+                <li><a ng-href="{{'#!'}}" class="btn disabled">Replay</a></li>
+                <li><a ng-href="{{'#!'}}" class="btn disabled">Metrics</a></li>
+                <li><a ng-href="{{'#!/information'}}">Information</a></li>
             </ul>
         </div>
     </nav>

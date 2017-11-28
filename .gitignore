@@ -2,6 +2,10 @@
 *.xml
 *.iml
 
+__pycache__/
+
+database.db
+
 # Elastic Beanstalk Files
 .elasticbeanstalk/*
 !.elasticbeanstalk/*.cfg.yml
