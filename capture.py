@@ -30,11 +30,13 @@ rds = boto3.client(
 
 
 #Function that prints all of a user's database instances
+@app.route('/listDBinstances')
 def list_db_instances():
     all_instances = rds.describe_db_instances()
     for i in all_instances['DBInstances']:
         print(i['DBInstanceIdentifier'])
 
+@app.route('/listbuckets')
 def list_buckets():
     bucket_list = [bucket.name for bucket in s3.buckets.all()]
     for i in bucket_list:
