@@ -72,11 +72,10 @@ def sqlite_setup():
     conn.execute(
         'CREATE TABLE if not exists users (name TEXT, dbName TEXT, logInfo TEXT, metricInfo TEXT)')
 
-    conn.execute(
-        'CREATE TABLE if not exists DBConnection ('
-    )
     print("Table created successfully")
     conn.close()
+
+    db.create_all()
 
 if __name__ == "__main__":
     app.run(debug=True)
