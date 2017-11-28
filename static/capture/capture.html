@@ -1,15 +1,45 @@
 <div>
-    <p>Capture</p>
-    <button ng-click="open()">Add DB Connection</button>
-    <p>Select Database:</p>
-    <select id="databaseSelector">
-        <option disabled selected value> -- select a database -- </option>
+    <h1 class="text-center">Capture</h1>
+<div class="row">
+    <div class="col-md-4 col-md-offset-4 text-center">
+    <button type="button" class="text-center btn btn-primary" ng-click="open()">Add DB Connection</button>
+
+    <!-- Dropdown menu -->
+    <h5>Database:</h5>
+    <div class="dropdown">
+      <button class="btn btn-default dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+          -- Select Database --
+        <span class="caret"></span>
+      </button>
+      <ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
+        <li><a href="#">db</a></li>
+      </ul>
+    </div>
+
+    <!-- <select id="databaseSelector">
+        <option disabled selected value>  select a database  </option>
         <option value="db">db</option>
-    </select>
-    <form action="">
-        <input type="radio" name="captureMode" value=""> Interactive
+    </select> -->
+    <!-- <form action=""> -->
+    <h5>Capture Mode:</h5>
+      <div class="btn-group" name="captureMode" data-toggle="buttons">
+        <label class="btn btn-success active">
+          <input type="checkbox" checked autocomplete="off"> Interactive
+        </label>
+        <label class="btn btn-success">
+          <input type="checkbox" autocomplete="off"> Time-Constrained
+        </label>
+        <label class="btn btn-success">
+          <input type="checkbox" autocomplete="off"> Storage-Constrained
+        </label>
+      </div>
+        <!-- <input type="radio" name="captureMode" value=""> Interactive
         <input type="radio" name="captureMode" value=""> Time-Constrained
         <input type="radio" name="captureMode" value=""> Storage-Constrained
-    </form>
-    <button>Capture</button>
+    </form>-->
+    <div>
+      <button type="button" class="btn btn-primary">Capture</button>
+    </div>
+  </div>
+</div>
 </div>
