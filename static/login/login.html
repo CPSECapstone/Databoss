@@ -5,11 +5,11 @@
         <p id="profile-name" class="profile-name-card"></p>
         <form class="form-signin">
             <span id="reauth-email" class="reauth-email"></span>
-            <input type="text" id="inputEmail" class="form-control" placeholder="User Access Key" required autofocus>
-            <input type="password" id="inputPassword" class="form-control" placeholder="User Secret Key" required>
+            <input type="password" ng-model="accessKey" class="form-control" placeholder="User Access Key" required autofocus>
+            <input type="password" ng-model="secretKey" class="form-control" placeholder="User Secret Key" required>
             <div id="remember" class="checkbox">
             </div>
-            <button class="btn btn-lg btn-primary btn-block btn-signin" type="submit">Sign in</button>
+            <button class="btn btn-lg btn-primary btn-block btn-signin" type="submit" ng-click="login()">Sign in</button>
         </form><!-- /form -->
         <a href="#" class="forgot-password">
             Forgot the password?

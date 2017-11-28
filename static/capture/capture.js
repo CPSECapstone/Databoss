@@ -61,5 +61,22 @@ app.controller('capture', function ($scope, $location, $uibModal, $http) {
         });
     };
 
-//    $scope.getDBConnections();
+    $scope.getDBConnections();
+
+    var getBuckets = function() {
+        $http({
+            method: 'GET',
+            url: 'capture/listbuckets',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+        }).then(function successCallback(response) {
+            $scope.buckets = response.data;
+            console.log('success');
+        }, function errorCallback(response) {
+            console.log('error');
+        });
+    };
+
+    getBuckets();
 });

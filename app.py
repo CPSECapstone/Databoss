@@ -4,8 +4,12 @@ from flask import Flask, send_file
 from web_app import app, db
 
 import views.dbConnection
+import capture
+import views.login
 
 app.register_blueprint(views.dbConnection.dbc_api, url_prefix="/dbc")
+app.register_blueprint(capture.capture_api, url_prefix="/capture")
+app.register_blueprint(views.login.login_api, url_prefix="/login")
 
 
 @app.route('/')

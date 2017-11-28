@@ -1,8 +1,6 @@
 from flask import Blueprint, request, jsonify
-from flask_sqlalchemy import SQLAlchemy
-from sqlalchemy import create_engine
-from web_app import app, db
-import sqlalchemy
+from sqlalchemy import create_engine, exc
+from web_app import db
 import models
 
 dbc_api = Blueprint('dbc_api', __name__)
@@ -38,30 +36,14 @@ def __add_connection(dialect, name, user, password, host, port, database):
                  + port + "/" + database
     print(connection)
 
-    # # Test that the connection is valid/authorized
-    # # If so, add the connection to the MyCRT SQLite db
-    # try:
-    #     # sqlalchemy_binds = {
-    #     #     'capture': connection
-    #     # }
-    #     #
-    #     # app.config['SQLALCHEMY_BINDS'] = sqlalchemy_binds
-    #     #
-    #     # capture_db = SQLAlchemy(app)
-    #
-    #     engine = create_engine(connection)
-    #     engine.connect()
-    #
-    #     __add_to_mycrt_db(dialect, name, user, host, port, database)
-    #
-    #     dbc = models.DBConnection.query.all()
-    #     print(dbc)
-    #
-    # # Catch errors when trying to connect with the db information
-    # except sqlalchemy.exc.OperationalError:
-    #     print("Unable to connect")
-    engine = create_engine(connection)
-    engine.connect()
+    # Test that the connection is valid/authorized
+    # If so, add the connection to the MyCRT SQLite db
+    try:
+        engine = create_engine(connection)
+        engine.connect()
+        __add_to_mycrt_db(dialect, name, user, host, port, database)
+    except exc.OperationalError:
+        print("Unable to connect")
 
     __add_to_mycrt_db(dialect, name, user, host, port, database)
 
