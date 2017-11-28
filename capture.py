@@ -28,6 +28,13 @@ rds = boto3.client(
     region_name=loc
 )
 
+#Function that prints all of a user's database instances
+def list_db_instances():
+    all_instances = rds.describe_db_instances()
+    for i in all_instances['DBInstances']:
+        print(i['DBInstanceIdentifier'])
+
+
 # Creating 2 buckets if they don't already exist
 def createBucket(bucketName):
     if (s3_resource.Bucket(bucketName) in s3_resource.buckets.all()):
@@ -68,6 +75,8 @@ while (metricBucket == -1):
 db_name = str(input("Enter RDS database name: "))
 allotted_time = input("Enter duration of capture (in minutes): ")
 
+list_db_instances()
+
 list_of_instances = rds.describe_db_instances(
     DBInstanceIdentifier= db_name
 )
@@ -105,14 +114,14 @@ numItems = 0
 
 with conn.cursor() as cur:
     cur.execute("create table IF NOT EXISTS Student ( StudentID  int NOT NULL, Name varchar(255) NOT NULL, PRIMARY KEY (StudentID))")
-    cur.execute('insert into Student (StudentID, Name) values(5, "random")')
+    cur.execute('insert into Student (StudentID, Name) values('+id+', "'+student_name+'")')
     conn.commit()
     cur.execute("select * from Student")
     for row in cur:
         numItems += 1
         print(row)
 
-print("Added " + str(numItems) + " items to RDS MySQL table")
+print(str(numItems) + " items exist in your RDS MySQL table")
 
 '''
 if status_of_db == "available":
@@ -124,7 +133,7 @@ else :
 
 print("Stopping database: " + db_name)
 print(stop_response)
-'''
+
 all_log_files = rds.describe_db_log_files(
     DBInstanceIdentifier= db_name
 )
@@ -133,7 +142,12 @@ print(all_log_files)
 '''
 rds_logfile = rds.download_db_log_file_portion(
     DBInstanceIdentifier= db_name,
-    LogFileName='testing log file',
-    Marker='string',
-    NumberOfLines=123
-)'''
+    LogFileName="general/mysql-general.log",
+    Marker='string'
+)
+print(rds_logfile)
+
+rds_logfile = rds.describe_db_log_files(
+    DBInstanceIdentifier= db_name
+)
+
