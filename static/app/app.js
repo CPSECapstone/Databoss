@@ -27,7 +27,7 @@ app.config(['$routeProvider', function($routeProvider) {
    $routeProvider
    //This is the home page
    .when('/', {
-      templateUrl: 'static/app/login.html',
+      templateUrl: 'static/login/login.html',
       controller: 'login',
       css: 'static/css/login.css'
    })
@@ -38,6 +38,10 @@ app.config(['$routeProvider', function($routeProvider) {
    .when('/home', {
       templateUrl: 'static/home/home.html',
       controller: 'home'
+   })
+   .when('/information', {
+      templateUrl: 'static/information/information.html',
+      controller: 'information'
    })
    //If none of the "when"s are matched then it defaults to the home page.
    .otherwise({
