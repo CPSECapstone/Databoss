@@ -46,39 +46,39 @@ def createBucket(bucketName):
         print("Found " + bucketName + " bucket")
         return s3_resource.Bucket(bucketName)
     else :
-        print("Created " + bucketName + " bucket")
         return s3.create_bucket(
             Bucket=bucketName,
             CreateBucketConfiguration={
             'LocationConstraint': loc}
     )
+    #print("Created " + bucketName + " bucket")
 
 
 
     #creating bucket names
-def createBucketName(bucketName):
+def createBucketName(bucketName, string):
     try:
         captureReplayBucket=createBucket(bucketName)
+        print("Created " + bucketName + " bucket")
         return bucketName
     except:
-        return -1
+        #bucketName = -1
+        testBucketName(bucketName, string)
+        #return -1
+
+def testBucketName(bucketName, string):
+    print("Change name of bucket")
+    name = input("Enter name for " + string + " bucket: ")
+    bucketName = createBucketName(name, string)
+
 
 
 name = input("Enter name for capture and replay: ")
-captureReplayBucket = createBucketName(name)
-
-while (captureReplayBucket == -1):
-    print("Change name of bucket")
-    name = input("Enter name for capture and replay bucket: ")
-    captureReplayBucket = createBucketName(name)
-
+captureReplayBucket = createBucketName(name, "capture and replay")
 
 name = input("Enter name for metrics bucket: ")
-metricBucket = createBucketName(name)
-while (metricBucket == -1):
-    print("Change name of bucket")
-    name = input("Enter name for metrics bucket: ")
-    metricBucket = createBucketName(name)
+metricBucket = createBucketName(name, "metrics")
+
 
 db_name = str(input("Enter RDS database name: "))
 allotted_time = input("Enter duration of capture (in minutes): ")
