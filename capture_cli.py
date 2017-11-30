@@ -105,7 +105,7 @@ print("Starting RDS database instance: " + db_name)
 
 # Testing RDS Database
 username = str(input("Enter username: "))
-password = str(getpass.getpass(prompt="Enter password: "))
+password = str(input("Enter password: "))
 endpoint = str(input("RDS MySQL endpoint: "))
 
 print("Connecting...")
