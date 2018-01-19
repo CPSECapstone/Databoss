@@ -8,10 +8,8 @@ import json
 import bson
 import getpass
 
-user_key = "AKIAIPOPEOM5I7AOWFXA"
-user_access = "gaP67kX5Qh+fIz5MxcVfG+74sxfbUCvABIF23VsE"
-'''user_key = input("Enter access key id: ")
-user_access = input("Enter secret key: ")'''
+user_key = input("Enter access key id: ")
+user_access = input("Enter secret key: ")
 loc = "us-west-1"
 bucket_name = "Capture " + str(time.strftime("%x"))
 
