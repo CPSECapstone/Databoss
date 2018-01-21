@@ -10,6 +10,7 @@ matrix:
     env: TEST_SUITE=tests/suite_3_4.py
   - python: "3.5"
     env: TEST_SUITE=tests/suite_3_5.py
+    env: TEST_SUITE=tests/parse_test.py
   - python: "3.6"
     env: TEST_SUITE=tests/suite_3_6.py
 # command to install dependencies
