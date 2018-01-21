@@ -1,5 +1,5 @@
 import sys
-sys.path.insert(0, '/Databoss')
+sys.path.insert(0, '/Documents/Databoss')
 
 import parseMetrics
 
