@@ -1,3 +1,6 @@
+import sys
+sys.path.insert(0, '/../')
+
 import parseMetrics
 
 file_name_1 = "../metric-file.txt"
