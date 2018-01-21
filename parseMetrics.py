@@ -7,36 +7,44 @@ readIOList = []
 readIOTimeList = []
 writeIOList = []
 writeIOTimeList = []
+memoryList = []
+memoryTimeList = []
 
 def readMetricsFile(textFile):
     tempList = []
     f = open(textFile, "r")
     tempData = json.loads(f.read())
-    createCPULists(tempData)
+    return tempData
 
-    #createCPULists(f)
-    #f.close();
-    #tempData[\"Label:" "CPUUtilization", "Datapoints"]
+def createLists(dictData, timeArray, dataArray):
+    for element in dictData['Datapoints']:
+        timeArray.append(element['Timestamp'])
+        dataArray.append(element['Average'])
 
 def createCPULists(openFile):
-    #cpuList = []
-    #cpuTimeList = []
     cpuData = openFile[0]
-    for element in cpuData['Datapoints']:
-        cpuTimeList.append(element['Timestamp'])
-        cpuList.append(element['Average'])
+    createLists(cpuData, cpuTimeList, cpuList)
 
 
 
-
-#array = '{"drinks": ["coffee", "tea", "water"]}'
-#data = json.loads(array)
-
-#for element in data['drinks']:
-#    print(element)
+def createReadIOLists(openFile):
+    readIOData = openFile[1]
+    createLists(readIOData, readIOTimeList, readIOList)
 
 
+def createWriteIOLists(openFile):
+    writeIOData = openFile[2]
+    createLists(writeIOData, writeIOTimeList, writeIOList)
+
+def createMemLists(openFile):
+    memData = openFile[3]
+    createLists(memData, memoryTimeList, memoryList)
 
 
-readMetricsFile("metric-file.txt")
+
+openFile = readMetricsFile("metric-file.txt")
+createCPULists(openFile)
+createReadIOLists(openFile)
+createWriteIOLists(openFile)
+
 
