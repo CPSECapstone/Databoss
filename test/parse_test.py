@@ -1,6 +1,3 @@
-import sys
-sys.path.insert(0, '/~/Documents/Databoss')
-
 import parseMetrics
 
 file_name_1 = "../metric-file.txt"

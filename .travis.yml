@@ -3,19 +3,19 @@ matrix:
   include:
 # Not supporting 3.2 and 3.3
 #  - python: "3.2"
-#    env: TEST_SUITE=tests/suite_3_2.py
+#    env: TEST_SUITE=test/suite_3_2.py
 #  - python: "3.3"
-#    env: TEST_SUITE=tests/suite_3_3.py
+#    env: TEST_SUITE=test/suite_3_3.py
   - python: "3.4"
-    env: TEST_SUITE=tests/suite_3_4.py
+    env: TEST_SUITE=test/suite_3_4.py
   - python: "3.5"
-    env: TEST_SUITE=tests/suite_3_5.py
-    env: TEST_SUITE=tests/parse_test.py
+    env: TEST_SUITE=test/suite_3_5.py
+    env: TEST_SUITE=test/parse_test.py
   - python: "3.6"
-    env: TEST_SUITE=tests/suite_3_6.py
+    env: TEST_SUITE=test/suite_3_6.py
 # command to install dependencies
 install:
   - pip install -r requirements.txt
-# command to run tests
+# command to run test
 script:
   - pytest $TEST_SUITE # or py.test for Python versions 3.5 and below
