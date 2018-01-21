@@ -1,1 +1,3 @@
-{}
+{
+  "parse_test.py::test_parse": true
+}
