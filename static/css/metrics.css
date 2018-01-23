@@ -1,5 +1,9 @@
 .table {
-    background-color: #F7F7F7;
-    height: 50%;
-    width: 50%;
+    border: red;
+    width: 10%;
+
+}
+
+th {
+    text-align: right;
 }
