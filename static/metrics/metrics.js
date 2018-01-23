@@ -20,6 +20,5 @@ app.controller('metrics', function($scope, $location, $http) {
          }
        ]
      }
-});
-
+    });
 });
