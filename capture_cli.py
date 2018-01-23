@@ -1,6 +1,11 @@
 import boto3
 import time
 import pymysql
+from datetime import timedelta
+from datetime import datetime
+from time import mktime
+import json
+import bson
 import getpass
 
 user_key = input("Enter access key id: ")
@@ -75,7 +80,7 @@ def testBucketName(bucketName, string):
 
 
 
-name = input("Enter name for capture and replay: ")
+'''name = input("Enter name for capture and replay: ")
 captureReplayBucket = createBucketName(name, "capture and replay")
 
 name = input("Enter name for metrics bucket: ")
@@ -83,7 +88,11 @@ metricBucket = createBucketName(name, "metrics")
 
 
 db_name = str(input("Enter RDS database name: "))
-allotted_time = input("Enter duration of capture (in minutes): ")
+allotted_time = input("Enter duration of capture (in minutes): ")'''
+
+captureReplayBucket = "capture-replay-info"
+metricBucket = "metric-info"
+db_name = "myinstance"
 
 list_of_instances = rds.describe_db_instances(
     DBInstanceIdentifier= db_name
@@ -99,14 +108,19 @@ if status_of_db == "stopped":
 else:
     start_response = "Starting"
 
-print("response: " + start_response)
+print(start_response + "...")
 
 print("Starting RDS database instance: " + db_name)
 
+'''
 # Testing RDS Database
 username = str(input("Enter username: "))
-password = str(getpass.getpass(prompt="Enter password: "))
-endpoint = str(input("RDS MySQL endpoint: "))
+password = str(input("Enter password: "))
+endpoint = str(input("RDS MySQL endpoint: "))'''
+
+username = "sonaraya"
+password = "sonaraya"
+endpoint = "myinstance.cpguxfvypxd2.us-west-1.rds.amazonaws.com"
 
 print("Connecting...")
 
@@ -162,9 +176,62 @@ rds_logfile = rds.download_db_log_file_portion(
 )
 print(rds_logfile)
 
-name_of_file = input("Enter file name: ")
+logFile = input("Enter file name for log file: ")
+metricFile = input("Enter file name for metric file: ")
 
-s3_resource.Object(captureReplayBucket, name_of_file).put(Body=rds_logfile['LogFileData'], Metadata={'foo':'bar'})
+cloudwatch = boto3.client(
+    service_name='cloudwatch',
+    aws_access_key_id=user_key,
+    aws_secret_access_key=user_access,
+    region_name=loc
+)
+
+dlist = []
+
+print("CPU Utilization: ")
+dlist.append(cloudwatch.get_metric_statistics(Namespace="AWS/RDS",
+                                              Statistics=['Average'],
+                                              StartTime=datetime.utcnow()-timedelta(minutes=60),
+                                              EndTime=datetime.utcnow(),
+                                              Period=300,
+                                              MetricName='CPUUtilization'))
+print("Read: ")
+dlist.append(cloudwatch.get_metric_statistics(Namespace="AWS/RDS",
+                                              Statistics=['Average'],
+                                              StartTime=datetime.utcnow()-timedelta(minutes=60),
+                                              EndTime=datetime.utcnow(),
+                                              Period=300,
+                                              MetricName='ReadIOPS'))
+print("Write: ")
+dlist.append(cloudwatch.get_metric_statistics(Namespace="AWS/RDS",
+                                              Statistics=['Average'],
+                                              StartTime=datetime.utcnow()-timedelta(minutes=60),
+                                              EndTime=datetime.utcnow(),
+                                              Period=300,
+                                              MetricName='WriteIOPS'))
+print("Incoming Bytes: ")
+dlist.append(cloudwatch.get_metric_statistics(Namespace="AWS/RDS",
+                                              Statistics=['Average'],
+                                              StartTime=datetime.utcnow()-timedelta(minutes=60),
+                                              EndTime=datetime.utcnow(),
+                                              Period=300,
+                                              MetricName='IncomingBytes'))
+
+
+class MyEncoder(json.JSONEncoder):
+    def default(self, obj):
+        if isinstance(obj, datetime):
+            return int(mktime(obj.timetuple()))
+        return json.JSONEncoder.default(self, obj)
+
+with open(metricFile, 'w') as metricFileOpened:
+    metricFileOpened.write(json.dumps(dlist, cls=MyEncoder))
+
+s3_resource.Object(captureReplayBucket, logFile).put(Body=rds_logfile['LogFileData'], Metadata={'foo':'bar'})
+s3.meta.client.upload_file(metricFileOpened.name, metricBucket, metricFileOpened.name)
+'''s3_resource.Object(metricBucket, metricFile).put(Body=dlist, Metadata={'foo':'bar'})'''
+
+print("Done!")
 
 rds_logfile = rds.describe_db_log_files(
     DBInstanceIdentifier= db_name

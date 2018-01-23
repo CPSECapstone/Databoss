@@ -18,18 +18,17 @@
                 </select>
             </div>
 
-            <button type="button" class="text-center btn btn-primary" ng-click="open()">Add DB Connection</button>
-
             <div class="form-group">
                 <label for="dbSelect">Database:</label>
                 <select class="form-control" id="dbSelect">
                     <option disabled selected value> -- Select Database -- </option>
                     <option ng-repeat="db in DBConnections" value="{{db.id}}">{{db.name}}</option>
                 </select>
+                <button type="button" class="text-center btn btn-primary" ng-click="open()" style="display: inline-block;">Add DB Connection</button>
             </div>
 
             <h5>Capture Mode:</h5>
-            <div class="btn-group" name="captureMode" data-toggle="buttons">
+            <div class="btn-group" name="captureMode" data-toggle="buttons" style="margin-bottom: 10px;">
                 <label class="btn btn-success active">
                     <input type="radio" name="mode" autocomplete="off" checked > Interactive
                 </label>
