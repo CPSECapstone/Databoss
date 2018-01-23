@@ -42,9 +42,9 @@ def createMemLists(openFile):
 
 
 
-openFile = readMetricsFile("metric-file.txt")
-createCPULists(openFile)
-createReadIOLists(openFile)
-createWriteIOLists(openFile)
+#openFile = readMetricsFile("metric-file.txt")
+#createCPULists(openFile)
+#createReadIOLists(openFile)
+#createWriteIOLists(openFile)
 
 
