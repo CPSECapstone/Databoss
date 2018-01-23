@@ -1,4 +1,5 @@
 {
+  "capture_cli.py": true,
   "test/parse_test.py::test_parse": true,
   "tests/suite_3_4.py::test_answer": true
 }
