@@ -43,6 +43,22 @@ var createChart = function(labels, data, label) {
                 borderColor: 'rgba(10, 148, 255, 1)',
                 backgroundColor:'rgba(10, 148, 255, 0.57)'
             }]
+        },
+        options : {
+          scales: {
+            yAxes: [{
+              scaleLabel: {
+                display: true,
+                labelString: 'CPU (Percent)'
+              }
+            }],
+            xAxes: [{
+              scaleLabel: {
+                display: true,
+                labelString: 'Time (seconds)'
+              }
+            }]
+          }
         }
     });
 };
