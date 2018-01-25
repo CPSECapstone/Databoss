@@ -1,15 +1,15 @@
 import sqlite3
 
-from flask import Flask, send_file
+from flask import send_file
 from web_app import app, db
 
-import views.dbConnection
 import capture
-import views.login
+from views import dbConnection, login, metrics
 
-app.register_blueprint(views.dbConnection.dbc_api, url_prefix="/dbc")
+app.register_blueprint(dbConnection.dbc_api, url_prefix="/dbc")
 app.register_blueprint(capture.capture_api, url_prefix="/capture")
-app.register_blueprint(views.login.login_api, url_prefix="/login")
+app.register_blueprint(login.login_api, url_prefix="/login")
+app.register_blueprint(metrics.metrics_api, url_prefix="/metrics")
 
 
 @app.route('/')
