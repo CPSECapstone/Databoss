@@ -26,7 +26,6 @@ def createLists(dictData, timeArray, dataArray):
 def createCPULists(openFile):
     cpuData = openFile[0]
     createLists(cpuData, cpuTimeList, cpuList)
-    _sortLists(cpuList, cpuTimeList)
 
 
 def createReadIOLists(openFile):
