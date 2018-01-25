@@ -1,0 +1,9 @@
+.table {
+    border: red;
+    width: 10%;
+
+}
+
+th {
+    text-align: right;
+}

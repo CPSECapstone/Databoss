@@ -45,7 +45,8 @@ app.config(['$routeProvider', function($routeProvider) {
    })
    .when('/metrics', {
       templateUrl: 'static/metrics/metrics.html',
-      controller: 'metrics'
+      controller: 'metrics',
+      css: 'static/css/metrics.css'
    })
    //If none of the "when"s are matched then it defaults to the home page.
    .otherwise({
