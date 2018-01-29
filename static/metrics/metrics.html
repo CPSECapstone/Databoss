@@ -1,34 +1,36 @@
 <div>
-    <label> Capture & Replays </label>
-    <table class="table">
-      <thead>
-        <tr>
-          <th>Name</th>
-          <th>Date</th>
-          <th>Display</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr>
-          <th scope="row">Capture 1</th>
-          <td>01/11/18</td>
-          <td></td>
-        </tr>
-        <tr>
-          <th scope="row">Capture 2</th>
-          <td>09/1/18</td>
-          <td></td>
-        </tr>
-        <tr>
-          <th scope="row">Capture 3</th>
-          <td>05/7/18</td>
-          <td>
-              <label>
-                 <input type="checkbox" ng-model="checkboxModel">
-              </label>
-
-          </td>
-        </tr>
-      </tbody>
-    </table>
+    <div class="tableWrapper">
+        <h2> Capture & Replays </h2>
+        <table class="table">
+          <thead>
+            <tr>
+              <th>Name</th>
+              <th>Date</th>
+              <th>Display</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <th scope="row">Capture 1</th>
+              <td>01/11/18</td>
+              <td><input type="checkbox"></td>
+            </tr>
+            <tr>
+              <th scope="row">Capture 2</th>
+              <td>09/1/18</td>
+              <td><input type="checkbox"></td>
+            </tr>
+            <tr>
+              <th scope="row">Capture 3</th>
+              <td>05/7/18</td>
+              <td><input type="checkbox"></td>
+            </tr>
+          </tbody>
+        </table>
+        </div>
+    <div class="chartWrapper">
+        <h2>Metrics Graph</h2>
+      <h3>CPU</h3>
+      <canvas id="myChart" width="1600" height="900"></canvas>
+    </div>
 </div>
