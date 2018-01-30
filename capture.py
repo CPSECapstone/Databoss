@@ -1,9 +1,15 @@
 import boto3
 import time
 import pymysql
+import random
+import sys
+import string
 import getpass
 from web_app import app
 from flask import Blueprint, jsonify
+
+VOWELS = "aeiou"
+CONSONANTS = "".join(set(string.ascii_lowercase) - set(VOWELS))
 
 capture_api = Blueprint('capture_api', __name__)
 
@@ -53,6 +59,7 @@ def aws_config():
 def list_db_instances():
     db_identifiers = []
     all_instances = rds.describe_db_instances()
+
     for i in all_instances['DBInstances']:
         print(i['DBInstanceIdentifier'])
         db_identifiers.append({'name': i['DBInstanceIdentifier']})
@@ -97,23 +104,55 @@ def testBucketName(bucketName, string):
     name = input("Enter name for " + string + " bucket: ")
     bucketName = createBucketName(name, string)
 
-#
-# name = input("Enter name for capture and replay: ")
-# captureReplayBucket = createBucketName(name, "capture and replay")
-#
-# name = input("Enter name for metrics bucket: ")
-# metricBucket = createBucketName(name, "metrics")
-#
-#
-# db_name = str(input("Enter RDS database name: "))
-# db_name = "test"
-# allotted_time = input("Enter duration of capture (in minutes): ")
-#
-# list_of_instances = rds.describe_db_instances(
-#     DBInstanceIdentifier= db_name
-# )
-#
-# # Starting the database instance
+
+def generate_word(wordLength):
+    word = ""
+    for i in range(wordLength):
+        if i % 2 == 0:
+            word += random.choice(CONSONANTS)
+        else:
+            word += random.choice(VOWELS)
+    return word
+
+
+def generate_number(numLength):
+    for i in range(numLength):
+        return random.randint(numLength)
+
+
+def get_list_of_instances(db_name):
+    list_of_instances = rds.describe_db_instances(
+        DBInstanceIdentifier=db_name
+    )
+    return list_of_instances
+
+
+def startCapture(username, password, db_name):
+    status_of_db = get_list_of_instances(db_name)['DBInstances'][0]['DBInstanceStatus']
+    endpoint = get_list_of_instances(db_name)['DBInstances'][0]['Endpoint']
+
+    if status_of_db == "available":
+        connection = pymysql.connect(host=endpoint, port=3306, user=username, passwd=password, db=db_name)
+
+        with connection.cursor() as cur:
+            cur.execute(
+                "create table IF NOT EXISTS Student ( StudentID  int NOT NULL, Name varchar(255) NOT NULL, PRIMARY KEY (StudentID))")
+            cur.execute(
+                'insert into Student (StudentID, Name) values(' + generate_number(5) + ', "' + generate_word(10) + '")')
+            connection.commit()
+            cur.execute("select * from Student")
+
+
+def stopCapture(username, password, db_name, fileName):
+    rds_logfile = rds.download_db_log_file_portion(
+        DBInstanceIdentifier=db_name,
+        LogFileName="general/mysql-general.log",
+        Marker='0'
+    )
+    s3_resource.Object(captureReplayBucket, fileName).put(Body=rds_logfile['LogFileData'], Metadata={'foo': 'bar'})
+
+
+# Checking status of database instance
 # status_of_db = list_of_instances['DBInstances'][0]['DBInstanceStatus']
 #
 # if status_of_db == "stopped":
@@ -124,34 +163,6 @@ def testBucketName(bucketName, string):
 #     start_response = "Starting"
 #
 # print("Starting RDS database instance: " + db_name)
-#
-# # Testing RDS Database
-# username = str(input("Enter username: "))
-# password = str(getpass.getpass(prompt="Enter password: "))
-# endpoint = str(input("RDS MySQL endpoint: "))
-#
-# print("Connecting...")
-#
-# conn = pymysql.connect(host=endpoint, port=3306, user=username, passwd=password, db=db_name)
-#
-# print("SUCCESS: Connection to RDS MySQL instance succeeded")
-#
-# print("Adding value to database table 'Student'")
-# id = input("Enter student id: ")
-# student_name = str(input("Enter student name: "))
-#
-# numItems = 0
-#
-# with conn.cursor() as cur:
-#     cur.execute("create table IF NOT EXISTS Student ( StudentID  int NOT NULL, Name varchar(255) NOT NULL, PRIMARY KEY (StudentID))")
-#     cur.execute('insert into Student (StudentID, Name) values('+id+', "'+student_name+'")')
-#     conn.commit()
-#     cur.execute("select * from Student")
-#     for row in cur:
-#         numItems += 1
-#         print(row)
-#
-# print(str(numItems) + " items exist in your RDS MySQL table")
 #
 # '''
 # if status_of_db == "available":
@@ -168,7 +179,6 @@ def testBucketName(bucketName, string):
 #     DBInstanceIdentifier= db_name
 # )
 # print(all_log_files)
-#
 # '''
 #
 # bucket = s3.Bucket(captureReplayBucket)
@@ -176,20 +186,3 @@ def testBucketName(bucketName, string):
 #
 # for key in bucket.objects.all():
 #     print(key.key)
-#
-# rds_logfile = rds.download_db_log_file_portion(
-#   DBInstanceIdentifier=db_name,
-#   LogFileName="general/mysql-general.log",
-#   Marker='0'
-# )
-# print(rds_logfile)
-#
-# name_of_file = input("Enter file name: ")
-#
-# s3_resource.Object(captureReplayBucket, name_of_file).put(Body=rds_logfile['LogFileData'], Metadata={'foo':'bar'})
-#
-# rds_logfile = rds.describe_db_log_files(
-#     DBInstanceIdentifier= db_name
-# )
-#
-#
