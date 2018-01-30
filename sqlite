@@ -4,8 +4,43 @@ conn = sqlite3.connect('database.db')
 c = conn.cursor()
 
 def createTable():
-    c.execute('''CREATE TABLE filepaths
-                  (path text)''')
+    # Metric
+    c.execute('''CREATE TABLE metric
+                 (id INTEGER PRIMARY KEY,
+                  name TEXT,
+                  path TEXT UNIQUE)''')
+    # DBConnection
+    c.execute('''CREATE TABLE dbConnection
+                 (id INTEGER PRIMARY KEY,
+                  hostname TEXT,
+                  port INTEGER,
+                  user TEXT)''')
+    # Workload
+    c.execute('''CREATE TABLE workload
+                 (id INTEGER PRIMARY KEY,
+                  name TEXT,
+                  path TEXT UNIQUE)''')
+    # Logfile
+    c.execute('''CREATE TABLE logfile
+                 (id INTEGER PRIMARY KEY,
+                  name TEXT,
+                  path TEXT UNIQUE)''')
+    # Capture
+    c.execute('''CREATE TABLE capture
+                 (id INTEGER PRIMARY KEY,
+                  FOREIGN KEY (dbId) REFERENCES dbConnection(id),
+                  FOREIGN KEY (logfileId) REFERENCES logfile(id),
+                  FOREIGN KEY (workloadId) REFERENCES workload(id),
+                  FOREIGN KEY (metricId) REFERENCES metric(id))''')
+    # Replay
+    c.execute('''CREATE TABLE replay
+                 (id INTEGER PRIMARY KEY,
+                  FOREIGN KEY (dbId) REFERENCES dbConnection(id),
+                  FOREIGN KEY (logfileId) REFERENCES logfile(id),
+                  FOREIGN KEY (workloadId) REFERENCES workload(id),
+                  FOREIGN KEY (metricId) REFERENCES metric(id),
+                  FOREIGN KEY (captureId) REFERENCES capture(id))''')
+
     c.commit()
 
 def addPath(pathName):
