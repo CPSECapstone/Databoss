@@ -101,6 +101,7 @@ list_of_instances = rds.describe_db_instances(
 # Starting the database instance
 status_of_db = list_of_instances['DBInstances'][0]['DBInstanceStatus']
 
+'''
 if status_of_db == "stopped":
     start_response = rds.start_db_instance(
         DBInstanceIdentifier= db_name
@@ -109,7 +110,7 @@ else:
     start_response = "Starting"
 
 print(start_response + "...")
-
+'''
 print("Starting RDS database instance: " + db_name)
 
 '''
@@ -124,7 +125,7 @@ endpoint = "myinstance.cpguxfvypxd2.us-west-1.rds.amazonaws.com"
 
 print("Connecting...")
 
-conn = pymysql.connect(host=endpoint, port=3306, user=username, passwd=password, db=db_name)
+conn = pymysql.connect(host=endpoint, user=username, passwd=password, db=db_name)
 
 print("SUCCESS: Connection to RDS MySQL instance succeeded")
 
