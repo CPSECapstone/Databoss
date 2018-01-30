@@ -22,7 +22,7 @@
                 <label for="dbSelect">Database:</label>
                 <select class="form-control" id="dbSelect">
                     <option disabled selected value> -- Select Database -- </option>
-                    <option ng-repeat="db in DBConnections" value="{{db.id}}">{{db.name}}</option>
+                    <option ng-repeat="db in DBConnections" value="{{db.id}}">{{db.DBInstanceIdentifier}}</option>
                 </select>
                 <button type="button" class="text-center btn btn-primary" ng-click="open()" style="display: inline-block;">Add DB Connection</button>
             </div>

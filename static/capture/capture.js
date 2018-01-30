@@ -49,7 +49,7 @@ app.controller('capture', function ($scope, $location, $uibModal, $http) {
 
         $http({
             method: 'GET',
-            url: '/dbc/get',
+            url: 'capture/listDBinstances',
             headers: {
                 'Content-Type': 'application/json'
             },
