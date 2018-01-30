@@ -3,6 +3,7 @@ import sqlite3
 conn = sqlite3.connect('database.db')
 c = conn.cursor()
 
+# Sets up the tables in the database and their connections. Should be called only once.
 def createTable():
     # Metric
     c.execute('''CREATE TABLE metric
@@ -43,13 +44,23 @@ def createTable():
 
     c.commit()
 
-def addPath(pathName):
-    p = (pathName,)
-    c.execute('INSERT INTO filepaths VALUES (?)', p)
-    c.execute('SELECT ?', pathName)
-    row = c.fetchone()
-    assert row[0] == pathName
+
+# Variable = (value,) is used to protect database from SQL Injection Attacks
+
+# Add metric information to the metric table
+def addMetric(metricName, path):
+    metric = (metricName, path)
+    c.execute("INSERT INTO metric(name, path) VALUES (?, ?)", metric)
+
     c.commit()
 
+# Retrieve metric path by referencing metric name
+def getMetricPath(metricName):
+    m = (metricName,)
+    c.execute("SELECT path FROM metric WHERE name=?", m)
+    row = c.fetchone()
+    return row[0]
+
+# Close the connection to the DB SQLite
 def closeConn():
     conn.close()

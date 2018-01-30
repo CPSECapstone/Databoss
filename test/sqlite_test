@@ -1,5 +1,0 @@
-import sqlite
-import importlib
-
-def test_insert():
-    sqlite.addPath('test')
