@@ -19,7 +19,7 @@ def main():
 
 @app.before_first_request
 def sqlite_setup():
-    print("Running sqlite setup")
+    print("Running sqlite.py setup")
     conn = sqlite3.connect('database.db')
     print("Opened database successfully")
 
