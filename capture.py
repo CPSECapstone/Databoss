@@ -163,14 +163,6 @@ def stopCapture(username, password, db_name, fileName):
     s3_resource.Object(captureReplayBucket, fileName).put(Body=rds_logfile['LogFileData'], Metadata={'foo': 'bar'})
 
 
-def filter_log_file(startTime, endTime, file):
-    with open(file, 'r') as oldfile:
-        print(oldfile.read())
-
-
-filter_log_file(None, None, "metric_files/metric-file.txt");
-
-
 # Checking status of database instance
 # status_of_db = list_of_instances['DBInstances'][0]['DBInstanceStatus']
 #
