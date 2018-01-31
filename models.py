@@ -2,6 +2,7 @@ from web_app import db
 
 
 class DBConnection(db.Model):
+    __tablename__ = "dbconnection"
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     dialect = db.Column(db.String(25))
     name = db.Column(db.String(100))
@@ -9,6 +10,8 @@ class DBConnection(db.Model):
     port = db.Column(db.Integer)
     database = db.Column(db.String(100))
     username = db.Column(db.String(100))
+    captures = db.relationship('Capture', lazy=True)
+    replays = db.relationship('Replay', lazy=True)
 
     @property
     def serialize(self):
@@ -67,7 +70,7 @@ class Capture(db.Model):
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     name = db.Column(db.String(100))
     time = db.Column(db.DateTime)
-    dbId = db.Column(db.Integer, db.ForeignKey('DBConnection.id'), nullable=False)
+    dbId = db.Column(db.Integer, db.ForeignKey('dbconnection.id'), nullable=False)
     logfileId = db.Column(db.Integer, db.ForeignKey('logfile.id'), nullable=False)
     workloadId = db.Column(db.Integer, db.ForeignKey('workload.id'), nullable=False)
     metricId = db.Column(db.Integer, db.ForeignKey('metric.id'))
@@ -88,7 +91,7 @@ class Replay(db.Model):
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     name = db.Column(db.String(100))
     time = db.Column(db.DateTime)
-    dbId = db.Column(db.Integer, db.ForeignKey('DBConnection.id'), nullable=False)
+    dbId = db.Column(db.Integer, db.ForeignKey('dbconnection.id'), nullable=False)
     logfileId = db.Column(db.Integer, db.ForeignKey('logfile.id'), nullable=False)
     workloadId = db.Column(db.Integer, db.ForeignKey('workload.id'), nullable=False)
     metricId = db.Column(db.Integer, db.ForeignKey('metric.id'))
