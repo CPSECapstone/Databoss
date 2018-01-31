@@ -126,6 +126,17 @@ def get_list_of_instances(db_name):
     )
     return list_of_instances
 
+def get_log_file(bucket_name, file_name):
+    s3 = boto3.resource('s3')
+
+    try:
+        s3.Bucket(bucket_name).download_file(file_name, 'local-file.txt')
+    except botocore.exceptions.ClientError as e:
+        if e.response['Error']['Code'] == "404":
+            print("Object does not exist in bucket.")
+        else:
+            raise
+
 
 def startCapture(username, password, db_name):
     status_of_db = get_list_of_instances(db_name)['DBInstances'][0]['DBInstanceStatus']
@@ -150,6 +161,14 @@ def stopCapture(username, password, db_name, fileName):
         Marker='0'
     )
     s3_resource.Object(captureReplayBucket, fileName).put(Body=rds_logfile['LogFileData'], Metadata={'foo': 'bar'})
+
+
+def filter_log_file(startTime, endTime, file):
+    with open(file, 'r') as oldfile:
+        print(oldfile.read())
+
+
+filter_log_file(None, None, "metric_files/metric-file.txt");
 
 
 # Checking status of database instance

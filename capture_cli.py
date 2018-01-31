@@ -1,12 +1,11 @@
 import boto3
 import time
 import pymysql
+import random
 from datetime import timedelta
 from datetime import datetime
 from time import mktime
 import json
-import bson
-import getpass
 
 user_key = input("Enter access key id: ")
 user_access = input("Enter secret key: ")
@@ -60,7 +59,18 @@ def createBucket(bucketName):
     )
     #print("Created " + bucketName + " bucket")
 
+def generate_word(wordLength):
+    word = ""
+    for i in range(wordLength):
+        if i % 2 == 0:
+            word += random.choice(CONSONANTS)
+        else:
+            word += random.choice(VOWELS)
+    return word
 
+def generate_number(numLength):
+    for i in range(numLength):
+        return random.randint(numLength)
 
     #creating bucket names
 def createBucketName(bucketName, string):
@@ -92,7 +102,7 @@ allotted_time = input("Enter duration of capture (in minutes): ")'''
 
 captureReplayBucket = "capture-replay-info"
 metricBucket = "metric-info"
-db_name = "myinstance"
+db_name = "test"
 
 list_of_instances = rds.describe_db_instances(
     DBInstanceIdentifier= db_name
@@ -121,7 +131,7 @@ endpoint = str(input("RDS MySQL endpoint: "))'''
 
 username = "sonaraya"
 password = "sonaraya"
-endpoint = "myinstance.cpguxfvypxd2.us-west-1.rds.amazonaws.com"
+endpoint = "test.cpguxfvypxd2.us-west-1.rds.amazonaws.com"
 
 print("Connecting...")
 
@@ -130,14 +140,14 @@ conn = pymysql.connect(host=endpoint, user=username, passwd=password, db=db_name
 print("SUCCESS: Connection to RDS MySQL instance succeeded")
 
 print("Adding value to database table 'Student'")
-id = input("Enter student id: ")
-student_name = str(input("Enter student name: "))
+#id = input("Enter student id: ")
+#student_name = str(input("Enter student name: "))
 
 numItems = 0
 
 with conn.cursor() as cur:
     cur.execute("create table IF NOT EXISTS Student ( StudentID  int NOT NULL, Name varchar(255) NOT NULL, PRIMARY KEY (StudentID))")
-    cur.execute('insert into Student (StudentID, Name) values('+id+', "'+student_name+'")')
+    cur.execute('insert into Student (StudentID, Name) values('+generate_number(5)+', "'+generate_word(10)+'")')
     conn.commit()
     cur.execute("select * from Student")
     for row in cur:
