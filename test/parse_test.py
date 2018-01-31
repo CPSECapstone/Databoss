@@ -1,6 +1,7 @@
 import parseMetrics
 import importlib
 
+'''
 file_name_1 = "metric_files/metric-file.txt"
 file_name_2 = "metric_files/metric-file-2.txt"
 
@@ -53,4 +54,6 @@ def test_parse_2():
     assert parseMetrics.writeIOTimeList == ex_writeIO_time_list_2
     assert parseMetrics.memoryList == ex_memory_list_2
     assert parseMetrics.memoryTimeList == ex_memory_time_list_2
-    importlib.reload(parseMetrics)
+    importlib.reload(parseMetrics)''''''
+    
+'''
