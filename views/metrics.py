@@ -13,3 +13,4 @@ def getCPUMetrics():
 
     return jsonify(cpu=parseMetrics.cpuList, cpuTime=parseMetrics.cpuTimeList)
 
+
