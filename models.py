@@ -23,7 +23,7 @@ class DBConnection(db.Model):
             'username': self.username
         }
 
-class metric(db.Model):
+class Metric(db.Model):
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     name = db.Column(db.String(100))
     path = db.Column(db.String(100), unique=True)
@@ -37,7 +37,7 @@ class metric(db.Model):
         }
 
 
-class workload(db.Model):
+class Workload(db.Model):
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     name = db.Column(db.String(100))
     path = db.Column(db.String(100), unique=True)
@@ -50,7 +50,7 @@ class workload(db.Model):
             'path': self.path
         }
 
-class logfile(db.Model):
+class Logfile(db.Model):
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     name = db.Column(db.String(100))
     path = db.Column(db.String(100), unique=True)
@@ -63,7 +63,7 @@ class logfile(db.Model):
             'path': self.path
         }
 
-class capture(db.Model):
+class Capture(db.Model):
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     name = db.Column(db.String(100))
     time = db.Column(db.DateTime)
@@ -84,7 +84,7 @@ class capture(db.Model):
             'metricId': self.metricId
         }
 
-class replay(db.Model):
+class Replay(db.Model):
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     name = db.Column(db.String(100))
     time = db.Column(db.DateTime)
@@ -114,22 +114,22 @@ def createTable():
 
 # Return all captures in the capture table
 def getCaptureAll():
-    capList = capture.query.with_entities(capture.id, capture.name, capture.time)
+    capList = Capture.query.with_entities(Capture.id, Capture.name, Capture.time)
     return capList
 
 # Return all replays in the replay table
 def getReplayAll():
-    repList = replay.query.with_entities(replay.id, replay.name, replay.time)
+    repList = Replay.query.with_entities(Replay.id, Replay.name, Replay.time)
     return repList
 
 # Add metric to the metric table
 def addMetric(name, path):
-    newMetric = metric(name, path)
+    newMetric = Metric(name, path)
     db.session.add(newMetric)
     db.session.commit()
 
 # Return metric associated with provided capture or replay
 def getMetric(metricId):
-    m = metric.query.filter_by(id=metricId).all()
+    m = Metric.query.filter_by(id=metricId).with_entities(Metric.name, Metric.path)
     return m
 
