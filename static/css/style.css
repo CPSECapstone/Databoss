@@ -1,6 +1,11 @@
 .chartWrapper {
   max-width: 800px;
   margin: 50px auto;
+  padding-left: 10px;
+}
+
+.tableWrapper {
+    padding-left: 10px;
 }
 
 .tableWrapper .table{
