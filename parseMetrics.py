@@ -18,6 +18,7 @@ class ParsedMetrics:
         createLists(openFile[2], self.writeIOTimeList, self.writeIOList)
         createLists(openFile[3], self.memoryTimeList, self.memoryList)
 
+
 def readMetricsFile(textFile):
     f = open(textFile, "r")
     tempData = json.loads(f.read())
