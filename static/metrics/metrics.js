@@ -4,6 +4,8 @@ var app = angular.module('MyCRT');
 //whenever an action occurs on the metrics page, the controller will handle it
 app.controller('metrics', function($scope, $location, $http) {
     getCPUMetrics($http);
+    $scope.workloads = [{ "name":"Capture 1", "date":"01/12/17" }];
+    //$scope.workloads = getWorkloads();
 });
 
 // Function to execute an HTTP request to get CPU Metrics
@@ -62,3 +64,18 @@ var createChart = function(labels, data, label) {
         }
     });
 };
+
+var getWorkloads = function($http) {
+    $http({
+        method: 'GET',
+        url: 'workloads/listWorkloads',
+        headers: {
+        'Content-Type': 'application/json'
+        },
+    }).then(function successCallback(response) {
+        $scope.workloads = response.data;
+        console.log('success');
+    }, function errorCallback(response) {
+        console.log('error');
+    })
+ };
