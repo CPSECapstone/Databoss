@@ -1,4 +1,6 @@
 {
   "test/parse_test.py::test_parse": true,
+  "test/sqlite_test.py::testAddMetric": true,
+  "test/sqlite_test.py::testCreateTable": true,
   "tests/suite_3_4.py::test_answer": true
 }
