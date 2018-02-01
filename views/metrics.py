@@ -1,16 +1,14 @@
-from flask import Blueprint, jsonify
-import parseMetrics
+from flask import Blueprint, jsonify, request
+from parseMetrics import ParsedMetrics
 
 metrics_api = Blueprint('metrics_api', __name__)
 
+@metrics_api.route("/getMetrics", methods=["GET"])
+def getMetrics():
+    # TODO get the file from request instead of hard coding
+    metrics = ParsedMetrics("metric_files/metric-file.txt")
 
-@metrics_api.route("/getCPU", methods=["GET"])
-def getCPUMetrics():
-    if len(parseMetrics.cpuList) == 0 and len(parseMetrics.cpuTimeList) == 0:
-        openFile = parseMetrics.readMetricsFile("metric_files/metric-file.txt")
-        parseMetrics.createCPULists(openFile)
-        parseMetrics._sortLists(parseMetrics.cpuList, parseMetrics.cpuTimeList)
-
-    return jsonify(cpu=parseMetrics.cpuList, cpuTime=parseMetrics.cpuTimeList)
-
-
+    return jsonify(cpu=metrics.cpuList, cpuTime=metrics.cpuTimeList,
+                   readIO=metrics.readIOList, readIOTime=metrics.readIOTimeList,
+                   writeIO=metrics.writeIOList, writeIOTime=metrics.writeIOTimeList,
+                   memory=metrics.memoryList, memoryTime=metrics.memoryTimeList)
