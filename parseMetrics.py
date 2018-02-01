@@ -1,63 +1,44 @@
 import json
 
-cpuList = []
-cpuTimeList = []
-readIOList = []
-readIOTimeList = []
-writeIOList = []
-writeIOTimeList = []
-memoryList = []
-memoryTimeList = []
+class ParsedMetrics:
+    def __init__(self, file):
+        self.file = file
+        self.cpuList = []
+        self.cpuTimeList = []
+        self.readIOList = []
+        self.readIOTimeList = []
+        self.writeIOList = []
+        self.writeIOTimeList = []
+        self.memoryList = []
+        self.memoryTimeList = []
 
+        openFile = readMetricsFile(self.file)
+        createLists(openFile[0], self.cpuTimeList, self.cpuList)
+        createLists(openFile[1], self.readIOTimeList, self.readIOList)
+        createLists(openFile[2], self.writeIOTimeList, self.writeIOList)
+        createLists(openFile[3], self.memoryTimeList, self.memoryList)
 
 def readMetricsFile(textFile):
-    tempList = []
     f = open(textFile, "r")
     tempData = json.loads(f.read())
     return tempData
 
 def createLists(dictData, timeArray, dataArray):
-    timeArray.clear()
-    dataArray.clear()
     for element in dictData['Datapoints']:
         timeArray.append(element['Timestamp'])
         dataArray.append(element['Average'])
 
-def createCPULists(openFile):
-    cpuData = openFile[0]
-    createLists(cpuData, cpuTimeList, cpuList)
-
-
-def createReadIOLists(openFile):
-    readIOData = openFile[1]
-    createLists(readIOData, readIOTimeList, readIOList)
-
-
-def createWriteIOLists(openFile):
-    writeIOData = openFile[2]
-    createLists(writeIOData, writeIOTimeList, writeIOList)
-
-
-def createMemLists(openFile):
-    memData = openFile[3]
-    createLists(memData, memoryTimeList, memoryList)
-
+    _sortLists(dataArray, timeArray)
 
 def _sortLists(dataList, timeList):
-    zipped = zip(timeList, dataList)
-    times, metrics = map(list, zip(*sorted(zipped, key=lambda data: data[0])))
-    dataList.clear()
-    timeList.clear()
+    if len(dataList) > 0:
+        zipped = zip(timeList, dataList)
+        times, metrics = map(list, zip(*sorted(zipped, key=lambda data: data[0])))
+        dataList.clear()
+        timeList.clear()
 
-    for metric in metrics:
-        dataList.append(metric)
+        for metric in metrics:
+            dataList.append(metric)
 
-    for time in times:
-        timeList.append(time)
-
-
-# openFile = readMetricsFile("metric_files/metric-file.txt")
-# createCPULists(openFile)
-# createReadIOLists(openFile)
-# createWriteIOLists(openFile)
-#
+        for time in times:
+            timeList.append(time)
