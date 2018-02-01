@@ -6,6 +6,8 @@ app.controller('metrics', function($scope, $location, $http, Metrics) {
     Metrics.setCPUChart(createChart('cpuChart', 'CPU (Percent)', 'Time (seconds)'));
     Metrics.setReadIOChart(createChart('readIOChart', 'Read IO (count/second)', 'Time (seconds)'));
 
+    $scope.workloads = [{ "name":"Capture 1", "date":"01/12/17" }];
+    //$scope.workloads = getWorkloads();
     getMetrics($http, Metrics);
 });
 
@@ -79,6 +81,20 @@ var createChart = function(elementId, yAxesLabel, xAxesLabel) {
             }
         }
     });
-
     return chart;
+};
+
+var getWorkloads = function($http) {
+    $http({
+        method: 'GET',
+        url: 'workloads/listWorkloads',
+        headers: {
+        'Content-Type': 'application/json'
+        },
+    }).then(function successCallback(response) {
+        $scope.workloads = response.data;
+        console.log('success');
+    }, function errorCallback(response) {
+        console.log('error');
+    })
 };

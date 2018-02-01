@@ -10,19 +10,9 @@
             </tr>
           </thead>
           <tbody>
-            <tr>
-              <th scope="row">Capture 1</th>
-              <td>01/11/18</td>
-              <td><input type="checkbox"></td>
-            </tr>
-            <tr>
-              <th scope="row">Capture 2</th>
-              <td>09/1/18</td>
-              <td><input type="checkbox"></td>
-            </tr>
-            <tr>
-              <th scope="row">Capture 3</th>
-              <td>05/7/18</td>
+            <tr ng-repeat="workload in workloads">
+              <th scope="row">{{workload.name}}</th>
+              <td>{{workload.date}}</td>
               <td><input type="checkbox"></td>
             </tr>
           </tbody>
