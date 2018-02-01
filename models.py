@@ -39,20 +39,6 @@ class Metric(db.Model):
             'path': self.path
         }
 
-
-class Workload(db.Model):
-    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    name = db.Column(db.String(100))
-    path = db.Column(db.String(100), unique=True)
-
-    @property
-    def serialize(self):
-        return {
-            'id': self.id,
-            'name': self.name,
-            'path': self.path
-        }
-
 class Logfile(db.Model):
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     name = db.Column(db.String(100))
@@ -72,8 +58,7 @@ class Capture(db.Model):
     time = db.Column(db.DateTime)
     dbId = db.Column(db.Integer, db.ForeignKey('dbconnection.id'), nullable=False)
     logfileId = db.Column(db.Integer, db.ForeignKey('logfile.id'), nullable=False)
-    workloadId = db.Column(db.Integer, db.ForeignKey('workload.id'), nullable=False)
-    metricId = db.Column(db.Integer, db.ForeignKey('metric.id'))
+    metricId = db.Column(db.Integer, db.ForeignKey('metric.id'), nullable=Fales)
 
     @property
     def serialize(self):
@@ -83,7 +68,7 @@ class Capture(db.Model):
             'time': self.time,
             'dbId': self.dbId,
             'logfileId': self.logfileId,
-            'workloadId': self.workloadId
+            'metricId': self.metricId
         }
 
 class Replay(db.Model):
@@ -92,8 +77,7 @@ class Replay(db.Model):
     time = db.Column(db.DateTime)
     dbId = db.Column(db.Integer, db.ForeignKey('dbconnection.id'), nullable=False)
     logfileId = db.Column(db.Integer, db.ForeignKey('logfile.id'), nullable=False)
-    workloadId = db.Column(db.Integer, db.ForeignKey('workload.id'), nullable=False)
-    metricId = db.Column(db.Integer, db.ForeignKey('metric.id'))
+    metricId = db.Column(db.Integer, db.ForeignKey('metric.id'), nullable=False)
     captureId = db.Column(db.Integer, db.ForeignKey('capture.id'), nullable=False)
 
     @property
@@ -104,7 +88,7 @@ class Replay(db.Model):
             'time': self.time,
             'dbId': self.dbId,
             'logfileId': self.logfileId,
-            'workloadId': self.workloadId,
+            'metricId': self.metricId,
             'captureId': self.captureId
         }
 
@@ -114,32 +98,31 @@ def createTable():
     db.session.commit()
 
 # Add capture to capture table with references to associated files
-def addCapture(name, time, dbId, logfileId, workloadId):
-    newCap = Capture(name, time, dbId, logfileId, workloadId)
-    db.session.add(newCap)
+def addCapture(name, time, dbId, logfileId, metricId):
+    new_cap = Capture(name, time, dbId, logfileId, metricId)
+    db.session.add(new_cap)
     db.session.commit()
 
 # Return all captures in the capture table
 def getCaptureAll():
-    capList = Capture.query.with_entities(Capture.id, Capture.name, Capture.time)
-    return capList
+    cap_list = Capture.query.with_entities(Capture.id, Capture.name, Capture.time)
+    return cap_list
 
 # Add replay to replay table with references to associated files
-def addReplay(name, time, dbId, logfileId, workloadId, captureId):
-    newRep = Capture(name, time, dbId, logfileId, workloadId, captureId)
-    db.session.add(newRep)
+def addReplay(name, time, dbId, logfileId, metricId, captureId):
+    new_rep = Capture(name, time, dbId, logfileId, metricId, captureId)
+    db.session.add(new_rep)
     db.session.commit()
-
 
 # Return all replays in the replay table
 def getReplayAll():
-    repList = Replay.query.with_entities(Replay.id, Replay.name, Replay.time)
-    return repList
+    rep_list = Replay.query.with_entities(Replay.id, Replay.name, Replay.time)
+    return rep_list
 
 # Add metric to the metric table
 def addMetric(name, path):
-    newMetric = Metric(name, path)
-    db.session.add(newMetric)
+    new_metric = Metric(name, path)
+    db.session.add(new_metric)
     db.session.commit()
 
 # Return metric associated with provided capture or replay
@@ -149,22 +132,11 @@ def getMetric(metricId):
 
 # Add logfile to the logfile table
 def addLogfile(name, path):
-    newLogfile = Logfile(name, path)
-    db.session.add(newLogfile)
+    new_logfile = Logfile(name, path)
+    db.session.add(new_logfile)
     db.session.commit()
 
 # Return logfile associated with provided capture or replay
 def getLogfile(logfileId):
-    l = Logfile.query.filter_by(id=logfileId).with_entities(Logfile.name, Logfile.path)
-    return l
-
-# Add workload to the workload table
-def addWorkload(name, path):
-    newWorkload = Workload(name, path)
-    db.session.add(newWorkload)
-    db.session.commit()
-
-# Return workload associated with provided capture or replay
-def getWorkload(workloadId):
-    w = Workload.query.filter_by(id=workloadId).with_entities(Workload.name, Workload.path)
-    return w
+    log = Logfile.query.filter_by(id=logfileId).with_entities(Logfile.name, Logfile.path)
+    return log
