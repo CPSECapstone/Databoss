@@ -12,15 +12,14 @@ class ParsedMetrics:
         self.memoryList = []
         self.memoryTimeList = []
 
-        openFile = readMetricsFile(self.file)
+        openFile = readMetrics(self.file)
         createLists(openFile[0], self.cpuTimeList, self.cpuList)
         createLists(openFile[1], self.readIOTimeList, self.readIOList)
         createLists(openFile[2], self.writeIOTimeList, self.writeIOList)
         createLists(openFile[3], self.memoryTimeList, self.memoryList)
 
-def readMetricsFile(textFile):
-    f = open(textFile, "r")
-    tempData = json.loads(f.read())
+def readMetrics(jsonString):
+    tempData = json.loads(jsonString)
     return tempData
 
 def createLists(dictData, timeArray, dataArray):

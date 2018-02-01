@@ -1,5 +1,6 @@
 import parseMetrics
 import importlib
+import json
 
 file_name_1 = "metric_files/metric-file.txt"
 file_name_2 = "metric_files/metric-file-2.txt"
@@ -24,7 +25,7 @@ ex_memory_time_list_2 = []
 
 
 # def test_parse_1():
-#     file_data = parseMetrics.readMetricsFile(file_name_1)
+#     file_data = parseMetrics.readMetrics(file_name_1)
 #     parseMetrics.createCPULists(file_data)
 #     parseMetrics.createReadIOLists(file_data)
 #     parseMetrics.createWriteIOLists(file_data)
@@ -40,7 +41,7 @@ ex_memory_time_list_2 = []
 #     importlib.reload(parseMetrics)
 #
 # def test_parse_2():
-#     file_data = parseMetrics.readMetricsFile(file_name_2)
+#     file_data = parseMetrics.readMetrics(file_name_2)
 #     parseMetrics.createCPULists(file_data)
 #     parseMetrics.createReadIOLists(file_data)
 #     parseMetrics.createWriteIOLists(file_data)
@@ -56,5 +57,7 @@ ex_memory_time_list_2 = []
 #     importlib.reload(parseMetrics)
 
 def test_parse_3():
-    metrics = parseMetrics.ParsedMetrics(file_name_1)
+    f = open(file_name_1, "r")
+    jsonString = f.read()
+    metrics = parseMetrics.ParsedMetrics(jsonString)
     assert len(metrics.cpuList) > 0
