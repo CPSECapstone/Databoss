@@ -161,39 +161,3 @@ def stopCapture(username, password, db_name, fileName):
         Marker='0'
     )
     s3_resource.Object(captureReplayBucket, fileName).put(Body=rds_logfile['LogFileData'], Metadata={'foo': 'bar'})
-
-
-# Checking status of database instance
-# status_of_db = list_of_instances['DBInstances'][0]['DBInstanceStatus']
-#
-# if status_of_db == "stopped":
-#     start_response = rds.start_db_instance(
-#         DBInstanceIdentifier= db_name
-#     )
-# else :
-#     start_response = "Starting"
-#
-# print("Starting RDS database instance: " + db_name)
-#
-# '''
-# if status_of_db == "available":
-#     stop_response = rds.stop_db_instance(
-#         DBInstanceIdentifier= db_name
-#     )
-# else :
-#     stop_response = "stopped"
-#
-# print("Stopping database: " + db_name)
-# print(stop_response)
-#
-# all_log_files = rds.describe_db_log_files(
-#     DBInstanceIdentifier= db_name
-# )
-# print(all_log_files)
-# '''
-#
-# bucket = s3.Bucket(captureReplayBucket)
-# print("Printing location...")
-#
-# for key in bucket.objects.all():
-#     print(key.key)
