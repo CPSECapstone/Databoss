@@ -83,8 +83,7 @@ class Capture(db.Model):
             'time': self.time,
             'dbId': self.dbId,
             'logfileId': self.logfileId,
-            'workloadId': self.workloadId,
-            'metricId': self.metricId
+            'workloadId': self.workloadId
         }
 
 class Replay(db.Model):
@@ -106,7 +105,6 @@ class Replay(db.Model):
             'dbId': self.dbId,
             'logfileId': self.logfileId,
             'workloadId': self.workloadId,
-            'metricId': self.metricId,
             'captureId': self.captureId
         }
 
@@ -115,10 +113,23 @@ def createTable():
     db.create_all()
     db.session.commit()
 
+# Add capture to capture table with references to associated files
+def addCapture(name, time, dbId, logfileId, workloadId):
+    newCap = Capture(name, time, dbId, logfileId, workloadId)
+    db.session.add(newCap)
+    db.session.commit()
+
 # Return all captures in the capture table
 def getCaptureAll():
     capList = Capture.query.with_entities(Capture.id, Capture.name, Capture.time)
     return capList
+
+# Add replay to replay table with references to associated files
+def addReplay(name, time, dbId, logfileId, workloadId, captureId):
+    newRep = Capture(name, time, dbId, logfileId, workloadId, captureId)
+    db.session.add(newRep)
+    db.session.commit()
+
 
 # Return all replays in the replay table
 def getReplayAll():
@@ -136,3 +147,24 @@ def getMetric(metricId):
     m = Metric.query.filter_by(id=metricId).with_entities(Metric.name, Metric.path)
     return m
 
+# Add logfile to the logfile table
+def addLogfile(name, path):
+    newLogfile = Logfile(name, path)
+    db.session.add(newLogfile)
+    db.session.commit()
+
+# Return logfile associated with provided capture or replay
+def getLogfile(logfileId):
+    l = Logfile.query.filter_by(id=logfileId).with_entities(Logfile.name, Logfile.path)
+    return l
+
+# Add workload to the workload table
+def addWorkload(name, path):
+    newWorkload = Workload(name, path)
+    db.session.add(newWorkload)
+    db.session.commit()
+
+# Return workload associated with provided capture or replay
+def getWorkload(workloadId):
+    w = Workload.query.filter_by(id=workloadId).with_entities(Workload.name, Workload.path)
+    return w
