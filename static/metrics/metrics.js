@@ -3,16 +3,26 @@ var app = angular.module('MyCRT');
 
 //whenever an action occurs on the metrics page, the controller will handle it
 app.controller('metrics', function($scope, $location, $http, Metrics) {
-    Metrics.setCPUChart(createChart('cpuChart', 'CPU (Percent)', 'Time (seconds)'));
-    Metrics.setReadIOChart(createChart('readIOChart', 'Read IO (count/second)', 'Time (seconds)'));
+   Metrics.setCPUChart(createChart('cpuChart', 'CPU (Percent)', 'Time (seconds)'));
+   Metrics.setReadIOChart(createChart('readIOChart', 'Read IO (count/second)', 'Time (seconds)'));
 
-    $scope.captures = [{"Id": 1, "name" : "Capture 1", "date" : "01/12/17"},
-                        {"Id": 2, "name" : "Capture 2", "date" : "01/12/17"}];
-    $scope.replays = [{"Id" : 2, "name" : "Replay 1", "date" : "01/12/17", "captureId" : 1},
-                      {"Id" : 3, "name" : "Replay 2", "date" : "01/12/17", "captureId" : 2}];
-    //$scope.captures = getCaptures($http);
-    //$scope.replays = getReplays($http);
-    getMetrics($http, Metrics);
+   //    $scope.captures = [{"Id": 1, "name" : "Capture 1", "date" : "01/12/17"},
+   //                        {"Id": 2, "name" : "Capture 2", "date" : "01/12/17"}];
+   //    $scope.replays = [{"Id" : 2, "name" : "Replay 1", "date" : "01/12/17", "captureId" : 1},
+   //                      {"Id" : 3, "name" : "Replay 2", "date" : "01/12/17", "captureId" : 2}];
+
+   getCaptures($http, $scope);
+   getReplays($http, $scope);
+//   getMetrics($http, Metrics);
+
+   $scope.updateSelection = function(type, id, value) {
+      if (value === true) {
+         getMetrics($http, Metrics, type, id);
+      }
+      else {
+         console.log("remove from dataset");
+      }
+   };
 });
 
 var workloadChecked = function() {
@@ -31,10 +41,10 @@ var addMetricsToChart = function(chart, label, data, time) {
 };
 
 // Function to execute an HTTP request to get CPU Metrics
-var getMetrics = function($http, Metrics) {
+var getMetrics = function($http, Metrics, type, id) {
     $http({
         method: 'GET',
-        url: '/metrics/getMetrics',
+        url: '/metrics/getMetrics?type=' + type + '&id=' + id,
         headers: {
             'Content-Type': 'application/json'
         }
@@ -88,10 +98,10 @@ var createChart = function(elementId, yAxesLabel, xAxesLabel) {
     return chart;
 };
 
-var getCaptures = function($http) {
+var getCaptures = function($http, $scope) {
     $http({
         method: 'GET',
-        url: 'workloads/getCaptures',
+        url: 'capture/getAll',
         headers: {
         'Content-Type': 'application/json'
         },
@@ -104,10 +114,10 @@ var getCaptures = function($http) {
 };
 
 //Makes an HTTP GET Request to retrieve a list of the replays
-var getReplays = function($http) {
+var getReplays = function($http, $scope) {
     $http({
         method: 'GET',
-        url: 'workloads/getReplays',
+        url: 'replay/getAll',
         headers: {
         'Content-Type': 'application/json'
         },
@@ -118,7 +128,3 @@ var getReplays = function($http) {
         console.log('error retrieving replays');
     })
 };
-
-var replayFilter = function(capture, replay) {
-    return capture.Id == replay.captureId;
-}
