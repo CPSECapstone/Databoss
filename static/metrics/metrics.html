@@ -9,13 +9,20 @@
               <th>Display</th>
             </tr>
           </thead>
-          <tbody>
-            <tr ng-repeat="workload in workloads">
-              <th scope="row">{{workload.name}}</th>
-              <td>{{workload.date}}</td>
+          <tbody ng-repeat="capture in captures">
+            <tr>
+              <th >{{capture.name}}</th>
+              <td>{{capture.date}}</td>
               <td><input type="checkbox"></td>
             </tr>
+            <tr ng-repeat="replay in replays | filter : {captureId : capture.Id}">
+                <td >{{replay.name}}</td>
+                <td >{{replay.date}}</td>
+                <td><input type="checkbox"></td>
+            </tr>
           </tbody>
+                <!-- class="clickable" data-toggle="collapse" data-target="#replayList" -->
+                  <!-- id="replayList" class="collapse"> -->
         </table>
         </div>
     <div class="chartWrapper">
