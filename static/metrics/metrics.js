@@ -6,8 +6,12 @@ app.controller('metrics', function($scope, $location, $http, Metrics) {
     Metrics.setCPUChart(createChart('cpuChart', 'CPU (Percent)', 'Time (seconds)'));
     Metrics.setReadIOChart(createChart('readIOChart', 'Read IO (count/second)', 'Time (seconds)'));
 
-    $scope.workloads = [{ "name":"Capture 1", "date":"01/12/17" }];
-    //$scope.workloads = getWorkloads();
+    $scope.captures = [{"Id": 1, "name" : "Capture 1", "date" : "01/12/17"},
+                        {"Id": 2, "name" : "Capture 2", "date" : "01/12/17"}];
+    $scope.replays = [{"Id" : 2, "name" : "Replay 1", "date" : "01/12/17", "captureId" : 1},
+                      {"Id" : 3, "name" : "Replay 2", "date" : "01/12/17", "captureId" : 2}];
+    //$scope.captures = getCaptures($http);
+    //$scope.replays = getReplays($http);
     getMetrics($http, Metrics);
 });
 
@@ -84,17 +88,37 @@ var createChart = function(elementId, yAxesLabel, xAxesLabel) {
     return chart;
 };
 
-var getWorkloads = function($http) {
+var getCaptures = function($http) {
     $http({
         method: 'GET',
-        url: 'workloads/listWorkloads',
+        url: 'workloads/getCaptures',
         headers: {
         'Content-Type': 'application/json'
         },
     }).then(function successCallback(response) {
-        $scope.workloads = response.data;
+        $scope.captures = response.data;
         console.log('success');
     }, function errorCallback(response) {
-        console.log('error');
+        console.log('error retrieving captures');
     })
 };
+
+//Makes an HTTP GET Request to retrieve a list of the replays
+var getReplays = function($http) {
+    $http({
+        method: 'GET',
+        url: 'workloads/getReplays',
+        headers: {
+        'Content-Type': 'application/json'
+        },
+    }).then(function successCallback(response) {
+        $scope.replays = response.data;
+        console.log('success');
+    }, function errorCallback(response) {
+        console.log('error retrieving replays');
+    })
+};
+
+var replayFilter = function(capture, replay) {
+    return capture.Id == replay.captureId;
+}
