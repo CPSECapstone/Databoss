@@ -58,7 +58,7 @@ class Capture(db.Model):
     time = db.Column(db.DateTime)
     dbId = db.Column(db.Integer, db.ForeignKey('dbconnection.id'), nullable=False)
     logfileId = db.Column(db.Integer, db.ForeignKey('logfile.id'), nullable=False)
-    metricId = db.Column(db.Integer, db.ForeignKey('metric.id'), nullable=Fales)
+    metricId = db.Column(db.Integer, db.ForeignKey('metric.id'), nullable=False)
 
     @property
     def serialize(self):
