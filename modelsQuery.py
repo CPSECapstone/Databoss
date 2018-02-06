@@ -28,8 +28,8 @@ def getReplayAll():
     return rep_list
 
 # Add metric to the metric table
-def addMetric(name, path):
-    new_metric = models.Metric(name, path)
+def addMetric(name, bucket, file):
+    new_metric = models.Metric(name, bucket, file)
     models.db.session.add(new_metric)
     models.db.session.commit()
 
@@ -39,8 +39,8 @@ def getMetric(metricId):
     return m
 
 # Add logfile to the logfile table
-def addLogfile(name, path):
-    new_logfile = models.Logfile(name, path)
+def addLogfile(name, bucket, file):
+    new_logfile = models.Logfile(name, bucket, file)
     models.db.session.add(new_logfile)
     models.db.session.commit()
 
