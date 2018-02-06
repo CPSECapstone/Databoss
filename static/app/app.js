@@ -35,6 +35,10 @@ app.config(['$routeProvider', function($routeProvider) {
       templateUrl: 'static/capture/capture.html',
       controller: 'capture'
    })
+   .when('/replay', {
+     templateUrl: 'static/replay/replay.html',
+     controller: 'replay'
+   })
    .when('/home', {
       templateUrl: 'static/home/home.html',
       controller: 'home'

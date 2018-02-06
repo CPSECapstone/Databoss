@@ -79,4 +79,10 @@ app.controller('capture', function ($scope, $location, $uibModal, $http) {
     };
 
     getBuckets();
+
+    $scope.startCapture = function () {
+      // code to turn on DB logging goes here
+    console.log("---- STARTING CAPTURE ----")
+    }
+
 });
