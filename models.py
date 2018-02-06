@@ -1,5 +1,7 @@
 from web_app import db
 
+# TODO look into setting up some more relationships to make queries easier
+
 
 class DBConnection(db.Model):
     __tablename__ = "dbconnection"
@@ -29,29 +31,40 @@ class DBConnection(db.Model):
 class Metric(db.Model):
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     name = db.Column(db.String(100))
-    path = db.Column(db.String(100), unique=True)
+    bucket = db.Column(db.String(100))
+    file = db.Column(db.String(100))
+    db.UniqueConstraint(bucket, file)
+    capture = db.relationship('Capture', backref='metric', lazy=True, uselist=False)
+    replay = db.relationship('Replay', backref='metric', lazy=True, uselist=False)
 
     @property
     def serialize(self):
         return {
             'id': self.id,
             'name': self.name,
-            'path': self.path
+            'bucket': self.bucket,
+            'file': self.file
         }
 
 class Logfile(db.Model):
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     name = db.Column(db.String(100))
-    path = db.Column(db.String(100), unique=True)
+    bucket = db.Column(db.String(100))
+    file = db.Column(db.String(100))
+    db.UniqueConstraint(bucket, file)
+    capture = db.relationship('Capture', backref='logfile', lazy=True, uselist=False)
+    replay = db.relationship('Replay', backref='logfile', lazy=True, uselist=False)
 
     @property
     def serialize(self):
         return {
             'id': self.id,
             'name': self.name,
-            'path': self.path
+            'bucket': self.bucket,
+            'file': self.file
         }
 
+# TODO maybe change time to datetime?
 class Capture(db.Model):
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     name = db.Column(db.String(100))
