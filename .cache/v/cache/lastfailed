@@ -1,4 +1,5 @@
 {
+  "sqlite_test.py::testAddGetMetric": true,
   "test/parse_test.py::test_parse": true,
   "test/sqlite_test.py::testAddMetric": true,
   "test/sqlite_test.py::testCreateTable": true,
