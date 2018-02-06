@@ -8,4 +8,8 @@ app.controller('home', function($scope, $location) {
         $location.path('/capture');
     }
 
+    $scope.date = function () {
+      console.log("date picked");
+        $('#datetimepicker1').datetimepicker();
+    };
 });
