@@ -52,9 +52,10 @@ class Metric(db.Model):
             'file': self.file
         }
 
-    def __init__(self, name, path):
+    def __init__(self, name, bucket, file):
         self.name = name
-        self.path = path
+        self.bucket = bucket
+        self.file = file
 
 class Logfile(db.Model):
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
@@ -74,9 +75,10 @@ class Logfile(db.Model):
             'file': self.file
         }
 
-    def __init__(self, name, path):
+    def __init__(self, name, bucket, file):
         self.name = name
-        self.path = path
+        self.bucket = bucket
+        self.file = file
 
 class Capture(db.Model):
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)

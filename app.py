@@ -29,6 +29,7 @@ def sqlite_setup():
     print("Table created successfully")
     conn.close()
 
+    db.drop_all()
     db.create_all()
 
 
