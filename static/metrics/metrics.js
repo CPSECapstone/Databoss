@@ -6,18 +6,15 @@ app.controller('metrics', function($scope, $location, $http, Metrics) {
    Metrics.setCPUChart(createChart('cpuChart', 'CPU (Percent)', 'Time (seconds)'));
    Metrics.setReadIOChart(createChart('readIOChart', 'Read IO (count/second)', 'Time (seconds)'));
 
-   //    $scope.captures = [{"Id": 1, "name" : "Capture 1", "date" : "01/12/17"},
-   //                        {"Id": 2, "name" : "Capture 2", "date" : "01/12/17"}];
-   //    $scope.replays = [{"Id" : 2, "name" : "Replay 1", "date" : "01/12/17", "captureId" : 1},
-   //                      {"Id" : 3, "name" : "Replay 2", "date" : "01/12/17", "captureId" : 2}];
-
    getCaptures($http, $scope);
    getReplays($http, $scope);
-//   getMetrics($http, Metrics);
 
-   $scope.updateSelection = function(type, id, value) {
+
+   // Function that is called whenever a checkbox is checked or unchecked
+   // Handles calling the appropriate functions for updating the charts
+   $scope.updateSelection = function(type, name, id, value) {
       if (value === true) {
-         getMetrics($http, Metrics, type, id);
+         getMetrics($http, Metrics, name, type, id);
       }
       else {
          console.log("remove from dataset");
@@ -25,23 +22,26 @@ app.controller('metrics', function($scope, $location, $http, Metrics) {
    };
 });
 
-var workloadChecked = function() {
-    // TODO get value from checked box and get its corresponding metrics file
+var addMetricsToChart = function(chart, label, data, time) {
+   if (chart.data.labels.length <= 0)
+      chart.data.labels = time;
+   
+   chart.data.datasets.push({
+      data: data,
+      label: label,
+      borderColor: 'rgba(10, 148, 255, 1)',
+      fill: false
+   });
+   chart.update();
 };
 
-var addMetricsToChart = function(chart, label, data, time) {
-    chart.data.labels = time;
-    chart.data.datasets.push({
-        data: data,
-        label: label,
-        borderColor: 'rgba(10, 148, 255, 1)',
-        fill: false
-    });
-    chart.update();
+// TODO remove dataset from a chart; if last dataset, remove time labels too
+var removeMetricsFromChart = function() {
+
 };
 
 // Function to execute an HTTP request to get CPU Metrics
-var getMetrics = function($http, Metrics, type, id) {
+var getMetrics = function($http, Metrics, name, type, id) {
     $http({
         method: 'GET',
         url: '/metrics/getMetrics?type=' + type + '&id=' + id,
@@ -60,9 +60,8 @@ var getMetrics = function($http, Metrics, type, id) {
             return value - baseTime;
         });
 
-        // TODO change capture 1 to response.data.name or some equivalent
-        addMetricsToChart(Metrics.getCPUChart(), 'Capture 1', cpu, time);
-        addMetricsToChart(Metrics.getReadIOChart(), 'Capture 1', readIO, time);
+        addMetricsToChart(Metrics.getCPUChart(), name, cpu, time);
+        addMetricsToChart(Metrics.getReadIOChart(), name, readIO, time);
     }, function errorCallback(response) {
         console.log('error');
     });

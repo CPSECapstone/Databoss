@@ -37,6 +37,8 @@ def sqlite_setup():
     replay.add("Replay3", 2, 2, 2, 2)
     replay.add("Replay4", 2, 2, 2, 2)
 
+    metrics.add("Metrics1", "crt-metrics-test", "metric-file.txt")
+    metrics.add("Metrics2", "crt-metrics-test", "metric-file-2.txt")
 
 
 if __name__ == "__main__":

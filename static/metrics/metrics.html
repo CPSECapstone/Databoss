@@ -14,13 +14,13 @@
             <th >{{capture.name}}</th>
             <td>{{capture.date}}</td>
             <td><input type="checkbox" ng-model="captureSelection"
-                       ng-change="updateSelection('capture', capture.id, captureSelection)"></td>
+                       ng-change="updateSelection('capture', capture.name, capture.id, captureSelection)"></td>
          </tr>
          <tr ng-repeat="replay in replays" ng-if="replay.captureId == capture.id">
             <td >{{replay.name}}</td>
             <td >{{replay.date}}</td>
             <td><input type="checkbox" ng-model="replaySelection"
-                       ng-change="updateSelection('replay', replay.id, replaySelection)"></td>
+                       ng-change="updateSelection('replay', replay.name, replay.id, replaySelection)"></td>
          </tr>
          </tbody>
          <!-- class="clickable" data-toggle="collapse" data-target="#replayList" -->
