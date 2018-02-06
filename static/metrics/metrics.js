@@ -3,6 +3,7 @@ var app = angular.module('MyCRT');
 
 //whenever an action occurs on the metrics page, the controller will handle it
 app.controller('metrics', function($scope, $location, $http, Metrics) {
+  console.log("inside metrics")
     Metrics.setCPUChart(createChart('cpuChart', 'CPU (Percent)', 'Time (seconds)'));
     Metrics.setReadIOChart(createChart('readIOChart', 'Read IO (count/second)', 'Time (seconds)'));
 
@@ -26,6 +27,7 @@ var addMetricsToChart = function(chart, label, data, time) {
 
 // Function to execute an HTTP request to get CPU Metrics
 var getMetrics = function($http, Metrics) {
+  console.log("HERE getting metrics")
     $http({
         method: 'GET',
         url: '/metrics/getMetrics',

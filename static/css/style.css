@@ -13,6 +13,11 @@
     width: 50%;
 }
 
+.center-block {
+  margin-left: auto;
+  margin-right: auto;
+}
+
 a.navbar-brand.text-white {
   padding: 15px;
   padding-left: 50px;
