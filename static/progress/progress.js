@@ -2,5 +2,10 @@
 var app = angular.module('MyCRT');
 
 app.controller('progress', function($scope, $location, $http) {
-    console.log("hello progress page");
+    console.log("on progress page");
+
+    $scope.endCapture = function () {
+      // Code to end capture goes here - ng click is set up
+      console.log("---- Ending Capture ----")
+    }
 });

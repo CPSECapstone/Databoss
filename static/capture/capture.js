@@ -3,6 +3,7 @@ var app = angular.module('MyCRT');
 
 //app.controller('capture', ['$scope', '$location', '$modal', function($scope, $location, $modal) {
 app.controller('capture', function ($scope, $location, $uibModal, $http) {
+    console.log("in capture");
     $scope.open = function () {
         console.log('opening pop up');
         var modalInstance = $uibModal.open({
