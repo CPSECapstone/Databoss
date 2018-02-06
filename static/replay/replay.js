@@ -7,6 +7,7 @@ app.controller('replay', function($scope, $http, $location) {
     $scope.startReplay = function () {
       // Add code to turn on DB logging here
       console.log("starting Replay!")
+      $location.path('/progress');
     }
 
 });
