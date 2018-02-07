@@ -9,7 +9,6 @@ app.controller('metrics', function($scope, $location, $http, Metrics) {
    getCaptures($http, $scope);
    getReplays($http, $scope);
 
-
    // Function that is called whenever a checkbox is checked or unchecked
    // Handles calling the appropriate functions for updating the charts
    $scope.updateSelection = function(type, name, id, value) {
