@@ -163,6 +163,6 @@ def stopCapture(username, password, db_name, fileName):
     s3_resource.Object(captureReplayBucket, fileName).put(Body=rds_logfile['LogFileData'], Metadata={'foo': 'bar'})
 
 
-def filterLogFile(startTime, endTime) {
+#def filterLogFile(startTime, endTime) {
 
-}
+#}
