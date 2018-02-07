@@ -35,7 +35,7 @@ def addMetric(name, bucket, file):
 
 # Return metric associated with provided capture or replay
 def getMetric(metricId):
-    m = models.Metric.query.filter_by(id=metricId).with_entities(models.Metric.name, models.Metric.path)
+    m = models.Metric.query.get(metricId)
     return m
 
 # Add logfile to the logfile table
@@ -46,5 +46,5 @@ def addLogfile(name, bucket, file):
 
 # Return logfile associated with provided capture or replay
 def getLogfile(logfileId):
-    log = models.Logfile.query.filter_by(id=logfileId).with_entities(models.Logfile.name, models.Logfile.path)
+    log = models.Logfile.query.get(logfileId)
     return log

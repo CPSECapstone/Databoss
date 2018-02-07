@@ -1,13 +1,7 @@
 {
   "sqlite_test.py::testAddGetMetric": true,
   "test/parse_test.py::test_parse": true,
-  "test/sqlite_test.py::testAddCapture": true,
-  "test/sqlite_test.py::testAddGetLogfile": true,
-  "test/sqlite_test.py::testAddGetMetric": true,
   "test/sqlite_test.py::testAddMetric": true,
-  "test/sqlite_test.py::testAddReplay": true,
   "test/sqlite_test.py::testCreateTable": true,
-  "test/sqlite_test.py::testGetCapture": true,
-  "test/sqlite_test.py::testGetReplay": true,
   "tests/suite_3_4.py::test_answer": true
 }
