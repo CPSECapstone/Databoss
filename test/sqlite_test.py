@@ -3,6 +3,7 @@ import modelsQuery
 
 import datetime
 
+# Currently functions only on the main DB, and the main DB have tables created and empty
 
 def testAddGetMetric():
     name = 'metName'
@@ -35,6 +36,16 @@ def testGetCapture():
     list = modelsQuery.getCaptureAll().count()
     assert list == 1
 
+    name = 'capName'
+    startTime = datetime.datetime(2018, 1, 31, 12, 12, 12)
+    endTime = datetime.datetime(2018, 1, 31, 12, 13, 13)
+    dbId = 1
+    logfileId = 1
+    metricId = 1
+    modelsQuery.addCapture(name, startTime, endTime, dbId, logfileId, metricId)
+    list = modelsQuery.getCaptureAll().count()
+    assert list == 2
+
 def testAddReplay():
     name = 'repName'
     startTime = datetime.datetime(2018, 1, 31, 10, 10, 10)
@@ -50,3 +61,14 @@ def testAddReplay():
 def testGetReplay():
     list = modelsQuery.getReplayAll().count()
     assert list == 1
+
+    name = 'repName'
+    startTime = datetime.datetime(2018, 1, 31, 12, 12, 12)
+    endTime = datetime.datetime(2018, 1, 31, 12, 13, 13)
+    dbId = 1
+    logfileId = 1
+    metricId = 1
+    captureId = 1
+    modelsQuery.addReplay(name, startTime, endTime, dbId, logfileId, metricId, captureId)
+    list = modelsQuery.getReplayAll().count()
+    assert list == 2
