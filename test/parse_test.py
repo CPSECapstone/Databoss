@@ -55,6 +55,6 @@ ex_memory_time_list_2 = []
 #     assert parseMetrics.memoryTimeList == ex_memory_time_list_2
 #     importlib.reload(parseMetrics)
 
-#def test_parse_3():
-#    metrics = parseMetrics.ParsedMetrics(file_name_1)
-#    assert len(metrics.cpuList) > 0
+def test_parse_3():
+   metrics = parseMetrics.ParsedMetrics(file_name_1)
+   assert len(metrics.cpuList) > 0
