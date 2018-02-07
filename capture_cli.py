@@ -2,6 +2,7 @@ import boto3
 import time
 import pymysql
 import random
+import string
 from datetime import timedelta
 from datetime import datetime
 from time import mktime
@@ -11,6 +12,9 @@ user_key = input("Enter access key id: ")
 user_access = input("Enter secret key: ")
 loc = "us-west-1"
 bucket_name = "Capture " + str(time.strftime("%x"))
+
+VOWELS = "aeiou"
+CONSONANTS = "".join(set(string.ascii_lowercase) - set(VOWELS))
 
 s3 = boto3.client(
     service_name='s3',
@@ -70,7 +74,7 @@ def generate_word(wordLength):
 
 def generate_number(numLength):
     for i in range(numLength):
-        return random.randint(numLength)
+        return str(random.randint(0, numLength))
 
     #creating bucket names
 def createBucketName(bucketName, string):
@@ -102,7 +106,7 @@ allotted_time = input("Enter duration of capture (in minutes): ")'''
 
 captureReplayBucket = "capture-replay-info"
 metricBucket = "metric-info"
-db_name = "test"
+db_name = "new"
 
 list_of_instances = rds.describe_db_instances(
     DBInstanceIdentifier= db_name
@@ -131,7 +135,7 @@ endpoint = str(input("RDS MySQL endpoint: "))'''
 
 username = "sonaraya"
 password = "sonaraya"
-endpoint = "test.cpguxfvypxd2.us-west-1.rds.amazonaws.com"
+endpoint = "new.cpguxfvypxd2.us-west-1.rds.amazonaws.com"
 
 print("Connecting...")
 
