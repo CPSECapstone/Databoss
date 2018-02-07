@@ -25,7 +25,7 @@ app.controller('metrics', function($scope, $location, $http, Metrics) {
 var addMetricsToChart = function(chart, label, data, time) {
    if (chart.data.labels.length <= 0)
       chart.data.labels = time;
-   
+
    chart.data.datasets.push({
       data: data,
       label: label,
