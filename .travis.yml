@@ -15,6 +15,7 @@ matrix:
 # command to install dependencies
 install:
   - pip install -r requirements.txt
+  - pip install Flask-SQLAlchemy
 # command to run test
 script:
   - pytest $TEST_SUITE # or py.test for Python versions 3.5 and below
