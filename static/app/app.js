@@ -52,6 +52,11 @@ app.config(['$routeProvider', function($routeProvider) {
       controller: 'metrics',
       css: 'static/css/metrics.css'
    })
+   .when('/progress', {
+      templateUrl: 'static/progress/progress.html',
+      controller: 'progress',
+      css: 'static/css/progress.css'
+   })
    //If none of the "when"s are matched then it defaults to the home page.
    .otherwise({
       redirectTo: '/'

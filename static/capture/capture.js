@@ -3,6 +3,7 @@ var app = angular.module('MyCRT');
 
 //app.controller('capture', ['$scope', '$location', '$modal', function($scope, $location, $modal) {
 app.controller('capture', function ($scope, $location, $uibModal, $http) {
+    console.log("in capture");
     $scope.open = function () {
         console.log('opening pop up');
         var modalInstance = $uibModal.open({
@@ -82,7 +83,8 @@ app.controller('capture', function ($scope, $location, $uibModal, $http) {
 
     $scope.startCapture = function () {
       // code to turn on DB logging goes here
-    console.log("---- STARTING CAPTURE ----")
+        console.log("---- STARTING CAPTURE ----")
+        $location.path('/progress');
     }
 
 });
