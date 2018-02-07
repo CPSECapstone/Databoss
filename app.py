@@ -2,6 +2,7 @@ import sqlite3
 
 from flask import send_file
 from web_app import app, db
+from datetime import datetime
 
 import capture
 from views import dbConnection, login, metrics, replay, capture as cap
@@ -30,13 +31,13 @@ def sqlite_setup():
     db.drop_all()
     db.create_all()
 
-    cap.add("Capture1", 1, 1, 1)
-    replay.add("Replay1", 1, 1, 1, 1)
-    replay.add("Replay2", 1, 1, 1, 1)
+    cap.add("Capture1", datetime(2018, 2, 5, 1, 1, 1), datetime(2018, 2, 5, 1, 1, 1), 1, 1, 1)
+    replay.add("Replay1", datetime(2018, 2, 5, 1, 1, 1), datetime(2018, 2, 5, 1, 1, 1), 1, 1, 1, 1)
+    replay.add("Replay2", datetime(2018, 2, 5, 1, 1, 1), datetime(2018, 2, 5, 1, 1, 1), 1, 1, 1, 1)
 
-    cap.add("Capture2", 2, 2, 2)
-    replay.add("Replay3", 2, 2, 2, 2)
-    replay.add("Replay4", 2, 2, 2, 2)
+    cap.add("Capture2", datetime(2018, 2, 5, 1, 1, 1), datetime(2018, 2, 5, 1, 1, 1), 2, 2, 2)
+    replay.add("Replay3", datetime(2018, 2, 5, 1, 1, 1), datetime(2018, 2, 5, 1, 1, 1), 2, 2, 2, 2)
+    replay.add("Replay4", datetime(2018, 2, 5, 1, 1, 1), datetime(2018, 2, 5, 1, 1, 1), 2, 2, 2, 2)
 
     metrics.add("Metrics1", "crt-metrics-test", "metric-file.txt")
     metrics.add("Metrics2", "crt-metrics-test", "metric-file-2.txt")

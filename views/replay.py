@@ -1,6 +1,7 @@
 from flask import jsonify, Blueprint
 from models import Replay
 from web_app import db
+import modelsQuery
 
 replay_api = Blueprint('replay_api', __name__)
 
@@ -9,8 +10,5 @@ def getAllReplays():
     replays = Replay.query.all()
     return jsonify([i.serialize for i in replays])
 
-# TODO add date
-def add(name, dbId, logfileId, metricId, captureId):
-    newReplay = Replay(name=name, dbId=dbId, logfileId=logfileId, metricId=metricId, captureId=captureId)
-    db.session.add(newReplay)
-    db.session.commit()
+def add(name, startTime, endTime, dbId, logfileId, metricId, captureId):
+    modelsQuery.addReplay(name, startTime, endTime, dbId, logfileId, metricId, captureId)
