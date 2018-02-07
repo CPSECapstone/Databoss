@@ -1,8 +1,8 @@
 import boto3
 import capture_cli
 
-access_key = None
-secret_key = None
+access_key = ""
+secret_key = ""
 
 #can be refactored to a function later
 s3 = boto3.client(
@@ -31,4 +31,7 @@ def test_BucketCreation(bucketName):
     #create bucket
 
     #assert that the bucket was not created
-test_BucketCreation('test2')
+
+#bucket test creation - won't pass travis currently since requires access and secret key
+#currently no way to test bucket creation since access key and secret key not given, however once login is implemented, should be accesssible.
+#test_BucketCreation('test2')
