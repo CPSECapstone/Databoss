@@ -17,33 +17,41 @@
   margin-left: auto;
   margin-right: auto;
 }
-
-a.navbar-brand.text-white {
+#my-crt-logo {
+  font-size: 1.5em;
+  padding-top: 15px;
+  padding-bottom:15px;
+}
+/* This is the 'MyCRT' logo text */
+/* a.navbar-brand.text-white {
   padding: 15px;
   padding-left: 50px;
   font-size: 1.7em;
-}
+} */
 .nav-container {
   /* border: 1px solid blue; */
+  position: fixed;
   width: 200px;
   float: left;
-  height: 100vh;
+  height: 1000px;
   background-color: RGB(51, 51, 51);
 }
-
-.horizontal-nav {
+/* Took out the horizontal nav for now  */
+/* .horizontal-nav {
+  position: fixed;
   width: 100vw;
-  height: 60px;
-  /* border: 1px solid red; */
+  height: 30px;
+  border: 1px solid red;
   background-color: RGB(51, 51, 51);
-}
+} */
 
 .logout-header {
-  border: 1px solid red;
   height: 30px;
   width: 20px
 }
-
+h1 {
+  padding: 40px 70px 20px;
+}
 .myview {
   /* border: 2px solid green; */
   margin-left: 200px;

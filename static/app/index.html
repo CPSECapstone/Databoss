@@ -48,14 +48,18 @@
 
 </head>
 <body ng-app="MyCRT">
-  <div class="horizontal-nav">
+  <!-- <div class="horizontal-nav">
     <div class="navbar-header">
        <a class="navbar-brand text-white" href="#!">MyCRT</a>
     </div>
-  </div>
+  </div> -->
   <nav class="nav nav-pills flex-column container-fluid nav-container">
+  <!-- <nav class="nav container"> -->
+    <li id="my-crt-logo" class="text-center text-white">
+        MyCRT
+    </li>
     <li class="nav-item">
-      <i class="fa fa-home fa-inverse fa-lg nav-icon">
+      <i class="fa fa-key fa-inverse fa-lg nav-icon">
         <a class="h5 text-white cus-nav-link" ng-href="{{'#!/login'}}">Login</a>
       </i>
     </li>
