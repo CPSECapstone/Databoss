@@ -164,5 +164,16 @@ def stopCapture(username, password, db_name, fileName):
 
 
 #def filterLogFile(startTime, endTime) {
-
+#    response = rds.filter_log_events(
+#        logGroupName='string',
+#        logStreamNames=[
+#            'string',
+ #       ],
+ #       startTime=startTime,
+ #       endTime=endTime,
+ #       filterPattern='string',
+ #       nextToken='string',
+ #       limit=123,
+ #       interleaved=True | False
+    )
 #}
