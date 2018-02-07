@@ -75,7 +75,7 @@ def list_buckets():
 
 
 # Creating 2 buckets if they don't already exist
-@app.route
+#@app.route()
 def createBucket(bucketName):
     if s3_resource.Bucket(bucketName) in s3_resource.buckets.all():
         print("Found " + bucketName + " bucket")
@@ -161,3 +161,8 @@ def stopCapture(username, password, db_name, fileName):
         Marker='0'
     )
     s3_resource.Object(captureReplayBucket, fileName).put(Body=rds_logfile['LogFileData'], Metadata={'foo': 'bar'})
+
+
+#def filterLogFile(startTime, endTime) {
+
+#}

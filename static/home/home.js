@@ -2,10 +2,14 @@
 var app = angular.module('MyCRT');
 
 app.controller('home', function($scope, $location) {
-
+        console.log("I'm home")
     $scope.goCapture = function () {
         console.log("HERE")
         $location.path('/capture');
     }
 
+    $scope.date = function () {
+      console.log("date picked");
+        $('#datetimepicker1').datetimepicker();
+    };
 });
