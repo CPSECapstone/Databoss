@@ -26,6 +26,7 @@ bucket_name = "Capture " + str(time.strftime("%x"))
 s3 = None
 s3_resource = None
 rds = None
+log_client = None
 
 captureReplayBucket = None
 metricBucket = None
@@ -55,6 +56,13 @@ def aws_config():
         aws_access_key_id=access_key,
         aws_secret_access_key=secret_key,
         region_name=loc
+    )
+
+    log_client = boto3.client(
+        service_name='logs',
+        aws_access_key_id = access_key,
+        aws_secret_access_key = secret_key,
+        region_name = loc
     )
 
 
@@ -167,15 +175,15 @@ def startCapture():
             cur.execute(
                 "create table IF NOT EXISTS Student ( StudentID  int NOT NULL, Name varchar(255) NOT NULL, PRIMARY KEY (StudentID))")
             cur.execute(
-                'insert into Student (StudentID, Name) values(' + generate_number(5) + ', "' + generate_word(10) + '")')
+                'insert into Student (StudentID, Name) values(' + generate_number(100) + ', "' + generate_word(10) + '")')
             connection.commit()
             cur.execute("select * from Student")
+            cur.execute('select * from mysql.general_log')
 
 
 def stopCapture(startTime, endTime, username, password, db_name, fileName):
-    client = boto3.client('logs')
 
-    client.filter_log_events(
+    log_client.filter_log_events(
         startTime=startTime,
         endTime=endTime,
     )
