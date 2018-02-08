@@ -7,11 +7,15 @@ from datetime import timedelta
 from datetime import datetime
 from time import mktime
 import json
+import logging
 
 user_key = input("Enter access key id: ")
 user_access = input("Enter secret key: ")
 loc = "us-west-1"
 bucket_name = "Capture " + str(time.strftime("%x"))
+
+logger = logging.getLogger()
+logger.setLevel(logging.INFO)
 
 VOWELS = "aeiou"
 CONSONANTS = "".join(set(string.ascii_lowercase) - set(VOWELS))
@@ -178,11 +182,21 @@ print(all_log_files)
 
 '''
 
+
+
 bucket = s3.Bucket(captureReplayBucket)
 print("Printing location...")
 
 for key in bucket.objects.all():
     print(key.key)
+
+client = boto3.client('logs')
+
+time.sleep(60)
+client.filter_log_events(
+    startTime=datetime.now(),
+    endTime=datetime().now() + datetime.timedelta(minutes=1)
+)
 
 rds_logfile = rds.download_db_log_file_portion(
   DBInstanceIdentifier=db_name,
