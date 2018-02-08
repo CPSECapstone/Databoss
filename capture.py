@@ -152,6 +152,18 @@ def stopCapture(username, password, db_name, fileName):
     s3_resource.Object(captureReplayBucket, fileName).put(Body=rds_logfile['LogFileData'], Metadata={'foo': 'bar'})
 
 
+# configures aws credentials when app starts so they don't have to be input manually
+# TODO remove when done testing
+import json
+import os.path
+
+if os.path.exists("credentials.json"):
+    credentialFile = open("credentials.json", "r")
+    credentials = json.load(credentialFile)
+    access_key = credentials['access']
+    secret_key = credentials['secret']
+    aws_config()
+
 # Checking status of database instance
 # status_of_db = list_of_instances['DBInstances'][0]['DBInstanceStatus']
 #
