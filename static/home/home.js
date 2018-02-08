@@ -7,9 +7,5 @@ app.controller('home', function($scope, $location) {
         console.log("HERE")
         $location.path('/capture');
     }
-
-    $scope.date = function () {
-      console.log("date picked");
-        $('#datetimepicker1').datetimepicker();
-    };
+   $('.datepicker').datepicker();
 });
