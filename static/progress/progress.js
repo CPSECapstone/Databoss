@@ -7,5 +7,6 @@ app.controller('progress', function($scope, $location, $http) {
     $scope.endCapture = function () {
       // Code to end capture goes here - ng click is set up
       console.log("---- Ending Capture ----")
+      $location.path('/metrics');
     }
 });
