@@ -1,17 +1,21 @@
 import boto3
 import time
 import pymysql
+import botocore
 import random
 import sys
 import string
-import getpass
-from web_app import app
+import logging
 from flask import Blueprint, jsonify
+import rds_config
 
 VOWELS = "aeiou"
 CONSONANTS = "".join(set(string.ascii_lowercase) - set(VOWELS))
 
 capture_api = Blueprint('capture_api', __name__)
+
+logger = logging.getLogger()
+logger.setLevel(logging.INFO)
 
 access_key = None
 secret_key = None
@@ -135,15 +139,29 @@ def get_log_file(bucket_name, file_name):
         if e.response['Error']['Code'] == "404":
             print("Object does not exist in bucket.")
         else:
-            raise
+            raise e
 
 
-def startCapture(username, password, db_name):
+
+def startCapture():
+    username = rds_config.db_username
+    password = rds_config.db_password
+    db_name = rds_config.db_name
     status_of_db = get_list_of_instances(db_name)['DBInstances'][0]['DBInstanceStatus']
     endpoint = get_list_of_instances(db_name)['DBInstances'][0]['Endpoint']
 
-    if status_of_db == "available":
-        connection = pymysql.connect(host=endpoint, port=3306, user=username, passwd=password, db=db_name)
+
+    if status_of_db != "available":
+        rds.start_db_instance(
+            DBInstanceIdentifier=db_name
+        )
+
+    else:
+        try:
+            connection = pymysql.connect(host=endpoint, user=username, passwd=password, db=db_name, connect_timeout=5)
+        except:
+            logger.error("ERROR: Unexpected error: Could not connect to MySql instance.")
+            sys.exit()
 
         with connection.cursor() as cur:
             cur.execute(
@@ -154,7 +172,14 @@ def startCapture(username, password, db_name):
             cur.execute("select * from Student")
 
 
-def stopCapture(username, password, db_name, fileName):
+def stopCapture(startTime, endTime, username, password, db_name, fileName):
+    client = boto3.client('logs')
+
+    client.filter_log_events(
+        startTime=startTime,
+        endTime=endTime,
+    )
+
     rds_logfile = rds.download_db_log_file_portion(
         DBInstanceIdentifier=db_name,
         LogFileName="general/mysql-general.log",
