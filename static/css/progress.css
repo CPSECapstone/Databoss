@@ -1,0 +1,22 @@
+#progress-block {
+  width: 50%;
+  /* border: 2px solid; */
+}
+
+/* Overwriting the bootstrap progress bar height */
+.progress {
+  margin-top: 100px;
+  height: 70px;
+}
+
+.progress-bar {
+  height: inherit;
+}
+
+.col {
+  border: 1px solid red;
+}
+
+#progress-button-bar {
+  margin-top: 70px;
+}

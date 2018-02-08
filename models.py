@@ -26,75 +26,97 @@ class DBConnection(db.Model):
             'username': self.username
         }
 
+    def __init__(self, dialect, name, host, port, database, username):
+        self.dialect = dialect
+        self.name = name
+        self.host = host
+        self.port = port
+        self.database = database
+        self.username = username
+
 class Metric(db.Model):
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     name = db.Column(db.String(100))
-    path = db.Column(db.String(100), unique=True)
+    bucket = db.Column(db.String(100))
+    file = db.Column(db.String(100))
+    db.UniqueConstraint(bucket, file)
+    capture = db.relationship('Capture', backref='metric', lazy=True, uselist=False)
+    replay = db.relationship('Replay', backref='metric', lazy=True, uselist=False)
 
     @property
     def serialize(self):
         return {
             'id': self.id,
             'name': self.name,
-            'path': self.path
+            'bucket': self.bucket,
+            'file': self.file
         }
 
-
-class Workload(db.Model):
-    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    name = db.Column(db.String(100))
-    path = db.Column(db.String(100), unique=True)
-
-    @property
-    def serialize(self):
-        return {
-            'id': self.id,
-            'name': self.name,
-            'path': self.path
-        }
+    def __init__(self, name, bucket, file):
+        self.name = name
+        self.bucket = bucket
+        self.file = file
 
 class Logfile(db.Model):
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     name = db.Column(db.String(100))
-    path = db.Column(db.String(100), unique=True)
+    bucket = db.Column(db.String(100))
+    file = db.Column(db.String(100))
+    db.UniqueConstraint(bucket, file)
+    capture = db.relationship('Capture', backref='logfile', lazy=True, uselist=False)
+    replay = db.relationship('Replay', backref='logfile', lazy=True, uselist=False)
 
     @property
     def serialize(self):
         return {
             'id': self.id,
             'name': self.name,
-            'path': self.path
+            'bucket': self.bucket,
+            'file': self.file
         }
+
+    def __init__(self, name, bucket, file):
+        self.name = name
+        self.bucket = bucket
+        self.file = file
 
 class Capture(db.Model):
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     name = db.Column(db.String(100))
-    time = db.Column(db.DateTime)
+    startTime = db.Column(db.DateTime)
+    endTime = db.Column(db.DateTime)
     dbId = db.Column(db.Integer, db.ForeignKey('dbconnection.id'), nullable=False)
     logfileId = db.Column(db.Integer, db.ForeignKey('logfile.id'), nullable=False)
-    workloadId = db.Column(db.Integer, db.ForeignKey('workload.id'), nullable=False)
-    metricId = db.Column(db.Integer, db.ForeignKey('metric.id'))
+    metricId = db.Column(db.Integer, db.ForeignKey('metric.id'), nullable=False)
 
     @property
     def serialize(self):
         return {
             'id': self.id,
             'name': self.name,
-            'time': self.time,
+            'startTime': self.startTime,
+            'endTime': self.endTime,
             'dbId': self.dbId,
             'logfileId': self.logfileId,
-            'workloadId': self.workloadId,
             'metricId': self.metricId
         }
+
+    def __init__(self, name, startTime, endTime, dbId, logfileId, metricId):
+        self.name = name
+        self.startTime = startTime
+        self.endTime = endTime
+        self.dbId = dbId
+        self.logfileId = logfileId
+        self.metricId = metricId
 
 class Replay(db.Model):
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     name = db.Column(db.String(100))
-    time = db.Column(db.DateTime)
+    startTime = db.Column(db.DateTime)
+    endTime = db.Column(db.DateTime)
     dbId = db.Column(db.Integer, db.ForeignKey('dbconnection.id'), nullable=False)
     logfileId = db.Column(db.Integer, db.ForeignKey('logfile.id'), nullable=False)
-    workloadId = db.Column(db.Integer, db.ForeignKey('workload.id'), nullable=False)
-    metricId = db.Column(db.Integer, db.ForeignKey('metric.id'))
+    metricId = db.Column(db.Integer, db.ForeignKey('metric.id'), nullable=False)
     captureId = db.Column(db.Integer, db.ForeignKey('capture.id'), nullable=False)
 
     @property
@@ -102,37 +124,19 @@ class Replay(db.Model):
         return {
             'id': self.id,
             'name': self.name,
-            'time': self.time,
+            'startTime': self.startTime,
+            'endTime': self.endTime,
             'dbId': self.dbId,
             'logfileId': self.logfileId,
-            'workloadId': self.workloadId,
             'metricId': self.metricId,
             'captureId': self.captureId
         }
 
-# Sets up the tables in the database and their connections. Should be called only once.
-def createTable():
-    db.create_all()
-    db.session.commit()
-
-# Return all captures in the capture table
-def getCaptureAll():
-    capList = Capture.query.with_entities(Capture.id, Capture.name, Capture.time)
-    return capList
-
-# Return all replays in the replay table
-def getReplayAll():
-    repList = Replay.query.with_entities(Replay.id, Replay.name, Replay.time)
-    return repList
-
-# Add metric to the metric table
-def addMetric(name, path):
-    newMetric = Metric(name, path)
-    db.session.add(newMetric)
-    db.session.commit()
-
-# Return metric associated with provided capture or replay
-def getMetric(metricId):
-    m = Metric.query.filter_by(id=metricId).with_entities(Metric.name, Metric.path)
-    return m
-
+    def __init__(self, name, startTime, endTime, dbId, logfileId, metricId, captureId):
+        self.name = name
+        self.startTime = startTime
+        self.endTime = endTime
+        self.dbId = dbId
+        self.logfileId = logfileId
+        self.metricId = metricId
+        self.captureId = captureId
