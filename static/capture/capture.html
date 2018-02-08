@@ -25,25 +25,49 @@
           <option ng-repeat="db in DBConnections" value="{{db.id}}">{{db.DBInstanceIdentifier}}</option>
         </select>
         <!-- <div>
-          <button type="button" class="text-center btn btn-warning" ng-click="open()" style="display: inline-block;">Add DB Connection</button>
-        </div> -->
-      </div>
+        <button type="button" class="text-center btn btn-warning" ng-click="open()" style="display: inline-block;">Add DB Connection</button>
+      </div> -->
+    </div>
 
-      <h5>Capture Mode:</h5>
-      <div class="btn-group" name="captureMode" data-toggle="buttons" ng-click="checkRadioButtons()" style="margin-bottom: 10px;">
-        <label class="btn btn-primary active">
-          <input type="radio" name="mode" autocomplete="off" checked > Interactive
-        </label>
-        <label class="btn btn-primary">
-          <input type="radio" name="mode" autocomplete="off"> Time-Constrained
-        </label>
-        <label class="btn btn-primary">
-          <input type="radio" name="mode" autocomplete="off"> Storage-Constrained
-        </label>
-      </div>
-      <div class="text-center">
-        <button type="button" ng-click="startCapture()" class="btn btn-success" >Capture</button>
-      </div>
+    <h5>Capture Mode:</h5>
+    <div class="btn-group" name="captureMode" data-toggle="buttons" ng-click="checkRadioButtons()" style="margin-bottom: 10px;">
+      <label class="btn btn-primary active">
+        <input type="radio" name="mode" autocomplete="off" checked > Interactive
+      </label>
+      <label class="btn btn-primary">
+        <input type="radio" name="mode" autocomplete="off"> Time-Constrained
+      </label>
+      <label class="btn btn-primary">
+        <input type="radio" name="mode" autocomplete="off"> Storage-Constrained
+      </label>
+    </div>
+    <!-- <div class="date-container "> -->
+    <div id="date-container" class="row">
+        <span>Start Date: <input id="startDate" width="276" /> </span>
+        <span>End Date: <input id="endDate" width="276" /> </span>
+    </div>
+    <script>
+    var today = new Date(new Date().getFullYear(), new Date().getMonth(), new Date().getDate());
+    $('#startDate').datepicker({
+      uiLibrary: 'bootstrap4',
+      iconsLibrary: 'fontawesome',
+      minDate: today,
+      maxDate: function () {
+        return $('#endDate').val();
+      }
+    });
+    $('#endDate').datepicker({
+      uiLibrary: 'bootstrap4',
+      iconsLibrary: 'fontawesome',
+      minDate: function () {
+        return $('#startDate').val();
+      }
+    });
+    </script>
+
+    <div class="text-center">
+      <button type="button" ng-click="startCapture()" class="btn-capture btn btn-success" >Capture</button>
     </div>
   </div>
+</div>
 </div>
