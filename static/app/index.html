@@ -7,9 +7,10 @@
     <!-- JQuery include -->
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
 
-    <!-- Moment include -->
-    <script type="text/javascript" src="/bower_components/moment/min/moment.min.js"></script>
-
+    <!-- Datepicker -->
+   <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet" integrity="sha384-wvfXpqpZZVQGK6TAh5PVlGOfQNHSoD2xbE+QkPxCAFlNEevoEH3Sl0sibVcOQVnN" crossorigin="anonymous">
+   <script src="https://cdn.jsdelivr.net/gh/atatanasov/gijgo@1.8.0/dist/combined/js/gijgo.min.js" type="text/javascript"></script>
+   <link href="https://cdn.jsdelivr.net/gh/atatanasov/gijgo@1.8.0/dist/combined/css/gijgo.min.css" rel="stylesheet" type="text/css" />
     <!--ChartJS include-->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.5.0/Chart.min.js"></script>
 
@@ -36,26 +37,30 @@
 
     <!-- Bootstrap -->
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.6/css/bootstrap.min.css" integrity="sha384-rwoIResjU2yc3z8GV/NPeZWAv56rSmLldC3R/AZzGRnGxQQKnKkoFVhFQhNUwEyJ" crossorigin="anonymous">
-    <script src="https://code.jquery.com/jquery-3.1.1.slim.min.js" integrity="sha384-A7FZj7v+d/sdmMqp/nOQwliLvUsJfDHW+k9Omg/a/EheAdgtzNs3hpfag6Ed950n" crossorigin="anonymous"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/tether/1.4.0/js/tether.min.js" integrity="sha384-DztdAPBWPRXSA/3eYEEUWrWCy7G5KFbe8fFjk5JAIxUYHKkDx6Qin1DkWx51bBrb" crossorigin="anonymous"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.6/js/bootstrap.min.js" integrity="sha384-vBWWzlZJ8ea9aCX4pEW3rVHjgjt7zpkNpZk+02D9phzyeVkE+jo0ieGizqPLForn" crossorigin="anonymous"></script>
 
     <!-- CSS files for static pages -->
     <link rel="stylesheet" type="text/css" href="static/css/style.css">
     <link rel="stylesheet" type="text/css" href="static/css/progress.css">
+    <link rel="stylesheet" type="text/css" href="static/css/capture.css">
     <!-- Font Awesome -->
-    <script src="https://use.fontawesome.com/3844597d67.js"></script>
+    <!-- <script src="https://use.fontawesome.com/3844597d67.js"></script> -->
 
 </head>
 <body ng-app="MyCRT">
-  <div class="horizontal-nav">
+  <!-- <div class="horizontal-nav">
     <div class="navbar-header">
        <a class="navbar-brand text-white" href="#!">MyCRT</a>
     </div>
-  </div>
+  </div> -->
   <nav class="nav nav-pills flex-column container-fluid nav-container">
+  <!-- <nav class="nav container"> -->
+    <li id="my-crt-logo" class="text-center text-white">
+        MyCRT
+    </li>
     <li class="nav-item">
-      <i class="fa fa-home fa-inverse fa-lg nav-icon">
+      <i class="fa fa-key fa-inverse fa-lg nav-icon">
         <a class="h5 text-white cus-nav-link" ng-href="{{'#!/login'}}">Login</a>
       </i>
     </li>
@@ -86,6 +91,7 @@
     </li>
 </nav>
 <div class="myview">
+
     <ng-view></ng-view>
 </div>
 </body>
