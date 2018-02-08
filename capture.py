@@ -196,6 +196,18 @@ def stopCapture(startTime, endTime, username, password, db_name, fileName):
     s3_resource.Object(captureReplayBucket, fileName).put(Body=rds_logfile['LogFileData'], Metadata={'foo': 'bar'})
 
 
+#import cloudwatchlogs from boto3 client
 #def filterLogFile(startTime, endTime) {
-
+#    response = client.filter_log_events(
+#        logGroupName='string',
+#        logStreamNames=[
+#            'string',
+ #       ],
+ #       startTime=startTime,
+ #       endTime=endTime,
+ #       filterPattern='string',
+ #       nextToken='string',
+ #       limit=123,
+ #       interleaved=True | False
+   # )
 #}
