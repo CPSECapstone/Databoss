@@ -33,7 +33,8 @@ app.config(['$routeProvider', function($routeProvider) {
    })
    .when('/capture', {
       templateUrl: 'static/capture/capture.html',
-      controller: 'capture'
+      controller: 'capture',
+      css: 'static/css/capture.css'
    })
    .when('/replay', {
      templateUrl: 'static/replay/replay.html',
