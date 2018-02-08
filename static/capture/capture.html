@@ -1,5 +1,5 @@
 <div>
-  <h1 class="text-center">Capture</h1>
+  <h1>Capture</h1>
   <div class="row">
     <div class="center-block">
       <div class="form-group">
@@ -18,13 +18,15 @@
         </select>
       </div>
 
-      <div class="form-group text-center">
+      <div class="form-group">
         <label for="dbSelect">Database:</label>
         <select class="form-control" id="dbSelect">
           <option disabled selected value> -- Select Database -- </option>
           <option ng-repeat="db in DBConnections" value="{{db.id}}">{{db.DBInstanceIdentifier}}</option>
         </select>
-        <button type="button" class="text-center btn btn-warning" ng-click="open()" style="display: inline-block;">Add DB Connection</button>
+        <!-- <div>
+          <button type="button" class="text-center btn btn-warning" ng-click="open()" style="display: inline-block;">Add DB Connection</button>
+        </div> -->
       </div>
 
       <h5>Capture Mode:</h5>
