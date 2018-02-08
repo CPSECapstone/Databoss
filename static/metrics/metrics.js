@@ -3,34 +3,47 @@ var app = angular.module('MyCRT');
 
 //whenever an action occurs on the metrics page, the controller will handle it
 app.controller('metrics', function($scope, $location, $http, Metrics) {
-  console.log("inside metrics")
-    Metrics.setCPUChart(createChart('cpuChart', 'CPU (Percent)', 'Time (seconds)'));
-    Metrics.setReadIOChart(createChart('readIOChart', 'Read IO (count/second)', 'Time (seconds)'));
+   Metrics.setCPUChart(createChart('cpuChart', 'CPU (Percent)', 'Time (seconds)'));
+   Metrics.setReadIOChart(createChart('readIOChart', 'Read IO (count/second)', 'Time (seconds)'));
 
-    getMetrics($http, Metrics);
+   getCaptures($http, $scope);
+   getReplays($http, $scope);
+
+   // Function that is called whenever a checkbox is checked or unchecked
+   // Handles calling the appropriate functions for updating the charts
+   $scope.updateSelection = function(type, name, id, value) {
+      if (value === true) {
+         getMetrics($http, Metrics, name, type, id);
+      }
+      else {
+         console.log("remove from dataset");
+      }
+   };
 });
 
-var workloadChecked = function() {
-    // TODO get value from checked box and get its corresponding metrics file
+var addMetricsToChart = function(chart, label, data, time) {
+   if (chart.data.labels.length <= 0)
+      chart.data.labels = time;
+
+   chart.data.datasets.push({
+      data: data,
+      label: label,
+      borderColor: 'rgba(10, 148, 255, 1)',
+      fill: false
+   });
+   chart.update();
 };
 
-var addMetricsToChart = function(chart, label, data, time) {
-    chart.data.labels = time;
-    chart.data.datasets.push({
-        data: data,
-        label: label,
-        borderColor: 'rgba(10, 148, 255, 1)',
-        fill: false
-    });
-    chart.update();
+// TODO remove dataset from a chart; if last dataset, remove time labels too
+var removeMetricsFromChart = function() {
+
 };
 
 // Function to execute an HTTP request to get CPU Metrics
-var getMetrics = function($http, Metrics) {
-  console.log("HERE getting metrics")
+var getMetrics = function($http, Metrics, name, type, id) {
     $http({
         method: 'GET',
-        url: '/metrics/getMetrics',
+        url: '/metrics/getMetrics?type=' + type + '&id=' + id,
         headers: {
             'Content-Type': 'application/json'
         }
@@ -46,9 +59,8 @@ var getMetrics = function($http, Metrics) {
             return value - baseTime;
         });
 
-        // TODO change capture 1 to response.data.name or some equivalent
-        addMetricsToChart(Metrics.getCPUChart(), 'Capture 1', cpu, time);
-        addMetricsToChart(Metrics.getReadIOChart(), 'Capture 1', readIO, time);
+        addMetricsToChart(Metrics.getCPUChart(), name, cpu, time);
+        addMetricsToChart(Metrics.getReadIOChart(), name, readIO, time);
     }, function errorCallback(response) {
         console.log('error');
     });
@@ -81,6 +93,36 @@ var createChart = function(elementId, yAxesLabel, xAxesLabel) {
             }
         }
     });
-
     return chart;
+};
+
+var getCaptures = function($http, $scope) {
+    $http({
+        method: 'GET',
+        url: 'capture/getAll',
+        headers: {
+        'Content-Type': 'application/json'
+        },
+    }).then(function successCallback(response) {
+        $scope.captures = response.data;
+        console.log('success');
+    }, function errorCallback(response) {
+        console.log('error retrieving captures');
+    })
+};
+
+//Makes an HTTP GET Request to retrieve a list of the replays
+var getReplays = function($http, $scope) {
+    $http({
+        method: 'GET',
+        url: 'replay/getAll',
+        headers: {
+        'Content-Type': 'application/json'
+        },
+    }).then(function successCallback(response) {
+        $scope.replays = response.data;
+        console.log('success');
+    }, function errorCallback(response) {
+        console.log('error retrieving replays');
+    })
 };

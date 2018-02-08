@@ -211,3 +211,17 @@ def stopCapture(startTime, endTime, username, password, db_name, fileName):
  #       interleaved=True | False
    # )
 #}
+
+
+# configures aws credentials when app starts so they don't have to be input manually
+# TODO remove when done testing
+import json
+import os.path
+
+if os.path.exists("credentials.json"):
+    credentialFile = open("credentials.json", "r")
+    credentials = json.load(credentialFile)
+    access_key = credentials['access']
+    secret_key = credentials['secret']
+    aws_config()
+
