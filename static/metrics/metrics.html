@@ -1,36 +1,37 @@
 <div>
-   <div class="tableWrapper">
-      <h2> Capture & Replays </h2>
-      <table class="table">
-         <thead>
-         <tr>
-            <th>Name</th>
-            <th>Date</th>
-            <th>Display</th>
-         </tr>
-         </thead>
-         <tbody ng-repeat="capture in captures">
-         <tr>
-            <th>{{capture.name}}</th>
-            <td>{{capture.date}}</td>
-            <td><input type="checkbox" ng-model="captureSelection"
-                       ng-change="updateSelection('capture', capture.name, capture.id, captureSelection)"></td>
-         </tr>
-         <tr ng-repeat="replay in replays" ng-if="replay.captureId == capture.id">
+  <h1> Metrics </h1>
+  <div class="tableWrapper">
+  <h4 class="text-center"> Capture & Replays </h4>
+    <table class="table center-block" >
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Date</th>
+          <th>Display</th>
+        </tr>
+      </thead>
+      <tbody ng-repeat="capture in captures">
+        <tr>
+          <th>{{capture.name}}</th>
+          <td>{{capture.date}}</td>
+          <td><input type="checkbox" ng-model="captureSelection"
+            ng-change="updateSelection('capture', capture.name, capture.id, captureSelection)"></td>
+          </tr>
+          <tr ng-repeat="replay in replays" ng-if="replay.captureId == capture.id">
             <td>{{replay.name}}</td>
             <td>{{replay.date}}</td>
             <td><input type="checkbox" ng-model="replaySelection"
-                       ng-change="updateSelection('replay', replay.name, replay.id, replaySelection)"></td>
-         </tr>
-         </tbody>
-      </table>
-   </div>
-   <div class="chartWrapper">
-      <h2>CPU</h2>
-      <canvas id="cpuChart" width="1600" height="900"></canvas>
-   </div>
-   <div class="chartWrapper">
-      <h2>Read IO</h2>
-      <canvas id="readIOChart" width="1600" height="900"></canvas>
-   </div>
-</div>
+              ng-change="updateSelection('replay', replay.name, replay.id, replaySelection)"></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="chartWrapper">
+        <h2>CPU</h2>
+        <canvas id="cpuChart" width="1600" height="900"></canvas>
+      </div>
+      <div class="chartWrapper">
+        <h2>Read IO</h2>
+        <canvas id="readIOChart" width="1600" height="900"></canvas>
+      </div>
+    </div>
