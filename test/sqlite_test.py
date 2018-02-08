@@ -107,6 +107,7 @@ def testGetReplay():
 
 def testCleanup():
     db.drop_all()
+    db.create_all()
 
     for line in backupDB.iterdump():
         if 'Capture' in line:

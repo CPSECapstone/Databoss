@@ -1,17 +1,21 @@
 import boto3
 import time
 import pymysql
+import botocore
 import random
 import sys
 import string
-import getpass
-from web_app import app
+import logging
 from flask import Blueprint, jsonify
+import rds_config
 
 VOWELS = "aeiou"
 CONSONANTS = "".join(set(string.ascii_lowercase) - set(VOWELS))
 
 capture_api = Blueprint('capture_api', __name__)
+
+logger = logging.getLogger()
+logger.setLevel(logging.INFO)
 
 access_key = None
 secret_key = None
@@ -22,6 +26,7 @@ bucket_name = "Capture " + str(time.strftime("%x"))
 s3 = None
 s3_resource = None
 rds = None
+log_client = None
 
 captureReplayBucket = None
 metricBucket = None
@@ -53,6 +58,13 @@ def aws_config():
         region_name=loc
     )
 
+    log_client = boto3.client(
+        service_name='logs',
+        aws_access_key_id = access_key,
+        aws_secret_access_key = secret_key,
+        region_name = loc
+    )
+
 
 # Function that prints all of a user's database instances
 @capture_api.route('/listDBinstances')
@@ -75,7 +87,7 @@ def list_buckets():
 
 
 # Creating 2 buckets if they don't already exist
-@app.route
+#@app.route()
 def createBucket(bucketName):
     if s3_resource.Bucket(bucketName) in s3_resource.buckets.all():
         print("Found " + bucketName + " bucket")
@@ -126,24 +138,56 @@ def get_list_of_instances(db_name):
     )
     return list_of_instances
 
+def get_log_file(bucket_name, file_name):
+    s3 = boto3.resource('s3')
 
-def startCapture(username, password, db_name):
+    try:
+        s3.Bucket(bucket_name).download_file(file_name, 'local-file.txt')
+    except botocore.exceptions.ClientError as e:
+        if e.response['Error']['Code'] == "404":
+            print("Object does not exist in bucket.")
+        else:
+            raise e
+
+
+
+def startCapture():
+    username = rds_config.db_username
+    password = rds_config.db_password
+    db_name = rds_config.db_name
     status_of_db = get_list_of_instances(db_name)['DBInstances'][0]['DBInstanceStatus']
     endpoint = get_list_of_instances(db_name)['DBInstances'][0]['Endpoint']
 
-    if status_of_db == "available":
-        connection = pymysql.connect(host=endpoint, port=3306, user=username, passwd=password, db=db_name)
+
+    if status_of_db != "available":
+        rds.start_db_instance(
+            DBInstanceIdentifier=db_name
+        )
+
+    else:
+        try:
+            connection = pymysql.connect(host=endpoint, user=username, passwd=password, db=db_name, connect_timeout=5)
+        except:
+            logger.error("ERROR: Unexpected error: Could not connect to MySql instance.")
+            sys.exit()
 
         with connection.cursor() as cur:
             cur.execute(
                 "create table IF NOT EXISTS Student ( StudentID  int NOT NULL, Name varchar(255) NOT NULL, PRIMARY KEY (StudentID))")
             cur.execute(
-                'insert into Student (StudentID, Name) values(' + generate_number(5) + ', "' + generate_word(10) + '")')
+                'insert into Student (StudentID, Name) values(' + generate_number(100) + ', "' + generate_word(10) + '")')
             connection.commit()
             cur.execute("select * from Student")
+            cur.execute('select * from mysql.general_log')
 
 
-def stopCapture(username, password, db_name, fileName):
+def stopCapture(startTime, endTime, username, password, db_name, fileName):
+
+    log_client.filter_log_events(
+        startTime=startTime,
+        endTime=endTime,
+    )
+
     rds_logfile = rds.download_db_log_file_portion(
         DBInstanceIdentifier=db_name,
         LogFileName="general/mysql-general.log",
@@ -152,37 +196,32 @@ def stopCapture(username, password, db_name, fileName):
     s3_resource.Object(captureReplayBucket, fileName).put(Body=rds_logfile['LogFileData'], Metadata={'foo': 'bar'})
 
 
-# Checking status of database instance
-# status_of_db = list_of_instances['DBInstances'][0]['DBInstanceStatus']
-#
-# if status_of_db == "stopped":
-#     start_response = rds.start_db_instance(
-#         DBInstanceIdentifier= db_name
-#     )
-# else :
-#     start_response = "Starting"
-#
-# print("Starting RDS database instance: " + db_name)
-#
-# '''
-# if status_of_db == "available":
-#     stop_response = rds.stop_db_instance(
-#         DBInstanceIdentifier= db_name
-#     )
-# else :
-#     stop_response = "stopped"
-#
-# print("Stopping database: " + db_name)
-# print(stop_response)
-#
-# all_log_files = rds.describe_db_log_files(
-#     DBInstanceIdentifier= db_name
-# )
-# print(all_log_files)
-# '''
-#
-# bucket = s3.Bucket(captureReplayBucket)
-# print("Printing location...")
-#
-# for key in bucket.objects.all():
-#     print(key.key)
+#import cloudwatchlogs from boto3 client
+#def filterLogFile(startTime, endTime) {
+#    response = client.filter_log_events(
+#        logGroupName='string',
+#        logStreamNames=[
+#            'string',
+ #       ],
+ #       startTime=startTime,
+ #       endTime=endTime,
+ #       filterPattern='string',
+ #       nextToken='string',
+ #       limit=123,
+ #       interleaved=True | False
+   # )
+#}
+
+
+# configures aws credentials when app starts so they don't have to be input manually
+# TODO remove when done testing
+import json
+import os.path
+
+if os.path.exists("credentials.json"):
+    credentialFile = open("credentials.json", "r")
+    credentials = json.load(credentialFile)
+    access_key = credentials['access']
+    secret_key = credentials['secret']
+    aws_config()
+
