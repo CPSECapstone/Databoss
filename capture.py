@@ -9,6 +9,7 @@ import logging
 from flask import Blueprint, jsonify
 from datetime import timedelta
 from datetime import datetime
+from time import mktime
 import rds_config
 
 VOWELS = "aeiou"
