@@ -4,7 +4,10 @@
   margin: 50px auto;
   padding-left: 10px;
 }
-
+body {
+  background-color: #333333;
+  color: white;
+}
 .tableWrapper {
     padding-left: 10px;
 }
@@ -34,7 +37,7 @@
   width: 200px;
   float: left;
   height: 1000px;
-  background-color: RGB(51, 51, 51);
+  background-color: #2A2A2A;
 }
 /* Took out the horizontal nav for now  */
 /* .horizontal-nav {
@@ -52,6 +55,7 @@
 h1 {
   padding: 40px 70px 20px;
 }
+
 .myview {
   /* border: 2px solid green; */
   margin-left: 200px;
