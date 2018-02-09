@@ -62,8 +62,8 @@ def aws_config():
 
     cloudwatch = boto3.client(
         service_name='cloudwatch',
-        aws_access_key_id=user_key,
-        aws_secret_access_key=user_access,
+        aws_access_key_id=access_key,
+        aws_secret_access_key=secret_key,
         region_name=loc
     )
 
