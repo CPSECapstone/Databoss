@@ -44,7 +44,7 @@ var getMetrics = function($http, Metrics, name, type, id) {
     $http({
         method: 'GET',
         url: '/metrics/getMetrics?type=' + type + '&id=' + id,
-        headers: {
+        nheaders: {
             'Content-Type': 'application/json'
         }
     }).then(function successCallback(response) {
@@ -79,15 +79,26 @@ var createChart = function(elementId, yAxesLabel, xAxesLabel) {
         options : {
             scales: {
                 yAxes: [{
+                    gridLines: {
+                      color: "#585858"
+                    },
                     scaleLabel: {
                         display: true,
-                        labelString: yAxesLabel
+                        labelString: yAxesLabel,
+                        fontColor: "#D9D9D9"
+                    },
+                    ticks: {
+                      fontColor: "#D9D9D9"
                     }
                 }],
                 xAxes: [{
                     scaleLabel: {
                         display: true,
-                        labelString: xAxesLabel
+                        labelString: xAxesLabel,
+                        fontColor: "#D9D9D9"
+                    },
+                    ticks: {
+                      fontColor: "#D9D9D9"
                     }
                 }]
             }
