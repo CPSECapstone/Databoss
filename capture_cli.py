@@ -205,19 +205,7 @@ cloudwatch = boto3.client(
         region_name = loc
     )
 
-response = client.describe_log_groups(
-    logGroupNamePrefix='string',
-    nextToken='string',
-    limit=123
-)
 
-print(response)
-
-time.sleep(60)
-client.filter_log_events(
-    startTime=datetime.now(),
-    endTime=datetime.now() - timedelta(minutes=1)
-)
 
 rds_logfile = rds.download_db_log_file_portion(
   DBInstanceIdentifier=db_name,
