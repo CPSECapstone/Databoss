@@ -4,14 +4,10 @@
   margin: 50px auto;
   padding-left: 10px;
 }
-#timepicker {
-  border: 1px solid black;
-  border-radius: 3px;
-}
+
 body {
-  background-color: white;
-  /* background-color: #333333; */
-  color: black;
+  background-color: #333333;
+  color: white;
 }
 .tableWrapper {
     padding-left: 10px;
