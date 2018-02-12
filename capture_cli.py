@@ -155,10 +155,10 @@ numItems = 0
 
 with conn.cursor() as cur:
     cur.execute("create table IF NOT EXISTS Student ( StudentID  int NOT NULL, Name varchar(255) NOT NULL, PRIMARY KEY (StudentID))")
-    cur.execute('insert into Student (StudentID, Name) values('+generate_number(20)+', "'+generate_word(10)+'")')
+    cur.execute('insert into Student (StudentID, Name) values('+generate_number(100)+', "'+generate_word(10)+'")')
     conn.commit()
     cur.execute("select * from Student")
-    #cur.execute('select * from mysql.general_log')
+    cur.execute('SELECT event_time, command_type, argument FROM mysql.general_log')
     for row in cur:
         numItems += 1
         print(row)
@@ -183,8 +183,6 @@ print(all_log_files)
 
 '''
 
-
-
 bucket = s3.Bucket(captureReplayBucket)
 print("Printing location...")
 
@@ -204,14 +202,6 @@ cloudwatch = boto3.client(
         aws_secret_access_key = user_access,
         region_name = loc
     )
-
-response = client.describe_log_groups(
-    logGroupNamePrefix='string',
-    nextToken='string',
-    limit=123
-)
-
-print(response)
 
 time.sleep(60)
 client.filter_log_events(

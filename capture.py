@@ -7,6 +7,7 @@ import sys
 import string
 import logging
 from flask import Blueprint, jsonify
+from datetime import timedelta
 import rds_config
 
 VOWELS = "aeiou"
@@ -149,15 +150,34 @@ def get_log_file(bucket_name, file_name):
         else:
             raise e
 
+def parseRow(row):
+    eventTime = row[0]
+    command = row[1]
+    query = row[2]
+
+    message = command += ': ' + query
+
+    if hasattr(query, 'decode'):
+        query = query.decode()
+
+    return {
+        'timestamp': eventTime,
+        'message': command += ': ' + query
+    }
 
 
-def startCapture():
+def startCapture(startTime, endTime):
     username = rds_config.db_username
     password = rds_config.db_password
     db_name = rds_config.db_name
     status_of_db = get_list_of_instances(db_name)['DBInstances'][0]['DBInstanceStatus']
     endpoint = get_list_of_instances(db_name)['DBInstances'][0]['Endpoint']
+    difference = endTime - startTime
 
+    if endTime == None or difference.min < 1440:
+        endTime = startTime + timedelta(minutes=1440)
+
+    time.sleep((endTime - startTime).seconds)
 
     if status_of_db != "available":
         rds.start_db_instance(
@@ -171,22 +191,13 @@ def startCapture():
             logger.error("ERROR: Unexpected error: Could not connect to MySql instance.")
             sys.exit()
 
-        with connection.cursor() as cur:
-            cur.execute(
-                "create table IF NOT EXISTS Student ( StudentID  int NOT NULL, Name varchar(255) NOT NULL, PRIMARY KEY (StudentID))")
-            cur.execute(
-                'insert into Student (StudentID, Name) values(' + generate_number(100) + ', "' + generate_word(10) + '")')
-            connection.commit()
-            cur.execute("select * from Student")
-            cur.execute('select * from mysql.general_log')
+        stopCapture(db_name, connection, startTime, endTime)
 
-
-def stopCapture(startTime, endTime, username, password, db_name, fileName):
-
-    log_client.filter_log_events(
-        startTime=startTime,
-        endTime=endTime,
-    )
+def stopCapture(db_name, conn, startTime, endTime):
+    with conn.cursor() as cur:
+        cur.execute('SELECT event_time, command_type, argument FROM mysql.general_log '
+                    'WHERE event_time > %s AND event_time < %s' % (startTime, endTime))
+        logfile = map(parseRow, cur)
 
     rds_logfile = rds.download_db_log_file_portion(
         DBInstanceIdentifier=db_name,
@@ -194,23 +205,6 @@ def stopCapture(startTime, endTime, username, password, db_name, fileName):
         Marker='0'
     )
     s3_resource.Object(captureReplayBucket, fileName).put(Body=rds_logfile['LogFileData'], Metadata={'foo': 'bar'})
-
-
-#import cloudwatchlogs from boto3 client
-#def filterLogFile(startTime, endTime) {
-#    response = client.filter_log_events(
-#        logGroupName='string',
-#        logStreamNames=[
-#            'string',
- #       ],
- #       startTime=startTime,
- #       endTime=endTime,
- #       filterPattern='string',
- #       nextToken='string',
- #       limit=123,
- #       interleaved=True | False
-   # )
-#}
 
 
 # configures aws credentials when app starts so they don't have to be input manually
