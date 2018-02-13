@@ -46,6 +46,10 @@
         <span>Start Date: <input id="startDate" width="276" /> </span>
         <span>End Date: <input id="endDate" width="276" /> </span>
     </div>
+    <div id="time-container" class="row">
+    <span>Start Time: <input id="startTime" width="276" /> </span>
+    <span>End Time: <input id="endTime" width="276" /> </span>
+  </div>
     <script>
     var today = new Date(new Date().getFullYear(), new Date().getMonth(), new Date().getDate());
     $('#startDate').datepicker({
@@ -62,6 +66,14 @@
       minDate: function () {
         return $('#startDate').val();
       }
+    });
+    $('#startTime').timepicker({
+      uiLibrary: 'bootstrap4',
+      iconsLibrary: 'fontawesome',
+    });
+    $('#endTime').timepicker({
+      uiLibrary: 'bootstrap4',
+      iconsLibrary: 'fontawesome',
     });
     </script>
 

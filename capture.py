@@ -7,6 +7,9 @@ import sys
 import string
 import logging
 from flask import Blueprint, jsonify
+from datetime import timedelta
+from datetime import datetime
+from time import mktime
 import rds_config
 
 VOWELS = "aeiou"
@@ -26,7 +29,7 @@ bucket_name = "Capture " + str(time.strftime("%x"))
 s3 = None
 s3_resource = None
 rds = None
-log_client = None
+cloudwatch = None
 
 captureReplayBucket = None
 metricBucket = None
@@ -58,11 +61,11 @@ def aws_config():
         region_name=loc
     )
 
-    log_client = boto3.client(
-        service_name='logs',
-        aws_access_key_id = access_key,
-        aws_secret_access_key = secret_key,
-        region_name = loc
+    cloudwatch = boto3.client(
+        service_name='cloudwatch',
+        aws_access_key_id=access_key,
+        aws_secret_access_key=secret_key,
+        region_name=loc
     )
 
 
@@ -149,15 +152,26 @@ def get_log_file(bucket_name, file_name):
         else:
             raise e
 
+def parseRow(row):
+    eventTime = row[0]
+    command = row[1]
+    query = row[2]
 
+    message = command + ": " + query
+    
 @capture_api.route('/startCapture')
-def startCapture(data):
+def startCapture(startTime, endTime, captureBucket, metricBucket, metricFileName):
     username = rds_config.db_username
     password = rds_config.db_password
     db_name = rds_config.db_name
     status_of_db = get_list_of_instances(db_name)['DBInstances'][0]['DBInstanceStatus']
     endpoint = get_list_of_instances(db_name)['DBInstances'][0]['Endpoint']
+    difference = endTime - startTime
 
+    if endTime == None or difference.min < 1440:
+        endTime = startTime + timedelta(minutes=1440)
+
+    time.sleep((endTime - startTime).seconds)
 
     if status_of_db != "available":
         rds.start_db_instance(
@@ -171,46 +185,61 @@ def startCapture(data):
             logger.error("ERROR: Unexpected error: Could not connect to MySql instance.")
             sys.exit()
 
-        with connection.cursor() as cur:
-            cur.execute(
-                "create table IF NOT EXISTS Student ( StudentID  int NOT NULL, Name varchar(255) NOT NULL, PRIMARY KEY (StudentID))")
-            cur.execute(
-                'insert into Student (StudentID, Name) values(' + generate_number(100) + ', "' + generate_word(10) + '")')
-            connection.commit()
-            cur.execute("select * from Student")
-            cur.execute('select * from mysql.general_log')
+        stopCapture(db_name, connection, startTime, endTime, captureBucket, metricBucket, metricFileName)
+
+def stopCapture(db_name, conn, startTime, endTime, captureBucket, metricBucket, metricFileName):
+    with conn.cursor() as cur:
+        cur.execute('SELECT event_time, command_type, argument FROM mysql.general_log '
+                    'WHERE event_time > %s AND event_time < %s' % (startTime, endTime))
+        logfile = list(map(parseRow, cur))
+
+    s3.meta.client.upload_file(logfile.name, captureBucket, logfile.name)
+
+    sendMetrics(db_name, metricBucket, metricFileName)
 
 
-def stopCapture(startTime, endTime, username, password, db_name, fileName):
+def sendMetrics(db_name, metricBucket, metricFileName):
+    dlist = []
 
-    log_client.filter_log_events(
-        startTime=startTime,
-        endTime=endTime,
-    )
+    logger.log("CPU Utilization: ")
+    dlist.append(cloudwatch.get_metric_statistics(Namespace="AWS/RDS",
+                                                  Statistics=['Average'],
+                                                  StartTime=datetime.utcnow() - timedelta(minutes=60),
+                                                  EndTime=datetime.utcnow(),
+                                                  Period=300,
+                                                  MetricName='CPUUtilization'))
+    logger.log("Read: ")
+    dlist.append(cloudwatch.get_metric_statistics(Namespace="AWS/RDS",
+                                                  Statistics=['Average'],
+                                                  StartTime=datetime.utcnow() - timedelta(minutes=60),
+                                                  EndTime=datetime.utcnow(),
+                                                  Period=300,
+                                                  MetricName='ReadIOPS'))
+    logger.log("Write: ")
+    dlist.append(cloudwatch.get_metric_statistics(Namespace="AWS/RDS",
+                                                  Statistics=['Average'],
+                                                  StartTime=datetime.utcnow() - timedelta(minutes=60),
+                                                  EndTime=datetime.utcnow(),
+                                                  Period=300,
+                                                  MetricName='WriteIOPS'))
+    logger.log("Memory: ")
+    dlist.append(cloudwatch.get_metric_statistics(Namespace="AWS/RDS",
+                                                  Statistics=['Average'],
+                                                  StartTime=datetime.utcnow() - timedelta(minutes=60),
+                                                  EndTime=datetime.utcnow(),
+                                                  Period=300,
+                                                  MetricName='FreeableMemory'))
 
-    rds_logfile = rds.download_db_log_file_portion(
-        DBInstanceIdentifier=db_name,
-        LogFileName="general/mysql-general.log",
-        Marker='0'
-    )
-    s3_resource.Object(captureReplayBucket, fileName).put(Body=rds_logfile['LogFileData'], Metadata={'foo': 'bar'})
+    class MyEncoder(json.JSONEncoder):
+        def default(self, obj):
+            if isinstance(obj, datetime):
+                return int(mktime(obj.timetuple()))
+            return json.JSONEncoder.default(self, obj)
 
+    with open(metricFileName, 'w') as metricFileOpened:
+        metricFileOpened.write(json.dumps(dlist, cls=MyEncoder))
 
-#import cloudwatchlogs from boto3 client
-#def filterLogFile(startTime, endTime) {
-#    response = client.filter_log_events(
-#        logGroupName='string',
-#        logStreamNames=[
-#            'string',
- #       ],
- #       startTime=startTime,
- #       endTime=endTime,
- #       filterPattern='string',
- #       nextToken='string',
- #       limit=123,
- #       interleaved=True | False
-   # )
-#}
+    s3.meta.client.upload_file(metricFileOpened.name, metricBucket, metricFileOpened.name)
 
 
 # configures aws credentials when app starts so they don't have to be input manually
