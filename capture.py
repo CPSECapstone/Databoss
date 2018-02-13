@@ -150,8 +150,8 @@ def get_log_file(bucket_name, file_name):
             raise e
 
 
-
-def startCapture():
+@capture_api.route('/startCapture')
+def startCapture(data):
     username = rds_config.db_username
     password = rds_config.db_password
     db_name = rds_config.db_name
