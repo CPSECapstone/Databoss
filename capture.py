@@ -158,16 +158,8 @@ def parseRow(row):
     query = row[2]
 
     message = command + ": " + query
-
-    if hasattr(query, 'decode'):
-        query = query.decode()
-
-    return {
-        'timestamp': eventTime,
-        'message': message
-    }
-
-
+    
+@capture_api.route('/startCapture')
 def startCapture(startTime, endTime, captureBucket, metricBucket, metricFileName):
     username = rds_config.db_username
     password = rds_config.db_password
