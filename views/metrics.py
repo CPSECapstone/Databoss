@@ -30,7 +30,7 @@ def getMetrics():
 
 # Helper function to get a metrics file from S3 given a bucket and file name
 def getS3Metrics(bucket, file):
-    obj = capture.s3_resource.Object(bucket, file).get()
+    obj = capture.s3.Object(bucket, file).get()
     return ParsedMetrics(obj['Body'].read().decode('utf-8'))
 
 def add(name, bucket, file):
