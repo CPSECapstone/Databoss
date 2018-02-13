@@ -158,9 +158,9 @@ def parseRow(row):
     query = row[2]
 
     message = command + ": " + query
-    
-@capture_api.route('/startCapture')
-def startCapture(startTime, endTime, captureBucket, metricBucket, metricFileName):
+
+def startCapture(metricsBucket, captureBucket, database, startTime, endTime, metricFileName):
+    print("starting capture")
     username = rds_config.db_username
     password = rds_config.db_password
     db_name = rds_config.db_name
@@ -185,7 +185,7 @@ def startCapture(startTime, endTime, captureBucket, metricBucket, metricFileName
             logger.error("ERROR: Unexpected error: Could not connect to MySql instance.")
             sys.exit()
 
-        stopCapture(db_name, connection, startTime, endTime, captureBucket, metricBucket, metricFileName)
+        stopCapture(db_name, connection, startTime, endTime, captureBucket, metricsBucket, metricFileName)
 
 def stopCapture(db_name, conn, startTime, endTime, captureBucket, metricBucket, metricFileName):
     with conn.cursor() as cur:

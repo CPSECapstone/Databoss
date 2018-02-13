@@ -90,9 +90,11 @@ app.controller('capture', function ($scope, $location, $uibModal, $http) {
                 'Content-Type' : 'application/json'
             },
             data : {
+                'captureBucket' : $('#crBucket').val(),
                 'metricsBucket' : $('#metricsBucket').val(),
-                'crBucket' : $('#crBucket').val(),
-                'dbSelect' : $('#dbSelect').val()
+                'database' : $('#dbSelect').val(),
+                'startTime' : $('#startTime').val(),
+                'endTime' : $('#endTime').val(),
             }
         });
         // code to turn on DB logging goes here
