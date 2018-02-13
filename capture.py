@@ -27,6 +27,7 @@ loc = "us-west-1"
 bucket_name = "Capture " + str(time.strftime("%x"))
 
 s3 = None
+s3_resource = None
 rds = None
 cloudwatch = None
 
@@ -37,14 +38,20 @@ metricBucket = None
 # Configure boto3 to use access/secret key for s3 and rds
 def aws_config():
     global s3
+    global s3_resource
     global rds
-    global cloudwatch
 
     s3 = boto3.client(
         service_name='s3',
         aws_access_key_id=access_key,
         aws_secret_access_key=secret_key,
         region_name=loc
+    )
+
+    s3_resource = s3 = boto3.resource(
+        service_name='s3',
+        aws_access_key_id=access_key,
+        aws_secret_access_key=secret_key
     )
 
     rds = boto3.client(
@@ -85,9 +92,9 @@ def list_buckets():
 # Creating 2 buckets if they don't already exist
 #@app.route()
 def createBucket(bucketName):
-    if s3.Bucket(bucketName) in s3.buckets.all():
+    if s3_resource.Bucket(bucketName) in s3_resource.buckets.all():
         print("Found " + bucketName + " bucket")
-        return s3.Bucket(bucketName)
+        return s3_resource.Bucket(bucketName)
     else:
         return s3.create_bucket(
             Bucket=bucketName,
@@ -160,32 +167,35 @@ def parseRow(row):
         'message': message
     }
 
-def startDatabaseInstance(dbName):
-    rds.start_db_instance(
-        DBInstanceIdentifier=dbName
-    )
-
-
-def startCapture(startTime, endTime, captureBucket, metricBucket, metricFileName):
+def startCapture(metricsBucket, captureBucket, database, startTime, endTime, metricFileName):
+    print("starting capture")
+    username = rds_config.db_username
+    password = rds_config.db_password
     db_name = rds_config.db_name
     status_of_db = get_list_of_instances(db_name)['DBInstances'][0]['DBInstanceStatus']
+    endpoint = get_list_of_instances(db_name)['DBInstances'][0]['Endpoint']
     difference = endTime - startTime
 
     if endTime == None or difference.min < 1440:
         endTime = startTime + timedelta(minutes=1440)
 
-    if status_of_db != "available":
-        startDatabaseInstance(db_name)
+    time.sleep((endTime - startTime).seconds)
 
-def stopCapture(db_name, startTime, endTime, captureBucket, metricBucket, metricFileName):
-    username = rds_config.db_username
-    password = rds_config.db_password
-    endpoint = get_list_of_instances(db_name)['DBInstances'][0]['Endpoint']
-    try:
-        conn = pymysql.connect(host=endpoint, user=username, passwd=password, db=db_name, connect_timeout=5)
-    except:
-        logger.error("ERROR: Unexpected error: Could not connect to MySql instance.")
-        sys.exit()
+    if status_of_db != "available":
+        rds.start_db_instance(
+            DBInstanceIdentifier=db_name
+        )
+
+    else:
+        try:
+            connection = pymysql.connect(host=endpoint, user=username, passwd=password, db=db_name, connect_timeout=5)
+        except:
+            logger.error("ERROR: Unexpected error: Could not connect to MySql instance.")
+            sys.exit()
+
+        stopCapture(db_name, connection, startTime, endTime, captureBucket, metricsBucket, metricFileName)
+
+def stopCapture(db_name, conn, startTime, endTime, captureBucket, metricBucket, metricFileName):
     with conn.cursor() as cur:
         cur.execute('SELECT event_time, command_type, argument FROM mysql.general_log '
                     'WHERE event_time > %s AND event_time < %s' % (startTime, endTime))
@@ -251,4 +261,3 @@ if os.path.exists("credentials.json"):
     access_key = credentials['access']
     secret_key = credentials['secret']
     aws_config()
-

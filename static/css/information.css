@@ -1,8 +1,9 @@
 .info-section {
   margin-left: 75px;
   width: 60%;
+  margin-bottom: 20px;
 }
 
-#info-buckets {
+.info-block {
   color: black;
 }
