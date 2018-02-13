@@ -1,46 +1,50 @@
 <div>
-    <h1>Replay</h1>
-    <div class="row">
-        <div class="center-block">
-            <div class="form-group">
-                <label for="crBucket">Capture to Replay</label>
-                <select class="form-control">
-                    <option disabled selected value> -- Select Capture -- </option>
-                    <option ng-repeat="bucket in buckets" value="{{bucket}}">{{bucket}}</option>
-                </select>
-            </div>
+  <h1>Replay</h1>
+  <div class="row">
+    <div class="center-block">
+      <div class="form-group">
+        <label for="replayName">Replay Name</label>
+        <input type="text" class="form-control" id="replay-name" aria-describedby="replayName">
+      </div>
+      <div class="form-group">
+        <label for="crBucket">Capture to Replay</label>
+        <select class="form-control">
+          <option disabled selected value> -- Select Capture -- </option>
+          <option ng-repeat="bucket in buckets" value="{{bucket}}">{{bucket}}</option>
+        </select>
+      </div>
 
-            <div class="form-group">
-                <label for="metricsBucket">Replay Server</label>
-                <select class="form-control" id="replayServer">
-                    <option disabled selected value> -- Select Server -- </option>
-                    <option ng-repeat="bucket in buckets" value="{{bucket}}">{{bucket}}</option>
-                </select>
-            </div>
+      <div class="form-group">
+        <label for="metricsBucket">Replay Server</label>
+        <select class="form-control" id="replayServer">
+          <option disabled selected value> -- Select Server -- </option>
+          <option ng-repeat="bucket in buckets" value="{{bucket}}">{{bucket}}</option>
+        </select>
+      </div>
 
 
-            <h5>Replay Mode:</h5>
-            <div class="btn-group" name="replayMode" data-toggle="buttons" style="margin-bottom: 10px;">
-                <label class="btn btn-primary active">
-                    <input type="radio" name="mode" autocomplete="off" checked > Raw
-                </label>
-                <label class="btn btn-primary">
-                    <input type="radio" name="mode" autocomplete="off"> Time-Preserving
-                </label>
-            </div>
-            <!-- Make sure to rename the name of this mode!!!!  -->
-            <h5>Mode:</h5>
-            <div class="btn-group" name="RENAMETHIS" data-toggle="buttons" style="margin-bottom: 10px;">
-                <label class="btn btn-primary active">
-                    <input type="radio" name="mode" autocomplete="off" checked > Interactive
-                </label>
-                <label class="btn btn-primary">
-                    <input type="radio" name="mode" autocomplete="off"> Time / Storage-Constrained
-                </label>
-            </div>
-            <div>
-                <button type="button" ng-click="startReplay()" class="btn btn-success">Replay</button>
-            </div>
-        </div>
+      <h5>Replay Mode:</h5>
+      <div class="btn-group" name="replayMode" data-toggle="buttons" style="margin-bottom: 10px;">
+        <label class="btn btn-primary active">
+          <input type="radio" name="mode" autocomplete="off" checked > Raw
+        </label>
+        <label class="btn btn-primary">
+          <input type="radio" name="mode" autocomplete="off"> Time-Preserving
+        </label>
+      </div>
+      <!-- Make sure to rename the name of this mode!!!!  -->
+      <h5>Mode:</h5>
+      <div class="btn-group" name="RENAMETHIS" data-toggle="buttons" style="margin-bottom: 10px;">
+        <label class="btn btn-primary active">
+          <input type="radio" name="mode" autocomplete="off" checked > Interactive
+        </label>
+        <label class="btn btn-primary">
+          <input type="radio" name="mode" autocomplete="off"> Time / Storage-Constrained
+        </label>
+      </div>
+      <div>
+        <button type="button" ng-click="startReplay()" class="btn btn-success">Replay</button>
+      </div>
     </div>
+  </div>
 </div>
