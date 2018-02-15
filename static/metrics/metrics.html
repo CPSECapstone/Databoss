@@ -12,8 +12,15 @@
       </thead>
       <tbody ng-repeat="capture in captures">
         <tr>
-          <th>{{capture.name}}</th>
-          <td>{{capture.date}}</td>
+          <th class="dropdown">
+              <button id="dLabel" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                  {{capture.name}}
+                  <span class="caret"></span>
+              </button>
+          </th>
+          <td class="dropdown-menu" aria-labelledby="dLabel">
+              {{capture.date}}
+          </td>
           <td><input type="checkbox" ng-model="captureSelection"
             ng-change="updateSelection('capture', capture.name, capture.id, captureSelection)"></td>
           </tr>
