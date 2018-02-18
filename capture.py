@@ -249,6 +249,7 @@ def sendMetrics(db_name, metricBucket, metricFileName):
 
     s3.meta.client.upload_file(metricFileOpened.name, metricBucket, metricFileOpened.name)
 
+def storageCapacity(db_instance, conn, storage)
 
 # configures aws credentials when app starts so they don't have to be input manually
 # TODO remove when done testing
