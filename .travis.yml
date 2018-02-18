@@ -9,13 +9,13 @@ matrix:
   - python: "3.4"
     env: TEST_SUITE=test/suite_3_4.py
   - python: "3.5"
-    env:
-      - TEST_SUITE=test/*.py
+    env: TEST_SUITE=test/*.py
   - python: "3.6"
     env: TEST_SUITE=test/suite_3_6.py
 # command to install dependencies
 install:
   - pip install -r requirements.txt
+  - pip install Flask-SQLAlchemy
 # command to run test
 script:
   - pytest $TEST_SUITE # or py.test for Python versions 3.5 and below

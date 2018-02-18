@@ -33,7 +33,12 @@ app.config(['$routeProvider', function($routeProvider) {
    })
    .when('/capture', {
       templateUrl: 'static/capture/capture.html',
-      controller: 'capture'
+      controller: 'capture',
+      css: 'static/css/capture.css'
+   })
+   .when('/replay', {
+     templateUrl: 'static/replay/replay.html',
+     controller: 'replay'
    })
    .when('/home', {
       templateUrl: 'static/home/home.html',
@@ -45,7 +50,13 @@ app.config(['$routeProvider', function($routeProvider) {
    })
    .when('/metrics', {
       templateUrl: 'static/metrics/metrics.html',
-      controller: 'metrics'
+      controller: 'metrics',
+      css: 'static/css/metrics.css'
+   })
+   .when('/progress', {
+      templateUrl: 'static/progress/progress.html',
+      controller: 'progress',
+      css: 'static/css/progress.css'
    })
    //If none of the "when"s are matched then it defaults to the home page.
    .otherwise({

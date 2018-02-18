@@ -1,0 +1,129 @@
+import models
+import modelsQuery
+import sqlite3
+from web_app import db
+
+import datetime
+
+# Currently functions only on the main DB, and the main DB have tables created and empty
+
+backupDB = sqlite3.connect(':memory:')
+mainDB = sqlite3.connect('database.db')
+
+def testSetup():
+    query = "".join(line for line in mainDB.iterdump())
+    backupDB.executescript(query)
+    db.drop_all()
+    db.create_all()
+
+def testAddGetMetric():
+    name = 'metName'
+    bucket = 'metBucket'
+    file = 'metFile'
+    modelsQuery.addMetric(name, bucket, file)
+    result = models.Metric.query.filter_by(name=name, bucket=bucket, file=file).count()
+    assert result == 1
+
+    metric = modelsQuery.getMetric(1)
+    assert metric.name == name
+    assert metric.bucket == bucket
+    assert metric.file == file
+
+def testAddGetLogfile():
+    name = 'logName'
+    bucket = 'logBucket'
+    file = 'logFile'
+    modelsQuery.addLogfile(name, bucket, file)
+    result = models.Logfile.query.filter_by(name=name, bucket=bucket, file=file).count()
+    assert result == 1
+
+    log = modelsQuery.getLogfile(1)
+    assert log.name == name
+    assert log.bucket == bucket
+    assert log.file == file
+
+def testAddCapture():
+    name = 'capName'
+    startTime = datetime.datetime(2018, 1, 31, 10, 10, 10)
+    endTime = datetime.datetime(2018, 1, 31, 11, 11, 11)
+    dbId = 1
+    logfileId = 1
+    metricId = 1
+    modelsQuery.addCapture(name, startTime, endTime, dbId, logfileId, metricId)
+    result = models.Capture.query.get(1)
+    assert result.name == name
+    assert result.startTime == startTime
+    assert result.endTime == endTime
+    assert result.dbId == dbId
+    assert result.logfileId == logfileId
+    assert result.metricId == metricId
+
+def testGetCapture():
+    list = modelsQuery.getCaptureAll().count()
+    assert list == 1
+
+    name = 'capName'
+    startTime = datetime.datetime(2018, 1, 31, 12, 12, 12)
+    endTime = datetime.datetime(2018, 1, 31, 12, 13, 13)
+    dbId = 1
+    logfileId = 1
+    metricId = 1
+    modelsQuery.addCapture(name, startTime, endTime, dbId, logfileId, metricId)
+    list = modelsQuery.getCaptureAll().count()
+    assert list == 2
+
+def testAddReplay():
+    name = 'repName'
+    startTime = datetime.datetime(2018, 1, 31, 10, 10, 10)
+    endTime = datetime.datetime(2018, 1, 31, 11, 11, 11)
+    dbId = 1
+    logfileId = 1
+    metricId = 1
+    captureId = 1
+    modelsQuery.addReplay(name, startTime, endTime, dbId, logfileId, metricId, captureId)
+    result = models.Replay.query.get(1)
+    assert result.name == name
+    assert result.startTime == startTime
+    assert result.endTime == endTime
+    assert result.dbId == dbId
+    assert result.logfileId == logfileId
+    assert result.metricId == metricId
+    assert result.captureId == captureId
+
+def testGetReplay():
+    list = modelsQuery.getReplayAll().count()
+    assert list == 1
+
+    name = 'repName'
+    startTime = datetime.datetime(2018, 1, 31, 12, 12, 12)
+    endTime = datetime.datetime(2018, 1, 31, 12, 13, 13)
+    dbId = 1
+    logfileId = 1
+    metricId = 1
+    captureId = 1
+    modelsQuery.addReplay(name, startTime, endTime, dbId, logfileId, metricId, captureId)
+    list = modelsQuery.getReplayAll().count()
+    assert list == 2
+
+def testCleanup():
+    db.drop_all()
+    db.create_all()
+
+    for line in backupDB.iterdump():
+        if 'Capture' in line:
+            query = line
+            mainDB.executescript(query)
+        if 'Replay' in line:
+            query = line
+            mainDB.executescript(query)
+        if 'Metric' in line:
+            query = line
+            mainDB.executescript(query)
+        if 'Logfile' in line:
+            query = line
+            mainDB.executescript(query)
+        if 'DBConnection' in line:
+            query = line
+            mainDB.executescript(query)
+    backupDB.close()
+    mainDB.close()

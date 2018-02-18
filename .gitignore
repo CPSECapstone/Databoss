@@ -6,7 +6,13 @@ __pycache__/
 
 database.db
 
+.cache/
+
+credentials.json
+
 # Elastic Beanstalk Files
 .elasticbeanstalk/*
 !.elasticbeanstalk/*.cfg.yml
 !.elasticbeanstalk/*.global.yml
+
+
