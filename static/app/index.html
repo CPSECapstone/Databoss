@@ -58,39 +58,57 @@
   <nav class="nav nav-pills flex-column container-fluid nav-container">
   <!-- <nav class="nav container"> -->
     <li id="my-crt-logo" class="text-center text-white">
-        MyCRT
+        MYCRT
     </li>
-    <li class="nav-item">
-      <i class="fa fa-key fa-inverse fa-lg nav-icon">
-        <a class="h5 text-white cus-nav-link" ng-href="{{'#!/login'}}">Login</a>
-      </i>
-    </li>
-    <li class="nav-item">
-      <i class="fa fa-home fa-inverse fa-lg nav-icon">
-        <a class="h5 text-white cus-nav-link" ng-href="{{'#!/home'}}">Home</a>
-      </i>
-    </li>
-    <li class="nav-item">
-      <i class="fa fa-camera-retro fa-inverse fa-lg nav-icon">
-        <a class="h5 text-white cus-nav-link" ng-href="{{'#!/capture'}}">Capture</a>
-      </i>
-    </li>
-    <li class="nav-item">
-      <i class="fa fa-play fa-inverse fa-lg nav-icon">
-        <a class="h5 text-white cus-nav-link" ng-href="{{'#!/replay'}}">Replay</a>
-      </i>
-    </li>
-    <li class="nav-item">
-      <i class="fa fa-info-circle fa-inverse fa-lg nav-icon">
-        <a class="h5 text-white cus-nav-link" ng-href="{{'#!/information'}}">Information</a>
-      </i>
-    </li>
-    <li class="nav-item">
-      <i class="fa fa-bar-chart fa-inverse fa-lg nav-icon">
-        <a class="h5 text-white cus-nav-link" ng-href="{{'#!/metrics'}}">Metrics</a>
-      </i>
-    </li>
+    <a ng-href="{{'#!/login'}}" class="text-white cus-nav-link" onclick="setActive(this)">
+      <li class="nav-item">
+        <div class="icon-container"> <i class="fa fa-key fa-inverse fa-3x nav-icon"> </i></div>
+        <div class="text-container">LOGIN</div>
+      </li>
+    </a>
+    <a ng-href="{{'#!/home'}}" class="text-white cus-nav-link" onclick="setActive(this)">
+      <li class="nav-item">
+        <div class="icon-container"> <i class="fa fa-home fa-inverse fa-3x nav-icon"> </i></div>
+        <div class="text-container">HOME</div>
+      </li>
+    </a>
+    <a ng-href="{{'#!/capture'}}" class="text-white cus-nav-link" onclick="setActive(this)">
+      <li class="nav-item active">
+        <div class="icon-container"> <i class="fa fa-camera-retro fa-inverse fa-3x nav-icon"> </i></div>
+        <div class="text-container">CAPTURE</div>
+      </li>
+    </a>
+    <a ng-href="{{'#!/replay'}}" class="text-white cus-nav-link" onclick="setActive(this)">
+      <li class="nav-item">
+        <div class="icon-container"> <i class="fa fa-play fa-inverse fa-3x nav-icon"> </i></div>
+        <div class="text-container">REPLAY</div>
+      </li>
+    </a>
+    <a ng-href="{{'#!/information'}}" class="text-white cus-nav-link" onclick="setActive(this)">
+      <li class="nav-item">
+        <div class="icon-container"> <i class="fa fa-info-circle fa-inverse fa-3x nav-icon"> </i></div>
+        <div class="text-container">INFORMATION</div>
+      </li>
+    </a>
+    <a ng-href="{{'#!/metrics'}}" class="text-white cus-nav-link" onclick="setActive(this)">
+      <li class="nav-item">
+        <div class="icon-container"> <i class="fa fa-bar-chart fa-inverse fa-3x nav-icon"> </i></div>
+        <div class="text-container">METRICS</div>
+      </li>
+    </a>
 </nav>
+<script>
+  function setActive(el) {
+    //remove active from previous classes
+    var curActive = document.getElementsByClassName('active');
+    for (var i = 0; i < curActive.length; i++) {
+      curActive[i].classList.remove('active');
+    }
+    //adding active to clicked element
+    var navitem = el.getElementsByClassName('nav-item')[0];
+    navitem.classList.add('active');
+  }
+</script>
 <div class="myview">
 
     <ng-view></ng-view>
