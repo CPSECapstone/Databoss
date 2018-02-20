@@ -89,6 +89,7 @@ def parseJson(jsonString, storage_limit):
            # print(gbVal)
             if (gbVal <= storageRem):
                 print('Storage limit has been met')
+                #call stop capture here
                 sys.exit()
 
 

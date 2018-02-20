@@ -167,7 +167,38 @@ def parseRow(row):
         'message': message
     }
 
-def startCapture(metricsBucket, captureBucket, database, startTime, endTime, metricFileName):
+def parseJson(jsonString, db_name, storage_limit, connection, startTime, endTime, captureBucket, metricsBucket, metricFileName):
+    freeSpace = (jsonString['Datapoints'][0]['Average'])/(10 **9)
+    if (storage_limit > freeSpace):
+        logger.error("ERROR: Not enough space for this.")
+        sys.exit()
+    else:
+        storageRem = freeSpace - storage_limit
+        for element in jsonString['Datapoints'][1:]:
+            gbVal = (element['Average'])/(10 ** 9)
+           # print(gbVal)
+            if (gbVal <= storageRem):
+                #print('Storage limit has been met')
+                stopCapture(db_name, connection, startTime, endTime, captureBucket, metricsBucket, metricFileName)
+
+
+#storage_limit should be in gb
+def checkStorageCacity(storage_limit, storage_max_db, db_name, connection, startTime, endTime,
+                       captureBucket, metricsBucket, metricFileName):
+    if (storage_limit > storage_max_db):
+        print("ERROR: Storage specified is greater than what", db_name, "has allocated")
+        sys.exit()
+    else:
+        parseJson(cloudwatch.get_metric_statistics(Namespace = 'AWS/RDS',
+                                    MetricName = 'FreeStorageSpace',
+                                    StartTime=datetime.utcnow() - timedelta(minutes=60),
+                                    EndTime=datetime.utcnow(),
+                                    Period= 300,
+                                    Statistics=['Average']
+                                        ), db_name, storage_limit, connection, startTime, endTime, captureBucket,
+                                    metricsBucket, metricFileName)
+
+def startCapture(metricsBucket, captureBucket, database, startTime, endTime, storage_limit, metricFileName):
     print("starting capture")
     username = rds_config.db_username
     password = rds_config.db_password
@@ -175,6 +206,11 @@ def startCapture(metricsBucket, captureBucket, database, startTime, endTime, met
     status_of_db = get_list_of_instances(db_name)['DBInstances'][0]['DBInstanceStatus']
     endpoint = get_list_of_instances(db_name)['DBInstances'][0]['Endpoint']
     difference = endTime - startTime
+    storage_limit = storage_limit
+
+    storage_max_db = get_list_of_instances(db_name)['DBInstances'][0]['AllocatedStorage']
+
+
 
     if endTime == None or difference.min < 1440:
         endTime = startTime + timedelta(minutes=1440)
@@ -193,7 +229,12 @@ def startCapture(metricsBucket, captureBucket, database, startTime, endTime, met
             logger.error("ERROR: Unexpected error: Could not connect to MySql instance.")
             sys.exit()
 
+    if storage_limit != None:
+        checkStorageCacity(storage_limit, storage_max_db, db_name, connection, startTime, endTime, captureBucket,
+        metricsBucket, metricFileName)
         #stopCapture(db_name, connection, startTime, endTime, captureBucket, metricsBucket, metricFileName)
+
+
 
 def stopCapture(db_name, conn, startTime, endTime, captureBucket, metricBucket, metricFileName):
     with conn.cursor() as cur:
