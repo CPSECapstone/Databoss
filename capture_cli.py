@@ -154,15 +154,40 @@ print("Adding value to database table 'Student'")
 
 numItems = 0
 
+def parseRow(row):
+    eventTime = row[0]
+    command = row[1]
+    query = row[2]
+
+    if hasattr(query, 'decode'):
+        query = query.decode()
+
+    message = command + ": " + query
+
+    return {
+        'timestamp': eventTime,
+        'message': message
+    }
+
 with conn.cursor() as cur:
     cur.execute("create table IF NOT EXISTS Student ( StudentID  int NOT NULL, Name varchar(255) NOT NULL, PRIMARY KEY (StudentID))")
     cur.execute('insert into Student (StudentID, Name) values('+generate_number(20)+', "'+generate_word(10)+'")')
+    cur.execute('SELECT event_time, command_type, argument FROM mysql.general_log')
+
+    tempFile = open('hello', 'w')
+    tempList = list(map(parseRow, cur))
+
+    for item in tempList:
+        tempFile.write("%s\n" % item)
+
     conn.commit()
-    cur.execute("select * from Student")
     #cur.execute('select * from mysql.general_log')
     for row in cur:
         numItems += 1
         print(row)
+
+
+s3.meta.client.upload_file(tempFile.name, captureReplayBucket, tempFile.name)
 
 print(str(numItems) + " items exist in your RDS MySQL table")
 
