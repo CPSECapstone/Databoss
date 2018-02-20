@@ -179,7 +179,7 @@ def startCapture(metricsBucket, captureBucket, database, startTime, endTime, met
     if endTime == None or difference.min < 1440:
         endTime = startTime + timedelta(minutes=1440)
 
-    time.sleep((endTime - startTime).seconds)
+    #time.sleep((endTime - startTime).seconds)
 
     if status_of_db != "available":
         rds.start_db_instance(
@@ -193,7 +193,7 @@ def startCapture(metricsBucket, captureBucket, database, startTime, endTime, met
             logger.error("ERROR: Unexpected error: Could not connect to MySql instance.")
             sys.exit()
 
-        stopCapture(db_name, connection, startTime, endTime, captureBucket, metricsBucket, metricFileName)
+        #stopCapture(db_name, connection, startTime, endTime, captureBucket, metricsBucket, metricFileName)
 
 def stopCapture(db_name, conn, startTime, endTime, captureBucket, metricBucket, metricFileName):
     with conn.cursor() as cur:
