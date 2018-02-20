@@ -84,19 +84,24 @@ app.controller('capture', function ($scope, $location, $uibModal, $http) {
     $scope.startCapture = function () {
         $http({
             method: 'POST',
-
             url: 'capture/startCapture',
             headers: {
                 'Content-Type' : 'application/json'
             },
             data : {
+                'captureName' : $('#captureName').val(),
                 'captureBucket' : $('#crBucket').val(),
                 'metricsBucket' : $('#metricsBucket').val(),
-                'database' : $('#dbSelect').val(),
+                'database' : 'hard-coded-db',
+                //'database' : $('#dbSelect').val(),
+                'captureMode' : $('input[name=mode]:checked').val(),
+                'startDate' : $('#startDate').val(),
+                'endDate' : $('#endDate').val(),
                 'startTime' : $('#startTime').val(),
                 'endTime' : $('#endTime').val(),
             }
         });
+
         // code to turn on DB logging goes here
         console.log("---- STARTING CAPTURE ----")
         $location.path('/progress');

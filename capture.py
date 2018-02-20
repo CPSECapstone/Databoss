@@ -11,6 +11,7 @@ from datetime import timedelta
 from datetime import datetime
 from time import mktime
 import rds_config
+import modelsQuery
 
 VOWELS = "aeiou"
 CONSONANTS = "".join(set(string.ascii_lowercase) - set(VOWELS))
@@ -159,8 +160,7 @@ def parseRow(row):
 
     message = command + ": " + query
 
-def startCapture(metricsBucket, captureBucket, database, startTime, endTime, metricFileName):
-    print("starting capture")
+def startCapture(captureName, captureBucket, metricsBucket, databaseName, captureMode, startDate, endDate, startTime, endTime, metricFileName):
     username = rds_config.db_username
     password = rds_config.db_password
     db_name = rds_config.db_name
@@ -185,7 +185,19 @@ def startCapture(metricsBucket, captureBucket, database, startTime, endTime, met
             logger.error("ERROR: Unexpected error: Could not connect to MySql instance.")
             sys.exit()
 
-        stopCapture(db_name, connection, startTime, endTime, captureBucket, metricsBucket, metricFileName)
+    # retrieve the id of the user specified database.
+    # modelsQuery.getDatabaseId(databaseName)
+
+    #retrieve the id of logfile. But where are we getting the logfile from?
+    # modelsQuery.getLogfileId(logfileName)
+
+    #retrieve the id of the metric?
+    # modelsQuery.getMetricfileId(metricFileName)
+
+    # adds capture instance to SQLite Db.
+    modelsQuery.addCapture(captureName, startTime, endTime, 1, 1, 1)
+
+    stopCapture(db_name, connection, startTime, endTime, captureBucket, metricsBucket, metricFileName)
 
 def stopCapture(db_name, conn, startTime, endTime, captureBucket, metricBucket, metricFileName):
     with conn.cursor() as cur:

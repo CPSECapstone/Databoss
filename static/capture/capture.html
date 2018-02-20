@@ -4,7 +4,7 @@
     <div class="center-block">
       <div class="form-group">
         <label for="captureName">Capture Name</label>
-        <input type="text" class="form-control" id="capture-name" aria-describedby="captureName">
+        <input type="text" class="form-control" id="captureName">
       </div>
       <div class="form-group">
         <label for="crBucket">Capture Replay Bucket:</label>
@@ -13,7 +13,6 @@
           <option ng-repeat="bucket in buckets" value="{{bucket}}">{{bucket}}</option>
         </select>
       </div>
-
       <div class="form-group">
         <label for="metricsBucket">Metrics Bucket:</label>
         <select class="form-control" id="metricsBucket">
@@ -21,31 +20,27 @@
           <option ng-repeat="bucket in buckets" value="{{bucket}}">{{bucket}}</option>
         </select>
       </div>
-
       <div class="form-group">
         <label for="dbSelect">Database:</label>
         <select class="form-control" id="dbSelect">
           <option disabled selected value> -- Select Database -- </option>
           <option ng-repeat="db in DBConnections" value="{{db.id}}">{{db.DBInstanceIdentifier}}</option>
         </select>
-        <!-- <div>
-        <button type="button" class="text-center btn btn-warning" ng-click="open()" style="display: inline-block;">Add DB Connection</button>
-      </div> -->
-    </div>
+      </div>
 
     <h5>Capture Mode:</h5>
-    <div class="btn-group" name="captureMode" data-toggle="buttons" ng-click="checkRadioButtons()" style="margin-bottom: 10px;">
+    <div class="btn-group" data-toggle="buttons" ng-click="checkRadioButtons()" style="margin-bottom: 10px;">
       <label class="btn btn-primary active">
-        <input type="radio" name="mode" autocomplete="off" checked > Interactive
+        <input type="radio" name="mode" value="interactive" checked > Interactive
       </label>
       <label class="btn btn-primary">
-        <input type="radio" name="mode" autocomplete="off"> Time-Constrained
+        <input type="radio" name="mode" value="timeConstrained"> Time-Constrained
       </label>
       <label class="btn btn-primary">
-        <input type="radio" name="mode" autocomplete="off"> Storage-Constrained
+        <input type="radio" name="mode" value="storageConstrained"> Storage-Constrained
       </label>
     </div>
-    <!-- <div class="date-container "> -->
+
     <div id="date-container" class="row">
       <span>Start Date: <input id="startDate" width="276" /> </span>
       <span>End Date: <input id="endDate" width="276" /> </span>
@@ -84,6 +79,6 @@
     <div class="text-center">
       <button type="button" ng-click="startCapture(metricsBucket.value)" class="btn-capture btn btn-success" >Capture</button>
     </div>
+    </div>
   </div>
-</div>
 </div>
