@@ -167,14 +167,46 @@ def parseRow(row):
         'message': message
     }
 
-def startCapture():
+def parseJson(jsonString, storage_limit):
+    freeSpace = (jsonString['Datapoints'][0]['Average'])/(10 **9)
+    if (storage_limit > freeSpace):
+        logger.error("ERROR: Not enough space for this.")
+        sys.exit()
+    else:
+        storageRem = freeSpace - storage_limit
+        for element in jsonString['Datapoints'][1:]:
+            gbVal = (element['Average'])/(10 ** 9)
+            #if (gbVal <= storageRem):   #Storage limit has been met
+                #CALL stopCapture()
+
+
+#storage_limit should be in gb
+def checkStorageCapacity(storage_limit, storage_max_db):
+    db_name = rds_config.db_name
+    if (storage_limit > storage_max_db):
+        print("ERROR: Storage specified is greater than what", db_name, "has allocated")
+        sys.exit()
+    else:
+        parseJson(cloudwatch.get_metric_statistics(Namespace = 'AWS/RDS',
+                                    MetricName = 'FreeStorageSpace',
+                                    StartTime=datetime.utcnow() - timedelta(minutes=60),
+                                    EndTime=datetime.utcnow(),
+                                    Period= 300,
+                                    Statistics=['Average']
+                                        ), storage_limit)
+
+def startCapture(storage_limit):
     db_name = rds_config.db_name
     status_of_db = get_list_of_instances(db_name)['DBInstances'][0]['DBInstanceStatus']
+    storage_max_db = get_list_of_instances(db_name)['DBInstances'][0]['AllocatedStorage']
 
     if status_of_db != "available":
         rds.start_db_instance(
             DBInstanceIdentifier=db_name
         )
+    else:
+        if storage_limit != None:
+            checkStorageCapacity(storage_limit, storage_max_db)
 
 def stopCapture(startTime, endTime, captureBucket, metricBucket, captureFileName, metricFileName):
     username = rds_config.db_username

@@ -72,6 +72,7 @@ def createBucket(bucketName):
     )
     #print("Created " + bucketName + " bucket")
 
+#used for creating queries for db
 def generate_word(wordLength):
     word = ""
     for i in range(wordLength):
