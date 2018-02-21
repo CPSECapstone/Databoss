@@ -19,6 +19,10 @@ app.controller('metrics', function($scope, $location, $http, Metrics) {
          console.log("remove from dataset");
       }
    };
+
+   $scope.toggleReplays = function(captureId) {
+      $('.collapse' + captureId).toggle();
+   };
 });
 
 var addMetricsToChart = function(chart, label, data, time) {
@@ -136,14 +140,4 @@ var getReplays = function($http, $scope) {
     }, function errorCallback(response) {
         console.log('error retrieving replays');
     })
-};
-
-  //get all of the replays associated with a capture and collapse only those.
-  //get the list of replays from the capture
-  //if the captureId == the id of the element, then toggle it.
-  //ISSUE: how do you access that element if you don't know what it's Id is?
-var toggleReplays = function(captureId) {
-    //loop through all replays, if the replay.captureID == captureId, then add it to the list of toggleableReplays.
-    toggleableReplays = []
-    $(collapse).toggle();
 };
