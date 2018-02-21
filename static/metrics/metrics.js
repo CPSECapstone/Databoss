@@ -137,3 +137,17 @@ var getReplays = function($http, $scope) {
         console.log('error retrieving replays');
     })
 };
+
+var toggleReplays = function(captureId) {
+  //get all of the replays associated with a capture and collapse only those.
+  //get the list of replays from the capture
+  //if the captureId == the id of the element, then collapse it.
+  //ISSUE: how do you access that element if you don't know what it's Id is?
+
+  if (document.getElementById("collapse").style.display == 'none') {
+    document.getElementById("collapse").style.display = '';
+  }
+  else {
+    document.getElementById("collapse").style.display = 'none';
+  }
+};
