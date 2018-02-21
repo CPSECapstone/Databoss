@@ -138,16 +138,12 @@ var getReplays = function($http, $scope) {
     })
 };
 
-var toggleReplays = function(captureId) {
   //get all of the replays associated with a capture and collapse only those.
   //get the list of replays from the capture
-  //if the captureId == the id of the element, then collapse it.
+  //if the captureId == the id of the element, then toggle it.
   //ISSUE: how do you access that element if you don't know what it's Id is?
-
-  if (document.getElementById("collapse").style.display == 'none') {
-    document.getElementById("collapse").style.display = '';
-  }
-  else {
-    document.getElementById("collapse").style.display = 'none';
-  }
+var toggleReplays = function(captureId) {
+    //loop through all replays, if the replay.captureID == captureId, then add it to the list of toggleableReplays.
+    toggleableReplays = []
+    $(collapse).toggle();
 };

@@ -11,8 +11,8 @@
         </tr>
       </thead>
       <tbody ng-repeat="capture in captures">
-        <tr>
-            <th onclick=toggleReplays({{capture.id}})>{{capture.name}}</th>
+        <tr onclick=toggleReplays({{capture.id}})>
+            <th>{{capture.name}}</th>
             <td>{{capture.date}}</td>
             <td>
                 <input type="checkbox" ng-model="captureSelection"
@@ -22,12 +22,13 @@
         <!-- only collapsing the first replay instead of all of the replays -->
         <!-- need to have this happen for every single replay, each replay needs to have it's own unique number and then
         the js will loop through all of the -->
-        <tr  ng-repeat="replay in replays" ng-if="replay.captureId == capture.id">
+        <tr id="collapse" + replayId ng-repeat="replay in replays" ng-if="replay.captureId == capture.id">
             <td>{{replay.name}}</td>
             <td>{{replay.date}}</td>
             <td><input type="checkbox" ng-model="replaySelection"
               ng-change="updateSelection('replay', replay.name, replay.id, replaySelection)"></td>
         </tr>
+      </tbody>
     </table>
   </div>
   <div class="chartWrapper">
