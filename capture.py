@@ -167,70 +167,71 @@ def parseRow(row):
         'message': message
     }
 
-def startCapture(metricsBucket, captureBucket, database, startTime, endTime, metricFileName):
-    print("starting capture")
-    username = rds_config.db_username
-    password = rds_config.db_password
+def startCapture():
     db_name = rds_config.db_name
     status_of_db = get_list_of_instances(db_name)['DBInstances'][0]['DBInstanceStatus']
-    endpoint = get_list_of_instances(db_name)['DBInstances'][0]['Endpoint']
-    difference = endTime - startTime
-
-    if endTime == None or difference.min < 1440:
-        endTime = startTime + timedelta(minutes=1440)
-
-    #time.sleep((endTime - startTime).seconds)
 
     if status_of_db != "available":
         rds.start_db_instance(
             DBInstanceIdentifier=db_name
         )
 
-    else:
+def stopCapture(startTime, endTime, captureBucket, metricBucket, captureFileName, metricFileName):
+    username = rds_config.db_username
+    password = rds_config.db_password
+    db_name = rds_config.db_name
+    endpoint = get_list_of_instances(db_name)['DBInstances'][0]['Endpoint']['Address']
+    status_of_db = get_list_of_instances(db_name)['DBInstances'][0]['DBInstanceStatus']
+
+
+    if status_of_db == "available":
         try:
-            connection = pymysql.connect(host=endpoint, user=username, passwd=password, db=db_name, connect_timeout=5)
+            conn = pymysql.connect(host=endpoint, user=username, passwd=password, db=db_name, connect_timeout=5)
         except:
             logger.error("ERROR: Unexpected error: Could not connect to MySql instance.")
             sys.exit()
+        with conn.cursor() as cur:
+            cur.execute("""SELECT event_time, command_type, argument FROM mysql.general_log\
+                            WHERE event_time BETWEEN '%s' AND '%s'""" % (startTime, endTime))
+            logfile = list(map(parseRow, cur))
 
-        #stopCapture(db_name, connection, startTime, endTime, captureBucket, metricsBucket, metricFileName)
+            conn.close()
 
-def stopCapture(db_name, conn, startTime, endTime, captureBucket, metricBucket, metricFileName):
-    with conn.cursor() as cur:
-        cur.execute('SELECT event_time, command_type, argument FROM mysql.general_log '
-                    'WHERE event_time > %s AND event_time < %s' % (startTime, endTime))
-        logfile = list(map(parseRow, cur))
+        outfile = open(captureFileName, 'w')
+        for item in logfile:
+            outfile.write("%s\n" % item)
 
-    s3.meta.client.upload_file(logfile.name, captureBucket, logfile.name)
+        s3.meta.client.upload_file(outfile.name, captureBucket, outfile.name)
+        if os.path.exists(captureFileName):
+            os.remove(captureFileName)
 
-    sendMetrics(db_name, metricBucket, metricFileName)
+        sendMetrics(metricBucket, metricFileName)
 
 
-def sendMetrics(db_name, metricBucket, metricFileName):
+def sendMetrics(metricBucket, metricFileName):
     dlist = []
 
-    logger.log("CPU Utilization: ")
     dlist.append(cloudwatch.get_metric_statistics(Namespace="AWS/RDS",
                                                   Statistics=['Average'],
                                                   StartTime=datetime.utcnow() - timedelta(minutes=60),
                                                   EndTime=datetime.utcnow(),
                                                   Period=300,
                                                   MetricName='CPUUtilization'))
-    logger.log("Read: ")
+
     dlist.append(cloudwatch.get_metric_statistics(Namespace="AWS/RDS",
                                                   Statistics=['Average'],
                                                   StartTime=datetime.utcnow() - timedelta(minutes=60),
                                                   EndTime=datetime.utcnow(),
                                                   Period=300,
                                                   MetricName='ReadIOPS'))
-    logger.log("Write: ")
+
     dlist.append(cloudwatch.get_metric_statistics(Namespace="AWS/RDS",
                                                   Statistics=['Average'],
                                                   StartTime=datetime.utcnow() - timedelta(minutes=60),
                                                   EndTime=datetime.utcnow(),
                                                   Period=300,
                                                   MetricName='WriteIOPS'))
-    logger.log("Memory: ")
+
     dlist.append(cloudwatch.get_metric_statistics(Namespace="AWS/RDS",
                                                   Statistics=['Average'],
                                                   StartTime=datetime.utcnow() - timedelta(minutes=60),
@@ -248,6 +249,8 @@ def sendMetrics(db_name, metricBucket, metricFileName):
         metricFileOpened.write(json.dumps(dlist, cls=MyEncoder))
 
     s3.meta.client.upload_file(metricFileOpened.name, metricBucket, metricFileOpened.name)
+    if os.path.exists(metricFileName):
+        os.remove(metricFileName)
 
 
 # configures aws credentials when app starts so they don't have to be input manually

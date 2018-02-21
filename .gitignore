@@ -9,6 +9,7 @@ database.db
 .cache/
 
 credentials.json
+rds_config.py
 
 # Elastic Beanstalk Files
 .elasticbeanstalk/*
