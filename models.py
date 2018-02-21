@@ -3,9 +3,8 @@ from web_app import db
 
 class DBConnection(db.Model):
     __tablename__ = "dbconnection"
-    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     dialect = db.Column(db.String(25))
-    name = db.Column(db.String(100))
+    name = db.Column(db.String(100), primary_key=True)
     host = db.Column(db.String(100))
     port = db.Column(db.Integer)
     database = db.Column(db.String(100))
@@ -81,33 +80,36 @@ class Logfile(db.Model):
         self.file = file
 
 class Capture(db.Model):
-    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    name = db.Column(db.String(100))
+    name = db.Column(db.String(100), primary_key=True)
     startTime = db.Column(db.DateTime)
     endTime = db.Column(db.DateTime)
-    dbId = db.Column(db.Integer, db.ForeignKey('dbconnection.id'), nullable=False)
-    logfileId = db.Column(db.Integer, db.ForeignKey('logfile.id'), nullable=False)
-    metricId = db.Column(db.Integer, db.ForeignKey('metric.id'), nullable=False)
+    captureBucket = db.Column(db.String(100))
+    metricsBucket = db.Column(db.String(100))
+    dbName = db.Column(db.String(100), db.ForeignKey('dbconnection.name'), nullable=False)
+    logfileId = db.Column(db.Integer, db.ForeignKey('logfile.id'), nullable=False, autoincrement=True)
+    metricId = db.Column(db.Integer, db.ForeignKey('metric.id'), nullable=False, autoincrement=True)
 
     @property
     def serialize(self):
         return {
-            'id': self.id,
             'name': self.name,
             'startTime': self.startTime,
             'endTime': self.endTime,
+            'captureBucket': self.captureBucket,
+            'metricsBucket': self.metricsBucket,
+            'dbName': self.dbName,
             'dbId': self.dbId,
             'logfileId': self.logfileId,
             'metricId': self.metricId
         }
 
-    def __init__(self, name, startTime, endTime, dbId, logfileId, metricId):
+    def __init__(self, name, startTime, endTime, captureBucket, metricsBucket, dbName):
         self.name = name
         self.startTime = startTime
         self.endTime = endTime
-        self.dbId = dbId
-        self.logfileId = logfileId
-        self.metricId = metricId
+        self.captureBucket = captureBucket
+        self.metricsBucket = metricsBucket
+        self.dbName = dbName
 
 class Replay(db.Model):
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)

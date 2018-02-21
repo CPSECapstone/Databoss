@@ -6,10 +6,14 @@ def createTable():
     models.db.session.commit()
 
 # Add capture to capture table with references to associated files
-def addCapture(name, startTime, endTime, dbId, logfileId, metricId):
-    new_cap = models.Capture(name, startTime, endTime, dbId, logfileId, metricId)
+def addCapture(name, startTime, endTime, captureBucket, metricsBucket, db_name):
+    new_cap = models.Capture(name, startTime, endTime, captureBucket, metricsBucket, db_name)
     models.db.session.add(new_cap)
     models.db.session.commit()
+
+def getCapture(captureName):
+    capture = models.Capture.query.get(captureName)
+    return capture
 
 # Return all captures in the capture table
 def getCaptureAll():
