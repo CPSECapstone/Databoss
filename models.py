@@ -3,9 +3,8 @@ from web_app import db
 
 class DBConnection(db.Model):
     __tablename__ = "dbconnection"
-    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     dialect = db.Column(db.String(25))
-    name = db.Column(db.String(100))
+    name = db.Column(db.String(100), primary_key=True)
     host = db.Column(db.String(100))
     port = db.Column(db.Integer)
     database = db.Column(db.String(100))
@@ -85,7 +84,7 @@ class Capture(db.Model):
     name = db.Column(db.String(100))
     startTime = db.Column(db.DateTime)
     endTime = db.Column(db.DateTime)
-    dbId = db.Column(db.Integer, db.ForeignKey('dbconnection.id'), nullable=False)
+    dbName = db.Column(db.String(100), db.ForeignKey('dbconnection.name'), nullable=False)
     logfileId = db.Column(db.Integer, db.ForeignKey('logfile.id'), nullable=False)
     metricId = db.Column(db.Integer, db.ForeignKey('metric.id'), nullable=False)
 
@@ -96,16 +95,17 @@ class Capture(db.Model):
             'name': self.name,
             'startTime': self.startTime,
             'endTime': self.endTime,
-            'dbId': self.dbId,
+            'dbName': self.dbName,
             'logfileId': self.logfileId,
             'metricId': self.metricId
         }
 
-    def __init__(self, name, startTime, endTime, dbId, logfileId, metricId):
+    def __init__(self, id, name, startTime, endTime, dbName, logfileId, metricId):
+        self.id = id
         self.name = name
         self.startTime = startTime
         self.endTime = endTime
-        self.dbId = dbId
+        self.dbName = dbName
         self.logfileId = logfileId
         self.metricId = metricId
 
@@ -114,7 +114,7 @@ class Replay(db.Model):
     name = db.Column(db.String(100))
     startTime = db.Column(db.DateTime)
     endTime = db.Column(db.DateTime)
-    dbId = db.Column(db.Integer, db.ForeignKey('dbconnection.id'), nullable=False)
+    dbName = db.Column(db.String(100), db.ForeignKey('dbconnection.name'), nullable=False)
     logfileId = db.Column(db.Integer, db.ForeignKey('logfile.id'), nullable=False)
     metricId = db.Column(db.Integer, db.ForeignKey('metric.id'), nullable=False)
     captureId = db.Column(db.Integer, db.ForeignKey('capture.id'), nullable=False)
@@ -126,17 +126,18 @@ class Replay(db.Model):
             'name': self.name,
             'startTime': self.startTime,
             'endTime': self.endTime,
-            'dbId': self.dbId,
+            'dbName': self.dbName,
             'logfileId': self.logfileId,
             'metricId': self.metricId,
             'captureId': self.captureId
         }
 
-    def __init__(self, name, startTime, endTime, dbId, logfileId, metricId, captureId):
+    def __init__(self, id, name, startTime, endTime, dbName, logfileId, metricId, captureId):
+        self.id = id
         self.name = name
         self.startTime = startTime
         self.endTime = endTime
-        self.dbId = dbId
+        self.dbName = dbName
         self.logfileId = logfileId
         self.metricId = metricId
         self.captureId = captureId

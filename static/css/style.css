@@ -5,6 +5,10 @@
   padding-left: 10px;
 }
 
+body {
+  background-color: #333333;
+  color: white;
+}
 .tableWrapper {
     padding-left: 10px;
 }
@@ -21,6 +25,8 @@
   font-size: 1.5em;
   padding-top: 15px;
   padding-bottom:15px;
+  text-align: center;
+  margin-left:15px;
 }
 /* This is the 'MyCRT' logo text */
 /* a.navbar-brand.text-white {
@@ -31,10 +37,11 @@
 .nav-container {
   /* border: 1px solid blue; */
   position: fixed;
-  width: 200px;
+  width: 132px;
   float: left;
   height: 1000px;
-  background-color: RGB(51, 51, 51);
+  /* background-color: #2A2A2A; */
+  background-color: #222222;
 }
 /* Took out the horizontal nav for now  */
 /* .horizontal-nav {
@@ -49,9 +56,11 @@
   height: 30px;
   width: 20px
 }
+
 h1 {
   padding: 40px 70px 20px;
 }
+
 .myview {
   /* border: 2px solid green; */
   margin-left: 200px;
@@ -61,16 +70,39 @@ h1 {
 .nav-item {
   /* border: 2px solid green; */
   /* border: 1px solid red; */
-  width: 200px;
-  padding: 20px;
-  padding-left: 20px;
+  width: 132px;
+  padding: 25px;
   font-style: white;
 }
 
 .cus-nav-link {
   /* border: 1px solid green; */
-  margin-left: 10px;
+  /* margin-left: 10px; */
+  font-size: 12px;
 }
-.h5 {
-  margin-bottom: 0;
+
+.cus-nav-link:hover {
+  text-decoration: none;
+}
+
+.icon-container {
+  /* border: 1px solid purple; */
+  margin: auto;
+  text-align: center;
+}
+
+.text-container {
+  /* border: 1px solid green; */
+  margin-top: 10px;
+  text-align: center;
+}
+
+.nav-item:hover {
+  /* border: 1px solid green; */
+  background-color: #111111;
+}
+
+.nav-item.active {
+  /* border: 1px solid green; */
+  background-color: #111111;
 }

@@ -26,18 +26,18 @@ def sqlite_setup():
     conn = sqlite3.connect('database.db')
     conn.close()
 
-
     # TODO remove db additions here. for testing purposes only
+
     db.drop_all()
     db.create_all()
 
-    cap.add("Capture1", datetime(2018, 2, 5, 1, 1, 1), datetime(2018, 2, 5, 1, 1, 1), 1, 1, 1)
-    replay.add("Replay1", datetime(2018, 2, 5, 1, 1, 1), datetime(2018, 2, 5, 1, 1, 1), 1, 1, 1, 1)
-    replay.add("Replay2", datetime(2018, 2, 5, 1, 1, 1), datetime(2018, 2, 5, 1, 1, 1), 1, 1, 1, 1)
+    cap.add(1, "Capture1", datetime(2018, 2, 5, 1, 1, 1), datetime(2018, 2, 5, 1, 1, 1), "myRDS1", 1, 1)
+    replay.add(1, "Replay1", datetime(2018, 2, 5, 1, 1, 1), datetime(2018, 2, 5, 1, 1, 1), "myRDS2", 1, 1, 1)
+    replay.add(2, "Replay2", datetime(2018, 2, 5, 1, 1, 1), datetime(2018, 2, 5, 1, 1, 1), "myRDS3", 2, 2, 2)
 
-    cap.add("Capture2", datetime(2018, 2, 5, 1, 1, 1), datetime(2018, 2, 5, 1, 1, 1), 2, 2, 2)
-    replay.add("Replay3", datetime(2018, 2, 5, 1, 1, 1), datetime(2018, 2, 5, 1, 1, 1), 2, 2, 2, 2)
-    replay.add("Replay4", datetime(2018, 2, 5, 1, 1, 1), datetime(2018, 2, 5, 1, 1, 1), 2, 2, 2, 2)
+    cap.add(2, "Capture2", datetime(2018, 2, 5, 1, 1, 1), datetime(2018, 2, 5, 1, 1, 1), "myRDS4", 2, 2)
+    replay.add(3, "Replay3", datetime(2018, 2, 5, 1, 1, 1), datetime(2018, 2, 5, 1, 1, 1), "myRDS5", 3, 3, 3)
+    replay.add(4, "Replay4", datetime(2018, 2, 5, 1, 1, 1), datetime(2018, 2, 5, 1, 1, 1), "myRDS6", 4, 4, 4)
 
     metrics.add("Metrics1", "crt-metrics-test", "metric-file.txt")
     metrics.add("Metrics2", "crt-metrics-test", "metric-file-2.txt")

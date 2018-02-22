@@ -6,8 +6,8 @@ def createTable():
     models.db.session.commit()
 
 # Add capture to capture table with references to associated files
-def addCapture(name, startTime, endTime, dbId, logfileId, metricId):
-    new_cap = models.Capture(name, startTime, endTime, dbId, logfileId, metricId)
+def addCapture(id, name, startTime, endTime, dbName, logfileID, metricID):
+    new_cap = models.Capture(id, name, startTime, endTime, dbName, logfileID, metricID)
     models.db.session.add(new_cap)
     models.db.session.commit()
 
@@ -17,10 +17,11 @@ def getCaptureAll():
     return cap_list
 
 # Add replay to replay table with references to associated files
-def addReplay(name, startTime, endTime, dbId, logfileId, metricId, captureId):
-    new_rep = models.Replay(name, startTime, endTime, dbId, logfileId, metricId, captureId)
+def addReplay(id, name, startTime, endTime, dbName, logfileId, metricId, captureId):
+    new_rep = models.Replay(id, name, startTime, endTime, dbName, logfileId, metricId, captureId)
     models.db.session.add(new_rep)
     models.db.session.commit()
+
 
 # Return all replays in the replay table
 def getReplayAll():
