@@ -30,7 +30,7 @@ app.factory('Metrics', function() {
             return memoryChart;
         },
         setMemoryChart : function(chart) {
-            memory = chart;
+            memoryChart = chart;
         },
     }
 });

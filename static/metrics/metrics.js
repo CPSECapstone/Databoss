@@ -6,6 +6,7 @@ app.controller('metrics', function($scope, $location, $http, Metrics) {
    Metrics.setCPUChart(createChart('cpuChart', 'CPU (Percent)', 'Time (seconds)'));
    Metrics.setReadIOChart(createChart('readIOChart', 'Read IO (count/second)', 'Time (seconds)'));
    Metrics.setWriteIOChart(createChart('writeIOChart', 'Write IO (count/second)', 'Time (seconds)'));
+   Metrics.setMemoryChart(createChart('memoryChart', 'Memory (bytes)', 'Time (seconds)'));
 
    getCaptures($http, $scope);
    getReplays($http, $scope);
@@ -86,7 +87,7 @@ var getMetrics = function($http, Metrics, name, type, id) {
     $http({
         method: 'GET',
         url: '/metrics/getMetrics?type=' + type + '&id=' + id,
-        nheaders: {
+        headers: {
             'Content-Type': 'application/json'
         }
     }).then(function successCallback(response) {
@@ -97,10 +98,13 @@ var getMetrics = function($http, Metrics, name, type, id) {
         var readIOTime = convertTimeArrayFromEpoch(response.data.readIOTime);
         var writeIO = response.data.writeIO;
         var writeIOTime = convertTimeArrayFromEpoch(response.data.writeIOTime);
+        var memory = response.data.memory;
+        var memoryTime = convertTimeArrayFromEpoch(response.data.memoryTime);
 
         addMetricsToChart(Metrics.getCPUChart(), name, cpu, cpuTime);
         addMetricsToChart(Metrics.getReadIOChart(), name, readIO, readIOTime);
         addMetricsToChart(Metrics.getWriteIOChart(), name, writeIO, writeIOTime);
+        addMetricsToChart(Metrics.getMemoryChart(), name, memory, memoryTime);
     }, function errorCallback(response) {
         console.log('error');
     });
