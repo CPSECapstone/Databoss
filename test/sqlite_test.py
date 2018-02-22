@@ -24,7 +24,7 @@ def testAddGetMetric():
     result = models.Metric.query.filter_by(name=name, bucket=bucket, file=file).count()
     assert result == 1
 
-    metric = modelsQuery.getMetric(1)
+    metric = modelsQuery.getMetricById(1)
     assert metric.name == name
     assert metric.bucket == bucket
     assert metric.file == file
@@ -37,7 +37,7 @@ def testAddGetLogfile():
     result = models.Logfile.query.filter_by(name=name, bucket=bucket, file=file).count()
     assert result == 1
 
-    log = modelsQuery.getLogfile(1)
+    log = modelsQuery.getLogfileById(1)
     assert log.name == name
     assert log.bucket == bucket
     assert log.file == file
