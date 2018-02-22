@@ -19,6 +19,10 @@ app.controller('metrics', function($scope, $location, $http, Metrics) {
          console.log("remove from dataset");
       }
    };
+
+   $scope.toggleReplays = function(captureId) {
+      $('.collapse' + captureId).toggle();
+   };
 });
 
 var addMetricsToChart = function(chart, label, data, time) {

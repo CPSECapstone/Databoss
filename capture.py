@@ -11,6 +11,7 @@ from datetime import timedelta
 from datetime import datetime
 from time import mktime
 import rds_config
+import modelsQuery
 
 VOWELS = "aeiou"
 CONSONANTS = "".join(set(string.ascii_lowercase) - set(VOWELS))
@@ -195,8 +196,7 @@ def checkStorageCapacity(storage_limit, storage_max_db):
                                     Statistics=['Average']
                                         ), storage_limit)
 
-def startCapture(storage_limit):
-    db_name = rds_config.db_name
+def startCapture(id, captureName, startTime, endTime, db_name, logfileId, metricId,  storage_limit):
     status_of_db = get_list_of_instances(db_name)['DBInstances'][0]['DBInstanceStatus']
     storage_max_db = get_list_of_instances(db_name)['DBInstances'][0]['AllocatedStorage']
 
@@ -208,7 +208,11 @@ def startCapture(storage_limit):
         if storage_limit != None:
             checkStorageCapacity(storage_limit, storage_max_db)
 
+    modelsQuery.addCapture(id, captureName, startTime, endTime, db_name, logfileId, metricId)
+
 def stopCapture(startTime, endTime, captureBucket, metricBucket, captureFileName, metricFileName):
+    #capture = modelsQuery.getCapture(aCapName)
+
     username = rds_config.db_username
     password = rds_config.db_password
     db_name = rds_config.db_name
