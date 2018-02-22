@@ -1,6 +1,22 @@
 <div>
   <h1> Home Screen </h1>
-  <div class="center-block text-center">
-    <button ng-click="goCapture()" type="button" class="btn btn-primary">Go to Capture</button>
-  </div>
+  <!--<div class="center-block text-center">-->
+    <!--<button ng-click="goCapture()" type="button" class="btn btn-primary">Go to Capture</button>-->
+  <!--</div>-->
+  <div class="tableWrapper">
+  <h4 class="text-center"> Currently Running Captures</h4>
+    <table class="table center-block">
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Date</th>
+        </tr>
+      </thead>
+      <tbody ng-repeat="capture in captures">
+        <tr>
+            <th>{{capture.name}}</th>
+            <td>{{capture.date}}</td>
+        </tr>
+      </tbody>
+    </table>
 </div>
