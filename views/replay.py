@@ -10,5 +10,5 @@ def getAllReplays():
     replays = Replay.query.all()
     return jsonify([i.serialize for i in replays])
 
-def add(id, name, startTime, endTime, dbName, logfileId, metricId, captureId):
-    modelsQuery.addReplay(id, name, startTime, endTime, dbName, logfileId, metricId, captureId)
+def add(name, startTime, endTime, dbName, logfileId, metricId, captureId):
+    modelsQuery.addReplay(name, startTime, endTime, dbName, logfileId, metricId, captureId)

@@ -10,8 +10,8 @@ def getAllCaptures():
     captures = Capture.query.all()
     return jsonify([i.serialize for i in captures])
 
-def add(id, name, startTime, endTime, dbName, logfileId, metricId):
-    modelsQuery.addCapture(id, name, startTime, endTime, dbName, logfileId, metricId)
+def add(name, startTime, endTime, dbName, logfileId, metricId):
+    modelsQuery.addCapture(name, startTime, endTime, dbName, logfileId, metricId)
 
 
 @capture_api.route('/startCapture', methods=["POST"])

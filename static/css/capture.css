@@ -2,10 +2,14 @@
   margin-bottom: 20px;
 }
 
-#time-container {
+#time-container, #storage-container {
   margin-bottom: 20px;
 }
 
 .gj-calendar-bootstrap {
   color: black !important;
+}
+
+#capture-mode-bar {
+  margin-bottom: 10px;
 }
