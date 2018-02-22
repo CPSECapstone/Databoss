@@ -126,7 +126,7 @@ class Replay(db.Model):
             'name': self.name,
             'startTime': self.startTime,
             'endTime': self.endTime,
-            'dbName': self.dbId,
+            'dbName': self.dbName,
             'logfileId': self.logfileId,
             'metricId': self.metricId,
             'captureId': self.captureId
