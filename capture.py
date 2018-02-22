@@ -196,7 +196,7 @@ def checkStorageCapacity(storage_limit, storage_max_db):
                                     Statistics=['Average']
                                         ), storage_limit)
 
-def startCapture(captureName, startTime, endTime, captureBucket, metricBucket, storage_limit, db_name):
+def startCapture(id, captureName, startTime, endTime, db_name, logfileId, metricId,  storage_limit):
     status_of_db = get_list_of_instances(db_name)['DBInstances'][0]['DBInstanceStatus']
     storage_max_db = get_list_of_instances(db_name)['DBInstances'][0]['AllocatedStorage']
 
@@ -208,7 +208,7 @@ def startCapture(captureName, startTime, endTime, captureBucket, metricBucket, s
         if storage_limit != None:
             checkStorageCapacity(storage_limit, storage_max_db)
 
-    modelsQuery.addCapture(captureName, startTime, endTime, captureBucket, metricBucket, db_name)
+    modelsQuery.addCapture(id, captureName, startTime, endTime, db_name, logfileId, metricId)
 
 def stopCapture(startTime, endTime, captureBucket, metricBucket, captureFileName, metricFileName):
     #capture = modelsQuery.getCapture(aCapName)
