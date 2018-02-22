@@ -43,16 +43,14 @@ def testAddGetLogfile():
     assert log.file == file
 
 def testAddCapture():
-    captureID = 1
     name = 'capName'
     startTime = datetime.datetime(2018, 1, 31, 10, 10, 10)
     endTime = datetime.datetime(2018, 1, 31, 11, 11, 11)
     dbName = 'myrds'
     logfileId = 1
     metricId = 1
-    modelsQuery.addCapture(captureID, name, startTime, endTime, dbName, logfileId, metricId)
+    modelsQuery.addCapture(name, startTime, endTime, dbName, logfileId, metricId)
     result = models.Capture.query.get(1)
-    assert result.id == captureID
     assert result.name == name
     assert result.startTime == startTime
     assert result.endTime == endTime
@@ -63,19 +61,17 @@ def testAddCapture():
 def testGetCapture():
     list = modelsQuery.getCaptureAll().count()
     assert list == 1
-    captureID = 2
     name = 'capName2'
     dbName = 'myrds'
     startTime = datetime.datetime(2018, 1, 31, 12, 12, 12)
     endTime = datetime.datetime(2018, 1, 31, 12, 13, 13)
     logfileId = 1
     metricId = 1
-    modelsQuery.addCapture(captureID, name, startTime, endTime, dbName, logfileId, metricId)
+    modelsQuery.addCapture(name, startTime, endTime, dbName, logfileId, metricId)
     list = modelsQuery.getCaptureAll().count()
     assert list == 2
 
 def testAddReplay():
-    id = 1
     name = 'repName'
     startTime = datetime.datetime(2018, 1, 31, 10, 10, 10)
     endTime = datetime.datetime(2018, 1, 31, 11, 11, 11)
@@ -83,9 +79,8 @@ def testAddReplay():
     logfileId = 1
     metricId = 1
     captureId = 1
-    modelsQuery.addReplay(id, name, startTime, endTime, dbName, logfileId, metricId, captureId)
+    modelsQuery.addReplay(name, startTime, endTime, dbName, logfileId, metricId, captureId)
     result = models.Replay.query.get(1)
-    assert result.id == id
     assert result.name == name
     assert result.startTime == startTime
     assert result.endTime == endTime
@@ -99,14 +94,13 @@ def testGetReplay():
     assert list == 1
 
     name = 'repName'
-    replayID = 2
     startTime = datetime.datetime(2018, 1, 31, 12, 12, 12)
     endTime = datetime.datetime(2018, 1, 31, 12, 13, 13)
     dbName = "rds2"
     logfileId = 2
     metricId = 2
     captureId = 2
-    modelsQuery.addReplay(replayID, name, startTime, endTime, dbName, logfileId, metricId, captureId)
+    modelsQuery.addReplay(name, startTime, endTime, dbName, logfileId, metricId, captureId)
     list = modelsQuery.getReplayAll().count()
     assert list == 2
 
