@@ -1,8 +1,7 @@
 from capture import capture_api
 from flask import jsonify, request
 from models import Capture
-from capture import startCapture
-from web_app import db
+from capture import startCapture, stopCapture
 import modelsQuery
 
 @capture_api.route('/<id>')
@@ -34,3 +33,20 @@ def captureRoute():
     endTime = data['endTime']
 
     startCapture(captureName, captureBucket, metricsBucket, dbName, startDate, endDate, startTime, endTime, None)
+
+@capture_api.route('/endCapture', methods=["POST"])
+def endCapture():
+    data = request.json
+
+    captureId = data.get('id')
+    captureName = data.get('name')
+    dbName = data.get('dbName')
+
+    startTime = data.get('startTime')
+    endTime = data.get('endTime')
+    captureBucket = data.get('captureBucket')
+    metricBucket = data.get('metricBucket')
+    captureFileName = data.get('captureFileName')
+    metricFileName = data.get('metricFileName')
+
+    stopCapture(startTime, endTime, captureId, captureBucket, metricBucket, captureFileName, metricFileName)

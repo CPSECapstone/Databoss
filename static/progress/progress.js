@@ -18,8 +18,19 @@ app.controller('progress', function($scope, $location, $http) {
     });
 
     $scope.endCapture = function () {
-      // Code to end capture goes here - ng click is set up
-      console.log("---- Ending Capture ----")
-      $location.path('/metrics');
+        $http({
+            method: 'POST',
+            url: 'capture/endCapture',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            data: $scope.capture
+        }).then(function successCallback(response) {
+            console.log('success');
+
+            $location.path('/metrics');
+        }, function errorCallback(response) {
+            console.log('error retrieving replays');
+        });
     }
 });
