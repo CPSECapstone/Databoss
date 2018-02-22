@@ -67,11 +67,16 @@ def getMetricById(metricId):
     m = models.Metric.query.get(metricId)
     return m
 
+def getMetricByFileName(metricFileName):
+    id = models.Metric.query.get(metricFileName)
+    return id
+
 # Add logfile to the logfile table
 def addLogfile(name, bucket, file):
     new_logfile = models.Logfile(name, bucket, file)
     models.db.session.add(new_logfile)
     models.db.session.commit()
+
 
 # Return logfile associated with provided capture or replay
 def getLogfileById(logfileId):
@@ -81,3 +86,7 @@ def getLogfileById(logfileId):
 def getLogfileByName(logfileName):
     log = models.Logfile.query.filter_by(name=logfileName).first()
     return log
+
+def getLogFileIdByNameAndBucket(logfileName, captureBucket):
+    id = models.Logfile.query.filter_by(name=logfileName, bucket=captureBucket).first()
+    return id
