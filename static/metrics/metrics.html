@@ -11,8 +11,8 @@
         </tr>
       </thead>
       <tbody ng-repeat="capture in captures">
-        <tr ng-click=toggleReplays(capture.id)>
-            <th>{{capture.name}}</th>
+        <tr>
+            <th ng-click=toggleReplays(capture.id)>{{capture.name}}</th>
             <td>{{capture.date}}</td>
             <td>
                 <input type="checkbox" ng-model="captureSelection"
@@ -23,17 +23,25 @@
             <td>{{replay.name}}</td>
             <td>{{replay.date}}</td>
             <td><input type="checkbox" ng-model="replaySelection"
-              ng-change="updateSelection('replay', replay.name, replay.id, replaySelection)"></td>
-        </tr>
-      </tbody>
-    </table>
-  </div>
-  <div class="chartWrapper">
-    <h2>CPU</h2>
-    <canvas id="cpuChart" width="1600" height="900"></canvas>
-  </div>
-  <div class="chartWrapper">
-    <h2>Read IO</h2>
-    <canvas id="readIOChart" width="1600" height="900"></canvas>
-  </div>
+                       ng-change="updateSelection('replay', replay.name, replay.id, replaySelection)"></td>
+         </tr>
+         </tbody>
+      </table>
+   </div>
+   <div class="chartWrapper">
+      <h2>CPU</h2>
+      <canvas id="cpuChart" width="1600" height="900"></canvas>
+   </div>
+   <div class="chartWrapper">
+      <h2>Read IO</h2>
+      <canvas id="readIOChart" width="1600" height="900"></canvas>
+   </div>
+   <div class="chartWrapper">
+      <h2>Write IO</h2>
+      <canvas id="writeIOChart" width="1600" height="900"></canvas>
+   </div>
+   <div class="chartWrapper">
+      <h2>Memory</h2>
+      <canvas id="memoryChart" width="1600" height="900"></canvas>
+   </div>
 </div>

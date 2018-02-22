@@ -196,9 +196,11 @@ def checkStorageCapacity(storage_limit, storage_max_db):
                                     Statistics=['Average']
                                         ), storage_limit)
 
-def startCapture(id, captureName, startTime, endTime, db_name, logfileId, metricId,  storage_limit):
+def startCapture(captureName, captureBucket, metricsBucket, db_name, startTime, endTime, storage_limit):
     status_of_db = get_list_of_instances(db_name)['DBInstances'][0]['DBInstanceStatus']
     storage_max_db = get_list_of_instances(db_name)['DBInstances'][0]['AllocatedStorage']
+    captureFileName = captureName + " " + "capture file"
+    metricFileName = captureName + " " + "metric file"
 
     if status_of_db != "available":
         rds.start_db_instance(
@@ -208,10 +210,18 @@ def startCapture(id, captureName, startTime, endTime, db_name, logfileId, metric
         if storage_limit != None:
             checkStorageCapacity(storage_limit, storage_max_db)
 
-    modelsQuery.addCapture(id, captureName, startTime, endTime, db_name, logfileId, metricId)
+    modelsQuery.addLogfile(captureFileName, captureBucket, None)
+    modelsQuery.addMetric(metricFileName, metricsBucket, None)
 
-def stopCapture(startTime, endTime, captureBucket, metricBucket, captureFileName, metricFileName):
-    #capture = modelsQuery.getCapture(aCapName)
+    metricID = modelsQuery.getMetricByFileName(metricFileName)
+    logfileID = modelsQuery.getLogFileIdByNameAndBucket(captureFileName, captureBucket)
+    #modelsQuery.addDBConnection()
+    modelsQuery.addCapture(captureName, startTime, endTime, db_name, logfileID, metricID)
+
+def stopCapture(startTime, endTime, captureID, captureBucket, metricBucket, captureFileName, metricFileName):
+    #captureName = modelsQuery.getCapture(captureID)
+    #captureFileName = captureName + " " + "log file"
+    #metricFileName = captureName + " " + "metric file"
 
     username = rds_config.db_username
     password = rds_config.db_password

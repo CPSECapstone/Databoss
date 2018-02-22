@@ -100,8 +100,7 @@ class Capture(db.Model):
             'metricId': self.metricId
         }
 
-    def __init__(self, id, name, startTime, endTime, dbName, logfileId, metricId):
-        self.id = id
+    def __init__(self, name, startTime, endTime, dbName, logfileId, metricId):
         self.name = name
         self.startTime = startTime
         self.endTime = endTime
@@ -126,14 +125,13 @@ class Replay(db.Model):
             'name': self.name,
             'startTime': self.startTime,
             'endTime': self.endTime,
-            'dbName': self.dbId,
+            'dbName': self.dbName,
             'logfileId': self.logfileId,
             'metricId': self.metricId,
             'captureId': self.captureId
         }
 
-    def __init__(self, id, name, startTime, endTime, dbName, logfileId, metricId, captureId):
-        self.id = id
+    def __init__(self, name, startTime, endTime, dbName, logfileId, metricId, captureId):
         self.name = name
         self.startTime = startTime
         self.endTime = endTime

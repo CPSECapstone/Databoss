@@ -4,6 +4,55 @@ var app = angular.module('MyCRT');
 //app.controller('capture', ['$scope', '$location', '$modal', function($scope, $location, $modal) {
 app.controller('capture', function ($scope, $location, $uibModal, $http) {
     console.log("in capture");
+
+    // setting variables
+    const captureModeBar = document.getElementById('capture-mode-bar');
+    const dateContainer = $('#date-container');
+    const timeContainer = $('#time-container');
+    const storageContainer = $('#storage-container');
+    var selectedMode = "";
+
+
+    //setting an observer for the captureModeBar to change input view when clicked
+    const hideButtons = function() {
+      console.log(arguments);
+      for (var i = 0; i < arguments.length; i++) {
+        arguments[i].hide();
+      }
+    }
+
+    const showButtons = function() {
+      console.log(arguments);
+      for (var i = 0; i < arguments.length; i++) {
+        arguments[i].show();
+      }
+    }
+
+    //setup
+    hideButtons(dateContainer, timeContainer, storageContainer);
+
+    $('input[name=mode]').on('change', function(event) {
+      selectedMode = $("input[name=mode]:checked").attr('id');
+      console.log("value " + selectedMode);
+      if (selectedMode === "capture-int") {
+        console.log("updating to interactive view");
+        hideButtons(dateContainer, timeContainer, storageContainer);
+      }
+      else if (selectedMode === "capture-time") {
+        console.log("updating to time constrained view");
+        showButtons(dateContainer, timeContainer);
+        hideButtons(storageContainer);
+      }
+      else if (selectedMode === "capture-storage") {
+        console.log("updating to storage view");
+        hideButtons(dateContainer, timeContainer);
+        showButtons(storageContainer);
+      }
+      else {
+        console.log("NO MODE SELECTED");
+      }
+    });
+
     $scope.open = function () {
         console.log('opening pop up');
         var modalInstance = $uibModal.open({
@@ -84,21 +133,39 @@ app.controller('capture', function ($scope, $location, $uibModal, $http) {
     $scope.startCapture = function () {
         $http({
             method: 'POST',
-
             url: 'capture/startCapture',
             headers: {
                 'Content-Type' : 'application/json'
             },
             data : {
+                'captureName' : $('#captureName').val(),
                 'captureBucket' : $('#crBucket').val(),
                 'metricsBucket' : $('#metricsBucket').val(),
-                'database' : $('#dbSelect').val(),
+                'database' : 'hard-coded-db',
+                //'database' : $('#dbSelect').val(),
+                'captureMode' : $('input[name=mode]:checked').val(),
+                'startDate' : $('#startDate').val(),
+                'endDate' : $('#endDate').val(),
                 'startTime' : $('#startTime').val(),
                 'endTime' : $('#endTime').val(),
             }
         });
+
         // code to turn on DB logging goes here
         console.log("---- STARTING CAPTURE ----")
         $location.path('/progress');
+    }
+
+    $scope.setStorageSize = function (id) {
+      console.log(id);
+      //clear active
+      if (id === "mb-button") {
+        document.getElementById(id).classList.add('active');
+        document.getElementById('gb-button').classList.remove('active');
+      }
+      else {
+        document.getElementById(id).classList.add('active');
+        document.getElementById('mb-button').classList.remove('active');
+      }
     }
 });
