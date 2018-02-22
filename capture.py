@@ -196,7 +196,7 @@ def checkStorageCapacity(storage_limit, storage_max_db):
                                     Statistics=['Average']
                                         ), storage_limit)
 
-def startCapture(captureName, captureBucket, metricsBucket, db_name, startTime, endTime, storage_limit):
+def startCapture(captureName, captureBucket, metricsBucket, db_name, startDate, endDate, startTime, endTime, storage_limit):
     status_of_db = get_list_of_instances(db_name)['DBInstances'][0]['DBInstanceStatus']
     storage_max_db = get_list_of_instances(db_name)['DBInstances'][0]['AllocatedStorage']
     captureFileName = captureName + " " + "capture file"
