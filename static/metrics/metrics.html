@@ -11,8 +11,8 @@
         </tr>
       </thead>
       <tbody ng-repeat="capture in captures">
-        <tr ng-click=toggleReplays(capture.id)>
-            <th>{{capture.name}}</th>
+        <tr>
+            <th ng-click=toggleReplays(capture.id)>{{capture.name}}</th>
             <td>{{capture.date}}</td>
             <td>
                 <input type="checkbox" ng-model="captureSelection"
