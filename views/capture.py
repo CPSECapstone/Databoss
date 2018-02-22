@@ -5,6 +5,11 @@ from capture import startCapture
 from web_app import db
 import modelsQuery
 
+@capture_api.route('/<id>')
+def getCapture(id):
+    capture = Capture.query.get(id)
+    return jsonify(capture.serialize)
+
 @capture_api.route('/getAll')
 def getAllCaptures():
     captures = Capture.query.all()

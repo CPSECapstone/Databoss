@@ -14,7 +14,7 @@
       </thead>
       <tbody ng-repeat="capture in captures">
         <tr>
-            <th>{{capture.name}}</th>
+            <th><a href="#!/progress?id={{capture.id}}">{{capture.name}}</a></th>
             <td>{{capture.date}}</td>
         </tr>
       </tbody>
