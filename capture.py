@@ -218,7 +218,7 @@ def startCapture(captureName, captureBucket, metricsBucket, db_name, startDate, 
     #modelsQuery.addDBConnection()
     modelsQuery.addCapture(captureName, startTime, endTime, db_name, logfileID, metricID)
 
-def stopCapture(startTime, endTime, captureID, captureBucket, metricBucket, captureFileName, metricFileName):
+def stopCapture(startTime, endTime, captureName, captureBucket, metricBucket, captureFileName, metricFileName):
     #captureName = modelsQuery.getCapture(captureID)
     #captureFileName = captureName + " " + "log file"
     #metricFileName = captureName + " " + "metric file"
