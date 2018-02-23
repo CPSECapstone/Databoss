@@ -77,7 +77,6 @@ def addLogfile(name, bucket, file):
     models.db.session.add(new_logfile)
     models.db.session.commit()
 
-
 # Return logfile associated with provided capture or replay
 def getLogfileById(logfileId):
     log = models.Logfile.query.get(logfileId)

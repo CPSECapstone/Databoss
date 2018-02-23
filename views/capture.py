@@ -1,12 +1,11 @@
 from capture import capture_api
 from flask import jsonify, request
-from models import Capture
 from capture import startCapture, stopCapture
 import modelsQuery
 
-@capture_api.route('/<id>')
-def getCapture(id):
-    capture = Capture.query.get(id)
+@capture_api.route('/<name>')
+def getCapture(name):
+    capture = modelsQuery.getCaptureByName(name)
     return jsonify(capture.serialize)
 
 @capture_api.route('/getAll')
