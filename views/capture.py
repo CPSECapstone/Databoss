@@ -21,10 +21,16 @@ def add(name, startTime, endTime, dbName, logfileId, metricId):
 
 @capture_api.route('/startCapture', methods=["POST"])
 def captureRoute():
-    data = request.data
-    metricsBucket = data[0]
-    captureBucket = data[1]
-    database = data[2]
-    startTime = data[3]
-    endTime = data[4]
-    startCapture(captureBucket, metricsBucket, database, startTime, endTime, " ")
+   data = request.json
+   print(data)
+   captureName = data['captureName']
+   captureBucket = data['captureBucket']
+   metricsBucket = data['metricsBucket']
+   dbName = data['database']
+   captureMode = data['captureMode']
+   startDate = data['startDate']
+   endDate = data['endDate']
+   startTime = data['startTime']
+   endTime = data['endTime']
+
+   startCapture(captureName, captureBucket, metricsBucket, dbName, startDate, endDate, startTime, endTime, None)

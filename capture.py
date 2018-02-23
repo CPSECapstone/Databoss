@@ -202,6 +202,9 @@ def startCapture(captureName, captureBucket, metricsBucket, db_name, startDate, 
     captureFileName = captureName + " " + "capture file"
     metricFileName = captureName + " " + "metric file"
 
+    startObj = datetime.combine(datetime.date(startDate), datetime.time(startTime))
+    endObj = datetime.combine(datetime.date(endDate), datetime.time(endTime))
+
     if status_of_db != "available":
         rds.start_db_instance(
             DBInstanceIdentifier=db_name
@@ -216,7 +219,7 @@ def startCapture(captureName, captureBucket, metricsBucket, db_name, startDate, 
     metricID = modelsQuery.getMetricByFileName(metricFileName)
     logfileID = modelsQuery.getLogFileIdByNameAndBucket(captureFileName, captureBucket)
     #modelsQuery.addDBConnection()
-    modelsQuery.addCapture(captureName, startTime, endTime, db_name, logfileID, metricID)
+    modelsQuery.addCapture(captureName, startObj, endObj, db_name, logfileID, metricID)
 
 def stopCapture(startTime, endTime, captureName, captureBucket, metricBucket, captureFileName, metricFileName):
     #captureName = modelsQuery.getCapture(captureID)
