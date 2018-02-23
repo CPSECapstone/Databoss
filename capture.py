@@ -202,11 +202,14 @@ def startCapture(captureName, captureBucket, metricsBucket, db_name, startDate, 
     captureFileName = captureName + " " + "capture file"
     metricFileName = captureName + " " + "metric file"
 
-    if (startDate == None and endDate == None and startTime == None and endTime == None):
+    if (startDate == "" and endDate == "" and startTime == "" and endTime == ""):
         startDate = datetime.now().date()
         endDate = datetime.now().date() + timedelta(days=1)
         startTime = datetime.now().time()
-        endTime = datetime.now().date() + timedelta(days=1)
+        endTime = datetime.now().time()
+
+    sTimeCombined = datetime.combine(startDate, startTime)
+    eTimeCombined = datetime.combine(endDate, endTime)
 
 
     if status_of_db != "available":
@@ -223,7 +226,7 @@ def startCapture(captureName, captureBucket, metricsBucket, db_name, startDate, 
     metricID = modelsQuery.getMetricByFileName(metricFileName)
     logfileID = modelsQuery.getLogFileIdByNameAndBucket(captureFileName, captureBucket)
     # modelsQuery.addDBConnection()
-    modelsQuery.addCapture(captureName, startTime, endTime, db_name, logfileID, metricID)
+    modelsQuery.addCapture(captureName, sTimeCombined, eTimeCombined, db_name, logfileID, metricID)
 
 def stopCapture(startTime, endTime, captureName, captureBucket, metricBucket, captureFileName, metricFileName):
     #captureName = modelsQuery.getCapture(captureID)
