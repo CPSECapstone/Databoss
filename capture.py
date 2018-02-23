@@ -202,6 +202,13 @@ def startCapture(captureName, captureBucket, metricsBucket, db_name, startDate, 
     captureFileName = captureName + " " + "capture file"
     metricFileName = captureName + " " + "metric file"
 
+    if (startDate == None and endDate == None and startTime == None and endTime == None):
+        startDate = datetime.now().date()
+        endDate = datetime.now().date() + timedelta(days=1)
+        startTime = datetime.now().time()
+        endTime = datetime.now().date() + timedelta(days=1)
+
+
     if status_of_db != "available":
         rds.start_db_instance(
             DBInstanceIdentifier=db_name
