@@ -16,7 +16,6 @@ class DBConnection(db.Model):
     def serialize(self):
         # """Return object data in easily serializeable format"""
         return {
-            'id': self.id,
             'dialect': self.dialect,
             'name': self.name,
             'host': self.host,
