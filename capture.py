@@ -226,12 +226,16 @@ def startCapture(captureName, captureBucket, metricsBucket, db_name, startDate, 
 
     modelsQuery.addLogfile(captureFileName, captureBucket, None)
     modelsQuery.addMetric(metricFileName, metricsBucket, None)
-
-    metricID = modelsQuery.getMetricByFileName(metricFileName)
+    print("Type of db_name: ")
+    print(type(db_name))
+    metricID = modelsQuery.getMetricIDByNameAndBucket(metricFileName, metricsBucket)
     logfileID = modelsQuery.getLogFileIdByNameAndBucket(captureFileName, captureBucket)
     modelsQuery.addDBConnection(dbDialect, db_name, endpoint, port, "", username)
-    dbNames = modelsQuery.getDBConnectionByName(db_name)
-    modelsQuery.addCapture(captureName, sTimeCombined, eTimeCombined, db_name, logfileID, metricID)
+
+
+    allDBConnections = modelsQuery.getDBConnectionAll()
+    print(allDBConnections)
+    modelsQuery.addCapture(captureName, sTimeCombined, eTimeCombined, str(db_name), logfileID, metricID)
 
 def stopCapture(startTime, endTime, captureName, captureBucket, metricBucket, captureFileName, metricFileName):
     #captureName = modelsQuery.getCapture(captureID)

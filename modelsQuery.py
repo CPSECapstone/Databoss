@@ -6,9 +6,11 @@ def createTable():
     models.db.session.commit()
 
 def addDBConnection(dialect, name, host, port, database, username):
-    new_conn = models.DBConnection(dialect, name, host, port, database, username)
-    models.db.session.add(new_conn)
-    models.db.session.commit()
+    exists = models.DBConnection.query.filter_by(name=name).first()
+    if not exists:
+        new_conn = models.DBConnection(dialect, name, host, port, database, username)
+        models.db.session.add(new_conn)
+        models.db.session.commit()
 
 def getDBConnectionByName(name):
     conn = models.DBConnection.query.get(name)
@@ -69,6 +71,10 @@ def getMetricById(metricId):
 
 def getMetricByFileName(metricFileName):
     id = models.Metric.query.get(metricFileName)
+    return id
+
+def getMetricIDByNameAndBucket(metricFileName, metricBucket):
+    id = models.Metric.query.filter_by(name=metricFileName, bucket=metricBucket).first()
     return id
 
 # Add logfile to the logfile table
