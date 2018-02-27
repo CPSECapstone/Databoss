@@ -14,8 +14,6 @@ app.register_blueprint(login.login_api, url_prefix="/login")
 app.register_blueprint(metrics.metrics_api, url_prefix="/metrics")
 app.register_blueprint(replay.replay_api, url_prefix="/replay")
 
-
-
 @app.route('/')
 def main():
     return send_file('static/app/index.html')
