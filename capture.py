@@ -37,7 +37,7 @@ metricBucket = None
 
 
 # Configure boto3 to use access/secret key for s3 and rds
-def aws_config():
+def aws_config(access_key, secret_key):
     global s3
     global s3_resource
     global rds
@@ -309,4 +309,4 @@ if os.path.exists("credentials.json"):
     credentials = json.load(credentialFile)
     access_key = credentials['access']
     secret_key = credentials['secret']
-    aws_config()
+    aws_config(access_key, secret_key)

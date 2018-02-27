@@ -1,36 +1,60 @@
-#import boto3
-#import capture_cli
+import boto3
+import capture
+import testStorage
+import pytest
+import json
+import os.path
 
-#access_key = ""
-#secret_key = ""
-
-#s3 = boto3.client(
-#        service_name='s3',
-#        #aws_access_key_id=access_key,
-#        #aws_secret_access_key=secret_key,
-#        region_name='us-west-1'
-#    )
-#s3_resource = s3 = boto3.resource(
-#        service_name='s3',
-        #aws_access_key_id=access_key,
-        #aws_secret_access_key=secret_key
-#    )
-
-#def test_BucketCreation(bucketName):
-    #create bucket
-#    capture.createBucket(bucketName)
-#    bucket_list = [bucket.name for bucket in s3.buckets.all()]
-#    for i in bucket_list:
-#        print("this is the bucket: ", i)
-#    assertTrue(bucketName in bucket_list)
-    #assert that the bucket was created
+access_key = None
+secret_key = None
 
 
-#def test_BucketExists(bucketName):
-    #create bucket
+if os.path.exists("../credentials.json"):
+    credentialFile = open("../credentials.json", "r")
+    credentials = json.load(credentialFile)
+    access_key = credentials['access']
+    secret_key = credentials['secret']
+    capture.aws_config(access_key, secret_key)
+else:
+    print("ERROR: could not find credentials")
 
-    #assert that the bucket was not created
+s3 = boto3.client(
+        service_name='s3',
+        aws_access_key_id=access_key,
+        aws_secret_access_key=secret_key,
+        region_name='us-west-1'
+    )
+s3_resource = s3 = boto3.resource(
+        service_name='s3',
+        aws_access_key_id=access_key,
+        aws_secret_access_key=secret_key
+    )
 
-#bucket test creation - won't pass travis currently since requires access and secret key
-#currently no way to test bucket creation since access key and secret key not given, however once login is implemented, should be accesssible.
-#test_BucketCreation('test2')
+def test_BucketCreation(bucketName):
+    bucket_list = [bucket.name for bucket in s3.buckets.all()]
+    initialSize = bucket_list.__len__()
+    capture.createBucket(bucketName)
+    bucket_list = [bucket.name for bucket in s3.buckets.all()]
+    sizeAfterAdd = bucket_list.__len__()
+    assert len(bucket_list) == sizeAfterAdd
+
+def test_BucketExists(bucketName):
+    bucket_list = [bucket.name for bucket in s3.buckets.all()]
+    initialSize = bucket_list.__len__()
+    capture.createBucket(bucketName)
+    bucket_list = [bucket.name for bucket in s3.buckets.all()]
+    sizeAfterAdd = bucket_list.__len__()
+    assert (initialSize== sizeAfterAdd)
+
+def test_StorageMax(size, db_name):
+    res = testStorage.checkStorageCacity(size, db_name)
+    assert (res == -1)
+
+def test_Storage(size, db_name):
+    res = testStorage.checkStorageCacity(size, db_name)
+    assert (res == 0)
+
+test_BucketCreation('capture-test2')
+test_BucketExists('capture-does-not-exist')
+test_StorageMax(5, 'storagedb')
+test_Storage(25, 'storagedb')

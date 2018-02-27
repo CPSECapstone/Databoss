@@ -1,8 +1,6 @@
 import boto3
 import time
 import pymysql
-import random
-import string
 from datetime import timedelta
 from datetime import datetime
 from time import mktime
@@ -47,7 +45,7 @@ cloudwatch = boto3.client(
 
 username = str(input("enter db username: "))
 password = str(input("enter db password: "))
-db_name = str(input("Enter RDS database name: "))
+#db_name = str(input("Enter RDS database name: "))
 endpoint = "storagedb.coircswctb4r.us-west-1.rds.amazonaws.com"
 
 def list_db_instances():
@@ -58,9 +56,9 @@ def list_db_instances():
 list_of_instances = rds.describe_db_instances(
     DBInstanceIdentifier= db_name
 )
+
 # Starting the database instance
 status_of_db = list_of_instances['DBInstances'][0]['DBInstanceStatus']
-#print("status of db:", status_of_db)
 
 #this value is in gb
 storage_max_db = list_of_instances['DBInstances'][0]['AllocatedStorage']
@@ -81,22 +79,25 @@ def parseJson(jsonString, storage_limit):
     freeSpace = (jsonString['Datapoints'][0]['Average'])/(10 **9)
     if (storage_limit > freeSpace):
         logger.error("ERROR: Not enough space for this.")
-        sys.exit()
+        return -1
+        #sys.exit()
     else:
         storageRem = freeSpace - storage_limit
         for element in jsonString['Datapoints'][1:]:
             gbVal = (element['Average'])/(10 ** 9)
-           # print(gbVal)
             if (gbVal <= storageRem):
                 print('Storage limit has been met')
                 #call stop capture here
-                sys.exit()
+                return 0
+                #sys.exit()
+
 
 
 #storage_limit should be in gb
-def checkStorageCacity(storage_limit):
+def checkStorageCacity(storage_limit, db_name):
     if (storage_limit > storage_max_db):
         print("ERROR: Storage specified is greater than what", db_name, "has allocated")
+        return -1
     else:
         parseJson(cloudwatch.get_metric_statistics(Namespace = 'AWS/RDS',
                                     MetricName = 'FreeStorageSpace',
@@ -107,9 +108,3 @@ def checkStorageCacity(storage_limit):
                                         ), storage_limit)
 
 
-
-
-#def
-
-#testing this function
-checkStorageCacity(5);
