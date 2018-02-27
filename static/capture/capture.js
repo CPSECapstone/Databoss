@@ -32,18 +32,18 @@ app.controller('capture', function ($scope, $location, $uibModal, $http) {
     hideButtons(dateContainer, timeContainer, storageContainer);
 
     $('input[name=mode]').on('change', function(event) {
-      selectedMode = $("input[name=mode]:checked").attr('id');
+      selectedMode = $("input[name=mode]:checked").val();
       console.log("value " + selectedMode);
-      if (selectedMode === "capture-int") {
+      if (selectedMode === "interactive") {
         console.log("updating to interactive view");
         hideButtons(dateContainer, timeContainer, storageContainer);
       }
-      else if (selectedMode === "capture-time") {
+      else if (selectedMode === "time") {
         console.log("updating to time constrained view");
         showButtons(dateContainer, timeContainer);
         hideButtons(storageContainer);
       }
-      else if (selectedMode === "capture-storage") {
+      else if (selectedMode === "storage") {
         console.log("updating to storage view");
         hideButtons(dateContainer, timeContainer);
         showButtons(storageContainer);
@@ -142,11 +142,12 @@ app.controller('capture', function ($scope, $location, $uibModal, $http) {
                 'captureBucket' : $('#crBucket').val(),
                 'metricsBucket' : $('#metricsBucket').val(),
                 'dbName' : $('#dbName').val(),
-                'captureMode' : $('input[name=mode]:checked').val(),
                 'startDate' : $('#startDate').val(),
                 'endDate' : $('#endDate').val(),
                 'startTime' : $('#startTime').val(),
                 'endTime' : $('#endTime').val(),
+                'mode' : $('input[name=mode]:checked').val()
+
                 // 'storageLimit' : $('#')
                 //unsure how to grab the value of the storage limit.
             }

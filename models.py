@@ -86,6 +86,7 @@ class Capture(db.Model):
     #dbName = db.Column(db.String(100), db.ForeignKey('dbconnection.name'), nullable=False)
     logfileId = db.Column(db.Integer, db.ForeignKey('logfile.id'), nullable=False)
     metricId = db.Column(db.Integer, db.ForeignKey('metric.id'), nullable=False)
+    mode = db.Column(db.String(100), nullable=False)
 
     @property
     def serialize(self):
@@ -96,16 +97,18 @@ class Capture(db.Model):
             'endTime': self.endTime,
             'dbName': self.dbName,
             'logfileId': self.logfileId,
-            'metricId': self.metricId
+            'metricId': self.metricId,
+            'mode' : self.mode
         }
 
-    def __init__(self, name, startTime, endTime, dbName, logfileId, metricId):
+    def __init__(self, name, startTime, endTime, dbName, logfileId, metricId, mode):
         self.name = name
         self.startTime = startTime
         self.endTime = endTime
         self.dbName = dbName
         self.logfileId = logfileId
         self.metricId = metricId
+        self.mode = mode
 
 class Replay(db.Model):
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
