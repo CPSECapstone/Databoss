@@ -35,6 +35,7 @@ def captureRoute():
 
     print(data)
     startCapture(captureName, captureBucket, metricsBucket, dbName, startDate, endDate, startTime, endTime, None)
+    return "ok"
 
 @capture_api.route('/endCapture', methods=["POST"])
 def endCapture():
