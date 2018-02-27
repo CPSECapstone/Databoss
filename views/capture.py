@@ -47,9 +47,10 @@ def endCapture():
 
     startTime = data.get('startTime')
     endTime = data.get('endTime')
-    captureBucket = data.get('captureBucket')
-    metricBucket = data.get('metricBucket')
+    captureBucket = data.get('logfileId')
+    metricBucket = data.get('metricId')
     captureFileName = data.get('captureFileName')
     metricFileName = data.get('metricFileName')
 
     stopCapture(startTime, endTime, captureName, captureBucket, metricBucket, captureFileName, metricFileName)
+    return "ok"

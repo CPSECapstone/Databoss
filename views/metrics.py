@@ -21,6 +21,9 @@ def getMetrics():
         # TODO add error handling
         raise Exception('Unspecified Type')
 
+    print("PRINTING METRIC BUCKET AND METRIC FILE IN VIEWS/METRIC")
+    print(metric.bucket)
+    print(metric.file)
     metrics = getS3Metrics(metric.bucket, metric.file)
 
     return jsonify(cpu=metrics.cpuList, cpuTime=metrics.cpuTimeList,
