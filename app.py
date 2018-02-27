@@ -1,4 +1,5 @@
 import sqlite3
+import rds_config
 
 from flask import send_file
 from web_app import app, db
@@ -12,8 +13,6 @@ app.register_blueprint(capture.capture_api, url_prefix="/capture")
 app.register_blueprint(login.login_api, url_prefix="/login")
 app.register_blueprint(metrics.metrics_api, url_prefix="/metrics")
 app.register_blueprint(replay.replay_api, url_prefix="/replay")
-
-
 
 @app.route('/')
 def main():

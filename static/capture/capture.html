@@ -21,10 +21,11 @@
         </select>
       </div>
       <div class="form-group">
-        <label for="dbSelect">Database:</label>
-        <select class="form-control" id="dbSelect">
+        <label for="dbName">Database:</label>
+        <select class="form-control" id="dbName">
           <option disabled selected value> -- Select Database -- </option>
-          <option ng-repeat="db in DBConnections" value="{{db.id}}">{{db.DBInstanceIdentifier}}</option>
+          <option ng-repeat="db in DBConnections" value="{{db.DBInstanceIdentifier}}">{{db.DBInstanceIdentifier}}</option>
+
         </select>
       </div>
 
@@ -87,7 +88,7 @@
     </script>
 
     <div class="text-center">
-      <button type="button" ng-click="startCapture(metricsBucket.value)" class="btn-capture btn btn-success" >Capture</button>
+      <button type="button" ng-click="startCapture()" class="btn-capture btn btn-success">Capture</button>
     </div>
     </div>
   </div>

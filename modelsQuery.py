@@ -6,9 +6,11 @@ def createTable():
     models.db.session.commit()
 
 def addDBConnection(dialect, name, host, port, database, username):
-    new_conn = models.DBConnection(dialect, name, host, port, database, username)
-    models.db.session.add(new_conn)
-    models.db.session.commit()
+    exists = models.DBConnection.query.filter_by(name=name).first()
+    if not exists:
+        new_conn = models.DBConnection(dialect, name, host, port, database, username)
+        models.db.session.add(new_conn)
+        models.db.session.commit()
 
 def getDBConnectionByName(name):
     conn = models.DBConnection.query.get(name)
@@ -71,12 +73,15 @@ def getMetricByFileName(metricFileName):
     id = models.Metric.query.get(metricFileName)
     return id
 
+def getMetricIDByNameAndBucket(metricFileName, metricBucket):
+    metricObj = models.Metric.query.filter_by(name=metricFileName, bucket=metricBucket).first()
+    return metricObj.id
+
 # Add logfile to the logfile table
 def addLogfile(name, bucket, file):
     new_logfile = models.Logfile(name, bucket, file)
     models.db.session.add(new_logfile)
     models.db.session.commit()
-
 
 # Return logfile associated with provided capture or replay
 def getLogfileById(logfileId):
@@ -88,5 +93,5 @@ def getLogfileByName(logfileName):
     return log
 
 def getLogFileIdByNameAndBucket(logfileName, captureBucket):
-    id = models.Logfile.query.filter_by(name=logfileName, bucket=captureBucket).first()
-    return id
+    logObj = models.Logfile.query.filter_by(name=logfileName, bucket=captureBucket).first()
+    return logObj.id
