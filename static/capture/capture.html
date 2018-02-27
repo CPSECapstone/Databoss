@@ -21,10 +21,11 @@
         </select>
       </div>
       <div class="form-group">
-        <label for="dbSelect">Database:</label>
-        <select class="form-control" id="dbSelect">
+        <label for="dbName">Database:</label>
+        <select class="form-control" id="dbName">
           <option disabled selected value> -- Select Database -- </option>
           <option ng-repeat="db in DBConnections" value="{{db.DBInstanceIdentifier}}">{{db.DBInstanceIdentifier}}</option>
+
         </select>
       </div>
 

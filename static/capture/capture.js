@@ -141,7 +141,7 @@ app.controller('capture', function ($scope, $location, $uibModal, $http) {
                 'captureName' : $('#captureName').val(),
                 'captureBucket' : $('#crBucket').val(),
                 'metricsBucket' : $('#metricsBucket').val(),
-                'dbName' : $('#dbSelect').val(),
+                'dbName' : $('#dbName').val(),
                 'captureMode' : $('input[name=mode]:checked').val(),
                 'startDate' : $('#startDate').val(),
                 'endDate' : $('#endDate').val(),

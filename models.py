@@ -1,6 +1,5 @@
 from web_app import db
 
-
 class DBConnection(db.Model):
     __tablename__ = "dbconnection"
     dialect = db.Column(db.String(25))
