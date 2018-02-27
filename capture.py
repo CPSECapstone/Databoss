@@ -238,16 +238,13 @@ def startCapture(captureName, captureBucket, metricsBucket, db_name, startDate, 
     modelsQuery.addCapture(captureName, sTimeCombined, eTimeCombined, str(db_name), logfileID, metricID)
 
 def stopCapture(startTime, endTime, captureName, captureBucket, metricBucket, captureFileName, metricFileName):
-    #captureName = modelsQuery.getCapture(captureID)
-    #captureFileName = captureName + " " + "log file"
-    #metricFileName = captureName + " " + "metric file"
-
+    captureFileName = captureName + " " + "capture file"
+    metricFileName = captureName + " " + "metric file"
     username = rds_config.db_username
     password = rds_config.db_password
     db_name = rds_config.db_name
     endpoint = get_list_of_instances(db_name)['DBInstances'][0]['Endpoint']['Address']
     status_of_db = get_list_of_instances(db_name)['DBInstances'][0]['DBInstanceStatus']
-
 
     if status_of_db == "available":
         try:
@@ -262,9 +259,11 @@ def stopCapture(startTime, endTime, captureName, captureBucket, metricBucket, ca
 
             conn.close()
 
-        outfile = open(captureFileName, 'w')
+        file = modelsQuery.getLogFile(captureName, captureBucket)
+        outfile = open(file, 'w')
         for item in logfile:
             outfile.write("%s\n" % item)
+
 
         s3.meta.client.upload_file(outfile.name, captureBucket, outfile.name)
         if os.path.exists(captureFileName):

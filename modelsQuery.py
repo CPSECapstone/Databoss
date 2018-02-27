@@ -77,6 +77,10 @@ def getMetricIDByNameAndBucket(metricFileName, metricBucket):
     metricObj = models.Metric.query.filter_by(name=metricFileName, bucket=metricBucket).first()
     return metricObj.id
 
+def getMetricFile(metricFileName, metricBucket):
+    metricObj = models.Metric.query.filter_by(name=metricFileName, bucket=metricBucket).first()
+    return metricObj.file
+
 # Add logfile to the logfile table
 def addLogfile(name, bucket, file):
     new_logfile = models.Logfile(name, bucket, file)
@@ -91,6 +95,10 @@ def getLogfileById(logfileId):
 def getLogfileByName(logfileName):
     log = models.Logfile.query.filter_by(name=logfileName).first()
     return log
+
+def getLogFile(logfileName, captureBucket):
+    logObj = models.Logfile.query.filter_by(name=logfileName, bucket=captureBucket).first()
+    return logObj.file
 
 def getLogFileIdByNameAndBucket(logfileName, captureBucket):
     logObj = models.Logfile.query.filter_by(name=logfileName, bucket=captureBucket).first()

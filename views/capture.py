@@ -40,8 +40,7 @@ def captureRoute():
 @capture_api.route('/endCapture', methods=["POST"])
 def endCapture():
     data = request.json
-
-    captureId = data.get('id')
+    print(data)
     captureName = data.get('name')
     dbName = data.get('dbName')
 
@@ -52,4 +51,4 @@ def endCapture():
     captureFileName = data.get('captureFileName')
     metricFileName = data.get('metricFileName')
 
-    stopCapture(startTime, endTime, captureId, captureBucket, metricBucket, captureFileName, metricFileName)
+    stopCapture(startTime, endTime, captureName, captureBucket, metricBucket, captureFileName, metricFileName)
