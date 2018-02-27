@@ -97,6 +97,10 @@ def addLogfile(name, bucket, file):
     models.db.session.add(new_logfile)
     models.db.session.commit()
 
+def getLogfile(logfileId):
+    logObj = models.Logfile.query.filter_by(id=logfileId).first()
+    return logObj
+
 # Return logfile associated with provided capture or replay
 def getLogfileById(logfileId):
     logObj = models.Logfile.query.filter_by(id=logfileId).first()

@@ -30,14 +30,16 @@ def testAddGetMetric():
     assert metric.file == file
 
 def testAddGetLogfile():
+    id = 1
     name = 'logName'
     bucket = 'logBucket'
     file = 'logFile'
     modelsQuery.addLogfile(name, bucket, file)
-    result = models.Logfile.query.filter_by(name=name, bucket=bucket, file=file).count()
+    result = models.Logfile.query.filter_by(id=id).count()
     assert result == 1
 
-    log = modelsQuery.getLogfileById(1)
+    log = modelsQuery.getLogfile(id)
+    assert log.id == id
     assert log.name == name
     assert log.bucket == bucket
     assert log.file == file
