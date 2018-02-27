@@ -30,14 +30,16 @@ def testAddGetMetric():
     assert metric.file == file
 
 def testAddGetLogfile():
+    id = 1
     name = 'logName'
     bucket = 'logBucket'
     file = 'logFile'
     modelsQuery.addLogfile(name, bucket, file)
-    result = models.Logfile.query.filter_by(name=name, bucket=bucket, file=file).count()
+    result = models.Logfile.query.filter_by(id=id).count()
     assert result == 1
 
-    log = modelsQuery.getLogfileById(1)
+    log = modelsQuery.getLogfile(id)
+    assert log.id == id
     assert log.name == name
     assert log.bucket == bucket
     assert log.file == file
@@ -49,7 +51,8 @@ def testAddCapture():
     dbName = 'myrds'
     logfileId = 1
     metricId = 1
-    modelsQuery.addCapture(name, startTime, endTime, dbName, logfileId, metricId)
+    mode = "interactive"
+    modelsQuery.addCapture(name, startTime, endTime, dbName, logfileId, metricId, mode)
     result = models.Capture.query.get(1)
     assert result.name == name
     assert result.startTime == startTime
@@ -57,6 +60,7 @@ def testAddCapture():
     assert result.dbName == dbName
     assert result.logfileId == logfileId
     assert result.metricId == metricId
+    assert result.mode == mode
 
 def testGetCapture():
     list = modelsQuery.getCaptureAll().count()
@@ -67,7 +71,8 @@ def testGetCapture():
     endTime = datetime.datetime(2018, 1, 31, 12, 13, 13)
     logfileId = 1
     metricId = 1
-    modelsQuery.addCapture(name, startTime, endTime, dbName, logfileId, metricId)
+    mode = "interactive"
+    modelsQuery.addCapture(name, startTime, endTime, dbName, logfileId, metricId, mode)
     list = modelsQuery.getCaptureAll().count()
     assert list == 2
 

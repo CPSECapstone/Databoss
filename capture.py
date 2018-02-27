@@ -41,6 +41,7 @@ def aws_config():
     global s3
     global s3_resource
     global rds
+    global cloudwatch
 
     s3 = boto3.client(
         service_name='s3',
@@ -199,11 +200,22 @@ def checkStorageCapacity(storage_limit, storage_max_db):
 def startCapture(captureName, captureBucket, metricsBucket, db_name, startDate, endDate, startTime, endTime, storage_limit):
     status_of_db = get_list_of_instances(db_name)['DBInstances'][0]['DBInstanceStatus']
     storage_max_db = get_list_of_instances(db_name)['DBInstances'][0]['AllocatedStorage']
+    endpoint = get_list_of_instances(db_name)['DBInstances'][0]['Endpoint']['Address']
+    port = get_list_of_instances(db_name)['DBInstances'][0]['Endpoint']['Port']
     captureFileName = captureName + " " + "capture file"
     metricFileName = captureName + " " + "metric file"
+    dbDialect = "mysql"
+    username = rds_config.db_username
 
-    startObj = datetime.combine(datetime.date(startDate), datetime.time(startTime))
-    endObj = datetime.combine(datetime.date(endDate), datetime.time(endTime))
+    if (startDate == "" and endDate == "" and startTime == "" and endTime == ""):
+        startDate = datetime.now().date()
+        endDate = datetime.now().date() + timedelta(days=1)
+        startTime = datetime.now().time()
+        endTime = datetime.now().time()
+
+    sTimeCombined = datetime.combine(startDate, startTime)
+    eTimeCombined = datetime.combine(endDate, endTime)
+
 
     if status_of_db != "available":
         rds.start_db_instance(
@@ -215,23 +227,19 @@ def startCapture(captureName, captureBucket, metricsBucket, db_name, startDate, 
 
     modelsQuery.addLogfile(captureFileName, captureBucket, None)
     modelsQuery.addMetric(metricFileName, metricsBucket, None)
-
-    metricID = modelsQuery.getMetricByFileName(metricFileName)
+    metricID = modelsQuery.getMetricIDByNameAndBucket(metricFileName, metricsBucket)
     logfileID = modelsQuery.getLogFileIdByNameAndBucket(captureFileName, captureBucket)
-    #modelsQuery.addDBConnection()
-    modelsQuery.addCapture(captureName, startObj, endObj, db_name, logfileID, metricID)
+    modelsQuery.addDBConnection(dbDialect, db_name, endpoint, port, "", username)
+    modelsQuery.addCapture(captureName, sTimeCombined, eTimeCombined, str(db_name), logfileID, metricID)
 
 def stopCapture(startTime, endTime, captureName, captureBucket, metricBucket, captureFileName, metricFileName):
-    #captureName = modelsQuery.getCapture(captureID)
-    #captureFileName = captureName + " " + "log file"
-    #metricFileName = captureName + " " + "metric file"
-
+    captureFileName = captureName + " " + "capture file"
+    metricFileName = captureName + " " + "metric file"
     username = rds_config.db_username
     password = rds_config.db_password
     db_name = rds_config.db_name
     endpoint = get_list_of_instances(db_name)['DBInstances'][0]['Endpoint']['Address']
     status_of_db = get_list_of_instances(db_name)['DBInstances'][0]['DBInstanceStatus']
-
 
     if status_of_db == "available":
         try:
@@ -243,14 +251,16 @@ def stopCapture(startTime, endTime, captureName, captureBucket, metricBucket, ca
             cur.execute("""SELECT event_time, command_type, argument FROM mysql.general_log\
                             WHERE event_time BETWEEN '%s' AND '%s'""" % (startTime, endTime))
             logfile = list(map(parseRow, cur))
-
             conn.close()
 
         outfile = open(captureFileName, 'w')
         for item in logfile:
             outfile.write("%s\n" % item)
 
-        s3.meta.client.upload_file(outfile.name, captureBucket, outfile.name)
+        bucketCheck = modelsQuery.getCaptureBucket(captureBucket)
+
+        modelsQuery.updateLogFile(captureBucket, outfile.name)
+        s3.meta.client.upload_file(outfile.name, bucketCheck, outfile.name)
         if os.path.exists(captureFileName):
             os.remove(captureFileName)
 
@@ -297,7 +307,8 @@ def sendMetrics(metricBucket, metricFileName):
     with open(metricFileName, 'w') as metricFileOpened:
         metricFileOpened.write(json.dumps(dlist, cls=MyEncoder))
 
-    s3.meta.client.upload_file(metricFileOpened.name, metricBucket, metricFileOpened.name)
+    modelsQuery.updateMetricFile(metricBucket, metricFileOpened.name)
+    s3.meta.client.upload_file(metricFileOpened.name, modelsQuery.getMetricBucket(metricBucket), metricFileOpened.name)
     if os.path.exists(metricFileName):
         os.remove(metricFileName)
 

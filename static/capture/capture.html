@@ -21,23 +21,24 @@
         </select>
       </div>
       <div class="form-group">
-        <label for="dbSelect">Database:</label>
-        <select class="form-control" id="dbSelect">
+        <label for="dbName">Database:</label>
+        <select class="form-control" id="dbName">
           <option disabled selected value> -- Select Database -- </option>
-          <option ng-repeat="db in DBConnections" value="{{db.id}}">{{db.DBInstanceIdentifier}}</option>
+          <option ng-repeat="db in DBConnections" value="{{db.DBInstanceIdentifier}}">{{db.DBInstanceIdentifier}}</option>
+
         </select>
       </div>
 
     <h5>Capture Mode:</h5>
     <div id="capture-mode-bar" class="btn-group" data-toggle="buttons">
       <label class="btn btn-primary">
-        <input type="radio" name="mode" autocomplete="off" id="capture-int" checked=""> Interactive
+        <input type="radio" name="mode" autocomplete="off" value="interactive" checked=""> Interactive
       </label>
       <label class="btn btn-primary">
-        <input type="radio" name="mode" autocomplete="off" id="capture-time" checked="checked"> Time-Constrained
+        <input type="radio" name="mode" autocomplete="off" value="time" checked="checked"> Time-Constrained
       </label>
       <label class="btn btn-primary">
-        <input type="radio" name="mode" autocomplete="off" id="capture-storage" checked=""> Storage-Constrained
+        <input type="radio" name="mode" autocomplete="off" value="storage" checked=""> Storage-Constrained
       </label>
     </div>
 
@@ -87,7 +88,7 @@
     </script>
 
     <div class="text-center">
-      <button type="button" ng-click="startCapture(metricsBucket.value)" class="btn-capture btn btn-success" >Capture</button>
+      <button type="button" ng-click="startCapture()" class="btn-capture btn btn-success">Capture</button>
     </div>
     </div>
   </div>
