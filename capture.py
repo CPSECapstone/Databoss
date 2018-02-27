@@ -259,7 +259,7 @@ def stopCapture(startTime, endTime, captureName, captureBucket, metricBucket, ca
 
             conn.close()
 
-        file = modelsQuery.getLogFile(captureName, captureBucket)
+        file = modelsQuery.getLogFile(captureFileName, captureBucket)
         outfile = open(file, 'w')
         for item in logfile:
             outfile.write("%s\n" % item)
