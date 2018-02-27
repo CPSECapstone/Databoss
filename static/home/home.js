@@ -9,7 +9,8 @@ app.controller('home', function($scope, $location, $http) {
     }
    $('.datepicker').datepicker();
 
-   populateCaptures($http, $scope);
+    populateCaptures($http, $scope);
+
 
 });
 
