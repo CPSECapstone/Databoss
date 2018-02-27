@@ -6,7 +6,8 @@ app.controller('home', function($scope, $location, $http) {
         $location.path('/capture');
     }
 
-   populateCaptures($http, $scope);
+    populateCaptures($http, $scope);
+
 });
 
 var populateCaptures = function($http, $scope) {
