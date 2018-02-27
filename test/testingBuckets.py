@@ -15,6 +15,7 @@ if os.path.exists("../credentials.json"):
     access_key = credentials['access']
     secret_key = credentials['secret']
     capture.aws_config(access_key, secret_key)
+    testStorage.aws_config(access_key, secret_key)
 else:
     print("ERROR: could not find credentials")
 
@@ -22,7 +23,6 @@ s3 = boto3.client(
         service_name='s3',
         aws_access_key_id=access_key,
         aws_secret_access_key=secret_key,
-        region_name='us-west-1'
     )
 s3_resource = s3 = boto3.resource(
         service_name='s3',
@@ -47,14 +47,16 @@ def test_BucketExists(bucketName):
     assert (initialSize== sizeAfterAdd)
 
 def test_StorageMax(size, db_name):
+    testStorage.startRDS(db_name, "sthanawa", "sthanawa", "storagedb.coircswctb4r.us-west-1.rds.amazonaws.com")
     res = testStorage.checkStorageCacity(size, db_name)
     assert (res == -1)
 
 def test_Storage(size, db_name):
+    testStorage.startRDS(db_name, "sthanawa", "sthanawa", "storagedb.coircswctb4r.us-west-1.rds.amazonaws.com")
     res = testStorage.checkStorageCacity(size, db_name)
     assert (res == 0)
 
-test_BucketCreation('capture-test2')
+test_BucketCreation('capture-test3')
 test_BucketExists('capture-does-not-exist')
-test_StorageMax(5, 'storagedb')
-test_Storage(25, 'storagedb')
+#test_StorageMax(5, 'storagedb')
+#test_Storage(25, 'storagedb')
