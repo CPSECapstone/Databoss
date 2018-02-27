@@ -3,6 +3,7 @@ from flask import jsonify, request
 from capture import startCapture, stopCapture
 from models import Capture
 import modelsQuery
+from models import Capture
 
 @capture_api.route('/<name>')
 def getCapture(name):
