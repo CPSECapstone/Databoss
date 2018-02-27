@@ -21,7 +21,6 @@ def getMetrics():
         # TODO add error handling
         raise Exception('Unspecified Type')
 
-
     metrics = getS3Metrics(metric.bucket, metric.file)
 
     return jsonify(cpu=metrics.cpuList, cpuTime=metrics.cpuTimeList,
