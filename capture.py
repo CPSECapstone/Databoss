@@ -199,8 +199,12 @@ def checkStorageCapacity(storage_limit, storage_max_db):
 def startCapture(captureName, captureBucket, metricsBucket, db_name, startDate, endDate, startTime, endTime, storage_limit):
     status_of_db = get_list_of_instances(db_name)['DBInstances'][0]['DBInstanceStatus']
     storage_max_db = get_list_of_instances(db_name)['DBInstances'][0]['AllocatedStorage']
+    endpoint = get_list_of_instances(db_name)['DBInstances'][0]['Endpoint']['Address']
+    port = get_list_of_instances(db_name)['DBInstances'][0]['Endpoint']['Port']
     captureFileName = captureName + " " + "capture file"
     metricFileName = captureName + " " + "metric file"
+    dbDialect = "mysql"
+    username = rds_config.db_username
 
     if (startDate == "" and endDate == "" and startTime == "" and endTime == ""):
         startDate = datetime.now().date()
@@ -222,11 +226,16 @@ def startCapture(captureName, captureBucket, metricsBucket, db_name, startDate, 
 
     modelsQuery.addLogfile(captureFileName, captureBucket, None)
     modelsQuery.addMetric(metricFileName, metricsBucket, None)
-
-    metricID = modelsQuery.getMetricByFileName(metricFileName)
+    print("Type of db_name: ")
+    print(type(db_name))
+    metricID = modelsQuery.getMetricIDByNameAndBucket(metricFileName, metricsBucket)
     logfileID = modelsQuery.getLogFileIdByNameAndBucket(captureFileName, captureBucket)
-    # modelsQuery.addDBConnection()
-    modelsQuery.addCapture(captureName, sTimeCombined, eTimeCombined, db_name, logfileID, metricID)
+    modelsQuery.addDBConnection(dbDialect, db_name, endpoint, port, "", username)
+
+
+    allDBConnections = modelsQuery.getDBConnectionAll()
+    print(allDBConnections)
+    modelsQuery.addCapture(captureName, sTimeCombined, eTimeCombined, str(db_name), logfileID, metricID)
 
 def stopCapture(startTime, endTime, captureName, captureBucket, metricBucket, captureFileName, metricFileName):
     #captureName = modelsQuery.getCapture(captureID)
