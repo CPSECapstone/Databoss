@@ -9,13 +9,17 @@
       <thead>
         <tr>
           <th>Name</th>
-          <th>Date</th>
+          <th>Start Date</th>
+          <th>End Date</th>
+          <th>Progress</th>
         </tr>
       </thead>
       <tbody ng-repeat="capture in captures">
         <tr>
-            <th><a href="#!/progress?name={{capture.name}}">{{capture.name}}</a></th>
-            <td>{{capture.date}}</td>
+            <th><a href="#!/progress?id={{capture.id}}">{{capture.name}}</a></th>
+            <td>{{capture.startTime}}</td>
+            <td>{{capture.endTime}}</td>
+            <td>{{capture.progress}}</td>
         </tr>
       </tbody>
     </table>
