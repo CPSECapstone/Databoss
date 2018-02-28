@@ -1,4 +1,5 @@
 import models
+from flask import jsonify
 
 # Sets up the tables in the database and their connections. Should be called only once.
 def createTable():
@@ -21,8 +22,8 @@ def getDBConnectionAll():
     return conn_list
 
 # Add capture to capture table with references to associated files
-def addCapture(name, startTime, endTime, dbName, logfileID, metricID):
-    new_cap = models.Capture(name, startTime, endTime, dbName, logfileID, metricID)
+def addCapture(name, startTime, endTime, dbName, logfileID, metricID, mode):
+    new_cap = models.Capture(name, startTime, endTime, dbName, logfileID, metricID, mode)
     models.db.session.add(new_cap)
     models.db.session.commit()
 
@@ -77,20 +78,50 @@ def getMetricIDByNameAndBucket(metricFileName, metricBucket):
     metricObj = models.Metric.query.filter_by(name=metricFileName, bucket=metricBucket).first()
     return metricObj.id
 
+def getMetricBucket(metricID):
+    metric = models.Metric.query.filter_by(id=metricID).first()
+    return metric.bucket
+
+def getMetricFile(metricFileName, metricBucket):
+    metricObj = models.Metric.query.filter_by(name=metricFileName, bucket=metricBucket).first()
+    return metricObj.file
+
+def updateMetricFile(metricID, file):
+    metricObj = models.Metric.query.filter_by(id=metricID).first()
+    metricObj.file = file
+    models.db.session.commit()
+
 # Add logfile to the logfile table
 def addLogfile(name, bucket, file):
     new_logfile = models.Logfile(name, bucket, file)
     models.db.session.add(new_logfile)
     models.db.session.commit()
 
+def getLogfile(logfileId):
+    logObj = models.Logfile.query.filter_by(id=logfileId).first()
+    return logObj
+
 # Return logfile associated with provided capture or replay
 def getLogfileById(logfileId):
-    log = models.Logfile.query.get(logfileId)
-    return log
+    logObj = models.Logfile.query.filter_by(id=logfileId).first()
+    return logObj.file
 
 def getLogfileByName(logfileName):
     log = models.Logfile.query.filter_by(name=logfileName).first()
     return log
+
+def getCaptureBucket(logfileID):
+    log = models.Logfile.query.filter_by(id=logfileID).first()
+    return log.bucket
+
+def updateLogFile(logfileID, file):
+    log = models.Logfile.query.filter_by(id=logfileID).first()
+    log.file = file
+    models.db.session.commit()
+
+def getLogFile(logfileName, captureBucket):
+    logObj = models.Logfile.query.filter_by(name=logfileName, bucket=captureBucket).first()
+    return logObj
 
 def getLogFileIdByNameAndBucket(logfileName, captureBucket):
     logObj = models.Logfile.query.filter_by(name=logfileName, bucket=captureBucket).first()
