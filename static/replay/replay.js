@@ -109,4 +109,39 @@ app.controller('replay', function($scope, $http, $location) {
         document.getElementById('mb-button').classList.remove('active');
       }
     }
+
+    populateCaptures($http, $scope);
+    getDBConnections($http, $scope);
+
 });
+
+var populateCaptures = function($http, $scope) {
+    $http({
+        method: 'GET',
+        url: 'capture/getAll',
+        headers: {
+        'Content-Type': 'application/json'
+        },
+    }).then(function successCallback(response) {
+        $scope.captures = response.data;
+        calculateProgress($scope.captures);
+        console.log('success');
+    }, function errorCallback(response) {
+        console.log('error retrieving captures');
+    })
+};
+var getDBConnections = function($http, $scope) {
+    $http({
+        method: 'GET',
+        url: 'capture/listDBinstances',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+    }).then(function successCallback(response) {
+        $scope.DBConnections = response.data;
+        console.log('success');
+    }, function errorCallback(response) {
+        console.log('error');
+    });
+};
+
