@@ -12,6 +12,7 @@ from datetime import datetime
 from time import mktime
 import rds_config
 import modelsQuery
+import scheduler
 
 VOWELS = "aeiou"
 CONSONANTS = "".join(set(string.ascii_lowercase) - set(VOWELS))
@@ -197,6 +198,15 @@ def checkStorageCapacity(storage_limit, storage_max_db):
                                     Statistics=['Average']
                                         ), storage_limit)
 
+
+def updateDatabase(sTime, eTime, cName, cBucket, mBucket, cFile, mFile, dialect, dbName, endpoint, port, username, mode, status):
+    modelsQuery.addLogfile(cFile, cBucket, None)
+    modelsQuery.addMetric(mFile, mBucket, None)
+    modelsQuery.addDBConnection(dialect, dbName, endpoint, port, "", username)
+    metricID = modelsQuery.getMetricIDByNameAndBucket(mFile, mBucket)
+    logfileID = modelsQuery.getLogFileIdByNameAndBucket(cFile, cBucket)
+    modelsQuery.addCapture(cName, sTime, eTime, str(dbName), logfileID, metricID, mode, status)
+
 def startCapture(captureName, captureBucket, metricsBucket, db_name, startDate, endDate, startTime, endTime, storage_limit, mode):
     status_of_db = get_list_of_instances(db_name)['DBInstances'][0]['DBInstanceStatus']
     storage_max_db = get_list_of_instances(db_name)['DBInstances'][0]['AllocatedStorage']
@@ -212,25 +222,31 @@ def startCapture(captureName, captureBucket, metricsBucket, db_name, startDate, 
         endDate = datetime.now().date() + timedelta(days=1)
         startTime = datetime.now().time()
         endTime = datetime.now().time()
+    else:
+        startDate = datetime.strptime(startDate, "%m/%d/%Y").date()
+        endDate = datetime.strptime(endDate, "%m/%d/%Y").date()
+        startTime = datetime.strptime(startTime, "%H:%M").time()
+        endTime = datetime.strptime(endTime, "%H:%M").time()
 
     sTimeCombined = datetime.combine(startDate, startTime)
     eTimeCombined = datetime.combine(endDate, endTime)
 
+    if (mode == "time"):
+        updateDatabase(sTimeCombined, eTimeCombined, captureName, captureBucket, metricsBucket,
+                       captureFileName, metricFileName, dbDialect, db_name, endpoint, port, username, mode, "scheduled")
+        scheduler.scheduleCapture(captureName)
 
-    if status_of_db != "available":
-        rds.start_db_instance(
-            DBInstanceIdentifier=db_name
-        )
     else:
-        if storage_limit != None:
-            checkStorageCapacity(storage_limit, storage_max_db)
+        if status_of_db != "available":
+            rds.start_db_instance(
+                DBInstanceIdentifier=db_name
+            )
+        else:
+            if storage_limit != None:
+                checkStorageCapacity(storage_limit, storage_max_db)
 
-    modelsQuery.addLogfile(captureFileName, captureBucket, None)
-    modelsQuery.addMetric(metricFileName, metricsBucket, None)
-    metricID = modelsQuery.getMetricIDByNameAndBucket(metricFileName, metricsBucket)
-    logfileID = modelsQuery.getLogFileIdByNameAndBucket(captureFileName, captureBucket)
-    modelsQuery.addDBConnection(dbDialect, db_name, endpoint, port, "", username)
-    modelsQuery.addCapture(captureName, sTimeCombined, eTimeCombined, str(db_name), logfileID, metricID, mode)
+        updateDatabase(sTimeCombined, eTimeCombined, captureName, captureBucket, metricsBucket,
+                       captureFileName, metricFileName, dbDialect, db_name, endpoint, port, username, mode, "active")
 
 def stopCapture(startTime, endTime, captureName, captureBucket, metricBucket, captureFileName, metricFileName):
     captureFileName = captureName + " " + "capture file"
@@ -249,7 +265,7 @@ def stopCapture(startTime, endTime, captureName, captureBucket, metricBucket, ca
             sys.exit()
         with conn.cursor() as cur:
             cur.execute("""SELECT event_time, command_type, argument FROM mysql.general_log\
-                            WHERE event_time BETWEEN '%s' AND '%s'""" % (startTime, endTime))
+                          WHERE event_time BETWEEN '%s' AND '%s'""" % (startTime, endTime))
             logfile = list(map(parseRow, cur))
             conn.close()
 
