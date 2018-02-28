@@ -4,11 +4,11 @@
     <div class="center-block">
       <div class="form-group">
         <label for="replayName">Replay Name</label>
-        <input type="text" class="form-control" id="replay-name" aria-describedby="replayName">
+        <input type="text" class="form-control" id="replayName">
       </div>
       <div class="form-group">
         <label for="crBucket">Capture to Replay</label>
-        <select class="form-control">
+        <select class="form-control" id="crBucket">
           <option disabled selected value> -- Select Capture -- </option>
           <option ng-repeat="bucket in buckets" value="{{bucket}}">{{bucket}}</option>
         </select>
@@ -16,7 +16,7 @@
 
       <div class="form-group">
         <label for="metricsBucket">Replay Server</label>
-        <select class="form-control" id="replayServer">
+        <select class="form-control" id="metricsBucket">
           <option disabled selected value> -- Select Server -- </option>
           <option ng-repeat="bucket in buckets" value="{{bucket}}">{{bucket}}</option>
         </select>
@@ -36,17 +36,16 @@
       <h5>Mode:</h5>
       <div id="capture-mode-bar" class="btn-group" data-toggle="buttons">
         <label class="btn btn-primary">
-          <input type="radio" name="mode" autocomplete="off" id="capture-int" checked=""> Interactive
+          <input type="radio" name="mode" autocomplete="off" value="interactive" checked=""> Interactive
         </label>
         <label class="btn btn-primary">
-          <input type="radio" name="mode" autocomplete="off" id="capture-time" checked="checked"> Time-Constrained
+          <input type="radio" name="mode" autocomplete="off" value="time" checked="checked"> Time-Constrained
         </label>
         <label class="btn btn-primary">
-          <input type="radio" name="mode" autocomplete="off" id="capture-storage" checked=""> Storage-Constrained
+          <input type="radio" name="mode" autocomplete="off" value="storage" checked=""> Storage-Constrained
         </label>
       </div>
 
-      <!-- <div class="date-container "> -->
       <div id="date-container" class="row">
         <span>Start Date: <input id="startDate" width="276" /> </span>
         <span>End Date: <input id="endDate" width="276" /> </span>
