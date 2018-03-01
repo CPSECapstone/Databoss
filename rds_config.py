@@ -1,3 +1,3 @@
-db_username = "kimtan"
-db_password = "kimtantan"
-db_name = "kimtan"
+db_username = "sonaraya"
+db_password = "sonaraya"
+db_name = "new"
