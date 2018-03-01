@@ -63,6 +63,8 @@ def getReplayByName(replayName):
     replay = models.Replay.query.filter_by(name=replayName).first()
     return replay
 
+#get log file given capture name
+
 # Return all replays in the replay table
 def getReplayAll():
     rep_list = models.Replay.query.with_entities(models.Replay.id, models.Replay.name, models.Replay.startTime)
@@ -118,6 +120,9 @@ def getLogfileById(logfileId):
 def getLogfileByName(logfileName):
     log = models.Logfile.query.filter_by(name=logfileName).first()
     return log
+
+#def getLogfileByCaptureName(captureName):
+    #cap = models.Capture.query.filter_by(name=captureName).first()
 
 def getCaptureBucket(logfileID):
     log = models.Logfile.query.filter_by(id=logfileID).first()
