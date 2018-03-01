@@ -50,8 +50,8 @@ def getCaptureAll():
     return cap_list
 
 # Add replay to replay table with references to associated files
-def addReplay(name, startTime, endTime, dbName, logfileId, metricId, captureId):
-    new_rep = models.Replay(name, startTime, endTime, dbName, logfileId, metricId, captureId)
+def addReplay(name, startTime, endTime, dbName, metricId, captureId, mode, status):
+    new_rep = models.Replay(name, startTime, endTime, dbName, metricId, captureId, mode, status)
     models.db.session.add(new_rep)
     models.db.session.commit()
 

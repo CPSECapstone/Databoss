@@ -17,13 +17,5 @@ def add(name, startTime, endTime, dbName, logfileId, metricId, captureId):
 @replay_api.route('/startReplay', methods=["POST"])
 def startReplay():
     data = request.json
-    print(data)
-    dbName = data['dbName']
-    startDate = data['startDate']
-    endDate = data['endDate']
-    startTime = data['startTime']
-    endTime = data['endTime']
-    replayMode = data['replayMode']
-
     startReplay(data['replayName'], data['captureBucket'], data['dbName'], data['startDate'],
-                data['endDate'], data['startTime'], data['endTime'], None, data['replayMode'])
+                data['endDate'], data['startTime'], data['endTime'], None, data['mode'])
