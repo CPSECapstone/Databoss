@@ -40,4 +40,4 @@ def endCapture(captureObj, startTime, endTime):
 
     print("stop capture")
     capture.stopCapture(startTime, endTime, captureObj.name, captureObj.logfileId, captureObj.metricId, captureFileName, metricFileName)
-    modelsQuery.updateCaptureStatus(captureObj.name, "inactive")
+    modelsQuery.updateCaptureStatus(captureObj.name, "finished")
