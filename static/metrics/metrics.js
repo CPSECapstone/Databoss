@@ -17,7 +17,7 @@ app.controller('metrics', function($scope, $location, $http, Metrics) {
       if (value === true)
          getMetrics($http, Metrics, name, type, id);
       else
-        removeMetricsFromCharts(name);
+        removeMetricsFromCharts(Metrics, name);
    };
 
    $scope.toggleReplays = function(captureId) {
@@ -25,11 +25,11 @@ app.controller('metrics', function($scope, $location, $http, Metrics) {
    };
 });
 
-var addMetricsToChart = function(chart, label, data, time) {
+var addMetricsToChart = function(chart, label, data, time, color) {
    chart.data.datasets.push({
       data: data,
       label: label,
-      borderColor: 'rgba(10, 148, 255, 1)',
+      borderColor: color,
       fill: false,
       time: time
    });
@@ -37,13 +37,22 @@ var addMetricsToChart = function(chart, label, data, time) {
 };
 
 // Removes a specific metrics dataset from all the metrics charts
-var removeMetricsFromCharts = function(name) {
+var removeMetricsFromCharts = function(Metrics, name) {
+    var color;
+
     Chart.helpers.each(Chart.instances, function(instance) {
         var datasets = instance.chart.config.data.datasets;
 
         for (index = 0; index < datasets.length; index++)
             if (datasets[index].label === name)
                 break;
+
+        // Set the color for the dataset to be available
+        if (!color) {
+            color = datasets[index].borderColor;
+            console.log(color);
+            Metrics.removeUsedColor(color);
+        }
 
         datasets.splice(index, 1);
         instance.update();
@@ -101,10 +110,12 @@ var getMetrics = function($http, Metrics, name, type, id) {
         var memory = response.data.memory;
         var memoryTime = convertTimeArrayFromEpoch(response.data.memoryTime);
 
-        addMetricsToChart(Metrics.getCPUChart(), name, cpu, cpuTime);
-        addMetricsToChart(Metrics.getReadIOChart(), name, readIO, readIOTime);
-        addMetricsToChart(Metrics.getWriteIOChart(), name, writeIO, writeIOTime);
-        addMetricsToChart(Metrics.getMemoryChart(), name, memory, memoryTime);
+        var color = Metrics.getNextColor();
+
+        addMetricsToChart(Metrics.getCPUChart(), name, cpu, cpuTime, color);
+        addMetricsToChart(Metrics.getReadIOChart(), name, readIO, readIOTime, color);
+        addMetricsToChart(Metrics.getWriteIOChart(), name, writeIO, writeIOTime, color);
+        addMetricsToChart(Metrics.getMemoryChart(), name, memory, memoryTime, color);
     }, function errorCallback(response) {
         console.log('error');
     });
@@ -121,6 +132,12 @@ var createChart = function(elementId, yAxesLabel, xAxesLabel) {
             datasets: []
         },
         options : {
+            legend: {
+                display: true,
+                labels: {
+                    fontColor: "#D9D9D9"
+                }
+            },
             scales: {
                 yAxes: [{
                     gridLines: {

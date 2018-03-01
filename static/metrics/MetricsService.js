@@ -7,6 +7,25 @@ app.factory('Metrics', function() {
     var writeIOChart;
     var memoryChart;
 
+    // array of colors to use for the metrics charts
+    var colors = [
+        'cornflowerblue',
+        'tomato',
+        'palegreen',
+        'pink',
+        'orange',
+        'lemonchiffon',
+        'aqua',
+        'darkorchid',
+        'lime',
+        'red',
+        'yellow',
+        'violet'
+    ];
+    // array to keep track of used colors so line colors are unique
+    var usedColors = [];
+
+
     return {
         getCPUChart : function() {
             return cpuChart;
@@ -32,5 +51,16 @@ app.factory('Metrics', function() {
         setMemoryChart : function(chart) {
             memoryChart = chart;
         },
+        getNextColor : function() {
+            var availableColors = colors.filter(function(obj) { return usedColors.indexOf(obj) == -1; });
+            usedColors.push(availableColors[0]);
+            return availableColors[0];
+        },
+        removeUsedColor : function(color) {
+            var index = usedColors.indexOf(color);
+            if (index > -1) {
+                usedColors.splice(index, 1);
+            }
+        }
     }
 });
