@@ -82,6 +82,7 @@ def startRDS(db_name, db_username, db_password, db_endpoint):
             logger.error("ERROR: Unexpected error: Could not connect to MySql instance.")
             sys.exit()
 
+
 def parseJson(jsonString, storage_limit):
     freeSpace = (jsonString['Datapoints'][0]['Average'])/(10 **9)
     if (storage_limit > freeSpace):
