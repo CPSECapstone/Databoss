@@ -22,14 +22,23 @@ def getDBConnectionAll():
     return conn_list
 
 # Add capture to capture table with references to associated files
-def addCapture(name, startTime, endTime, dbName, logfileID, metricID, mode):
-    new_cap = models.Capture(name, startTime, endTime, dbName, logfileID, metricID, mode)
+def addCapture(name, startTime, endTime, dbName, logfileID, metricID, mode, status):
+    new_cap = models.Capture(name, startTime, endTime, dbName, logfileID, metricID, mode, status)
     models.db.session.add(new_cap)
     models.db.session.commit()
 
 def getCaptureById(captureId):
     capture = models.Capture.query.get(captureId)
     return capture
+
+def updateCaptureStatus(captureName, status):
+    capture = models.Capture.query.filter_by(name=captureName).first()
+    capture.status = status
+    models.db.session.commit()
+
+def getScheduledCaptures():
+    listOfCaptures = models.Capture.query.filter_by(status="scheduled")
+    return listOfCaptures
 
 def getCaptureByName(captureName):
     capture = models.Capture.query.filter_by(name=captureName).first()
