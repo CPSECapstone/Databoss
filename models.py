@@ -132,8 +132,8 @@ class Replay(db.Model):
             'dbName': self.dbName,
             'metricId': self.metricId,
             'captureId': self.captureId,
-            'mode' : self.mode,
-            'status' : self.status
+            'mode': self.mode,
+            'status': self.status
         }
 
     def __init__(self, name, startTime, endTime, dbName, metricId, captureId, mode, status):
