@@ -22,7 +22,7 @@ else:
 s3 = boto3.client(
         service_name='s3'
     )
-s3_resource = s3 = boto3.resource(
+s3_resource = boto3.resource(
         service_name='s3'
     )
 
