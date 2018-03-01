@@ -18,7 +18,7 @@ def getDBConnectionByName(name):
     return conn
 
 def getDBConnectionAll():
-    conn_list = models.DBConnection.query.with_entities(models.DBConnection.name)
+    conn_list = models.DBConnection.query.all()
     return conn_list
 
 # Add capture to capture table with references to associated files
