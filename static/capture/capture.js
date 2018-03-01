@@ -137,17 +137,24 @@ app.controller('capture', function ($scope, $location, $uibModal, $http) {
                 'captureName' : $('#captureName').val(),
                 'captureBucket' : $('#crBucket').val(),
                 'metricsBucket' : $('#metricsBucket').val(),
-                'database' : $('#dbSelect').val(),
-                'captureMode' : $('input[name=mode]:checked').val(),
+                'dbName' : $('#dbName').val(),
                 'startDate' : $('#startDate').val(),
                 'endDate' : $('#endDate').val(),
                 'startTime' : $('#startTime').val(),
                 'endTime' : $('#endTime').val(),
+                'mode' : $('input[name=mode]:checked').val()
+
+                // 'storageLimit' : $('#')
+                //unsure how to grab the value of the storage limit.
             }
         });
 
+<<<<<<< HEAD
         // code to turn on DB logging goes here
         $location.path('/progress');
+=======
+        $location.path('progress').search({name : $('#captureName').val()});
+>>>>>>> origin/master
     }
 
     $scope.setStorageSize = function (id) {

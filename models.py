@@ -1,6 +1,5 @@
 from web_app import db
 
-
 class DBConnection(db.Model):
     __tablename__ = "dbconnection"
     dialect = db.Column(db.String(25))
@@ -9,14 +8,13 @@ class DBConnection(db.Model):
     port = db.Column(db.Integer)
     database = db.Column(db.String(100))
     username = db.Column(db.String(100))
-    captures = db.relationship('Capture', lazy=True)
-    replays = db.relationship('Replay', lazy=True)
+    #captures = db.relationship('Capture', lazy=True)
+    #replays = db.relationship('Replay', lazy=True)
 
     @property
     def serialize(self):
         # """Return object data in easily serializeable format"""
         return {
-            'id': self.id,
             'dialect': self.dialect,
             'name': self.name,
             'host': self.host,
@@ -84,9 +82,12 @@ class Capture(db.Model):
     name = db.Column(db.String(100))
     startTime = db.Column(db.DateTime)
     endTime = db.Column(db.DateTime)
-    dbName = db.Column(db.String(100), db.ForeignKey('dbconnection.name'), nullable=False)
+    dbName = db.Column(db.String(100), nullable=False)
+    #dbName = db.Column(db.String(100), db.ForeignKey('dbconnection.name'), nullable=False)
     logfileId = db.Column(db.Integer, db.ForeignKey('logfile.id'), nullable=False)
     metricId = db.Column(db.Integer, db.ForeignKey('metric.id'), nullable=False)
+    mode = db.Column(db.String(100), nullable=False)
+    status = db.Column(db.String(100))
 
     @property
     def serialize(self):
@@ -97,23 +98,28 @@ class Capture(db.Model):
             'endTime': self.endTime,
             'dbName': self.dbName,
             'logfileId': self.logfileId,
-            'metricId': self.metricId
+            'metricId': self.metricId,
+            'mode' : self.mode,
+            'status': self.status
         }
 
-    def __init__(self, name, startTime, endTime, dbName, logfileId, metricId):
+    def __init__(self, name, startTime, endTime, dbName, logfileId, metricId, mode, status):
         self.name = name
         self.startTime = startTime
         self.endTime = endTime
         self.dbName = dbName
         self.logfileId = logfileId
         self.metricId = metricId
+        self.mode = mode
+        self.status = status
 
 class Replay(db.Model):
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     name = db.Column(db.String(100))
     startTime = db.Column(db.DateTime)
     endTime = db.Column(db.DateTime)
-    dbName = db.Column(db.String(100), db.ForeignKey('dbconnection.name'), nullable=False)
+    dbName = db.Column(db.String(100), nullable=False)
+    #dbName = db.Column(db.String(100), db.ForeignKey('dbconnection.name'), nullable=False)
     logfileId = db.Column(db.Integer, db.ForeignKey('logfile.id'), nullable=False)
     metricId = db.Column(db.Integer, db.ForeignKey('metric.id'), nullable=False)
     captureId = db.Column(db.Integer, db.ForeignKey('capture.id'), nullable=False)

@@ -3,10 +3,10 @@ var app = angular.module('MyCRT');
 
 app.controller('progress', function($scope, $location, $http) {
 
-    var captureId = $location.search()['id'];
+    var captureName = $location.search()['name'];
     $http({
         method: 'GET',
-        url: 'capture/' + captureId,
+        url: 'capture/' + captureName,
         headers: {
             'Content-Type': 'application/json'
         },
@@ -14,7 +14,7 @@ app.controller('progress', function($scope, $location, $http) {
         $scope.capture = response.data;
         calculateProgressCapture($scope.capture);
     }, function errorCallback(response) {
-        console.log('error retrieving capture id = ' + captureId);
+        console.log('error retrieving capture name = ' + captureName);
     });
 
     $scope.endCapture = function () {

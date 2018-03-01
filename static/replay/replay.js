@@ -66,6 +66,27 @@ app.controller('replay', function($scope, $http, $location) {
     });
 
     $scope.startReplay = function () {
+        $http({
+                method: 'POST',
+                url: 'capture/startReplay',
+                headers: {
+                    'Content-Type' : 'application/json'
+                },
+                data : {
+                    'replayName' : $('#captureName').val(),
+                    'captureBucket' : $('#crBucket').val(),
+                    'metricsBucket' : $('#metricsBucket').val(),
+                    'dbName' : $('#dbName').val(),
+                    'startDate' : $('#startDate').val(),
+                    'endDate' : $('#endDate').val(),
+                    'startTime' : $('#startTime').val(),
+                    'endTime' : $('#endTime').val(),
+                    'mode' : $('input[name=mode]:checked').val()
+
+                    // 'storageLimit' : $('#')
+                    //unsure how to grab the value of the storage limit.
+                }
+            });
       // Add code to turn on DB logging here
       console.log("Starting Replay!")
       // @TODO Need to fix the reroute to the started replay.
@@ -84,4 +105,38 @@ app.controller('replay', function($scope, $http, $location) {
         document.getElementById('mb-button').classList.remove('active');
       }
     }
+
+    populateCaptures($http, $scope);
+    getDBConnections($http, $scope);
+
 });
+
+var populateCaptures = function($http, $scope) {
+    $http({
+        method: 'GET',
+        url: 'capture/getAll',
+        headers: {
+        'Content-Type': 'application/json'
+        },
+    }).then(function successCallback(response) {
+        $scope.captures = response.data;
+        calculateProgress($scope.captures);
+        console.log('success');
+    }, function errorCallback(response) {
+        console.log('error retrieving captures');
+    })
+};
+var getDBConnections = function($http, $scope) {
+    $http({
+        method: 'GET',
+        url: 'capture/listDBinstances',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+    }).then(function successCallback(response) {
+        $scope.DBConnections = response.data;
+        console.log('success');
+    }, function errorCallback(response) {
+        console.log('error');
+    });
+};
