@@ -280,6 +280,7 @@ def stopCapture(startTime, endTime, captureName, captureBucket, metricBucket, ca
         if os.path.exists(captureFileName):
             os.remove(captureFileName)
 
+        modelsQuery.updateCaptureStatus(captureName, "finished")
         sendMetrics(metricBucket, metricFileName)
 
 
