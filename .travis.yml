@@ -1,16 +1,16 @@
 language: python
 matrix:
   include:
-#  - python: "3.4"
-#    env: TEST_SUITE=test/suite_3_4.py
-  - python: "3.5"
+  - python: '3.5'
     env: TEST_SUITE=test/*.py
-#  - python: "3.6"
-#    env: TEST_SUITE=test/suite_3_6.py
-# command to install dependencies
+before_install:
+  - ./ecr_credentials.sh
 install:
-  - pip install -r requirements.txt
-  - pip install Flask-SQLAlchemy
-# command to run test
+- pip install -r requirements.txt
+- pip install Flask-SQLAlchemy
 script:
-  - pytest $TEST_SUITE # or py.test for Python versions 3.5 and below
+- pytest $TEST_SUITE
+env:
+  global:
+  - secure: otYdzldzqYghVY0I5kq/ptJWO3XNHnE0ocJ/a7VlDpONTBBPecxNV21JYXWbQ3h5Rtt7DNiZ95TwPsKKfGTyfrwVSrv+bzwnvJ3DL+pE70abhcHOTf1/NjAh4+0pZ8wE2Rf1JMRdmlThpAu2YqbvroJeGfgmNm4HkoITJXG7TPyWu3a+9dM+fXJUu/YPNDu16zXoIpU5Aeufqc/ozKj8t3ftwsvG1bVaPyFwfgoI043GzLkXzMm3V8Mzt7jx13Cu3byJKEeNsBotSkQTMI6I8GE1ZBoQ6ileopYKodbn6Tf2RxFJM1n04BWjCtAQ4wI/hnO6zH8lWgoCf+IXbXE1aMVUwR/kdw7SFOh+EjEwTDsNX7dENMTP9zGfQ5ij6u4vNmRnskJYxGCb1Q8dk24mwmTOmcuFMcyNnLNoK36bpwbQg5wqo9iUNBPOjTUHkGHm1Xw/kq2iPOZJMvY3l+KYdVTjiLWOxkYIGrODoffejH5PCVmHHZ4GaL9NymBED7KYTN++6vYayFSwNDDPYVacvoOcAgoZ8hNEaUwnPOe6cRDHume5hgFRXo9vcHCAdO9nbHqFKIBFQy2WeShANlcgAmkUclHSuxXePUK80jvGlRSvRv3F3NJyr40CGjzAgnylilyHgw8LtqAgJjF44qGlq4k8SS200luTtyA283m4kyg=
+  - secure: tjjK5FfkKgVwrNayurGlaeGAL6bJGu3n4hcab4MLgorbmSV9rpz6pkJiAP1hdlzzPUZMxSiMDkF868fqZpwhQqARfdNtzqrDRwqQf6UE0Fdo0aE2qKjRDMKweBUi/uDzmjCGQSGZGNfmrQKvbc89jZ69g4QgWIs2Kup+Rq+FDmJb/sJqTxg3mc+vTF3zNJixOuBmWi70j9LbFpt86lp9KaRGAFqOTSLDzm8ExQ6SLnRFMsF27q2xPYNPVsBLROT853tW9fuDV2bUUAOCfZfdZGqYmN6HD9JYZSN1Plx1CGevsFJMoj17eLODx1crPsOYjAJnNYgZqmYfgztqzsQMALY8osczDY2ovFCp3z70ug9FRCnrcusALLYE0yF4R0tVkSnGVUBhiaRPejnnSmeqotzLLEK0NXO7Pb7+9NP3tVSGEVkc72c5i0AYzAq2UyBu/te9N/x+BQS3G5JaPKETCvfWK7fzqlhwNndxWR45emXpK/HO99V0QEzYnmUGiDRPEkPEKmFL9IOAT62ld4PCHQKzBF1K1s7zEw7pBEOsPnm/rcCFXsywkjc4B0eXPhQuQFN7jCyuR424QiaLCocLl1lxLiySDN6HCEYE0s67iU2u29j7Nvmr77ObntFU/1SOY9q4cWRM0rREsHyJvEzJKRis9D1t7PdFJ10/UXA+kqk=
