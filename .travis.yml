@@ -4,7 +4,7 @@ matrix:
   - python: '3.5'
     env: TEST_SUITE=test/*.py
 before_install:
-  - ./ecr_credentials.sh
+  - chmod +x ./ecr_credentials.sh
 install:
 - pip install -r requirements.txt
 - pip install Flask-SQLAlchemy
