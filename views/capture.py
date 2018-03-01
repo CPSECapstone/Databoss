@@ -17,7 +17,7 @@ def getAllCaptures():
 
 
 @capture_api.route('/startCapture', methods=["POST"])
-def startCapture():
+def captureRoute():
     print("entering startCapture")
     data = request.json
     print(data)
