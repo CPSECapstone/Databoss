@@ -68,23 +68,19 @@ app.controller('replay', function($scope, $http, $location) {
     $scope.startReplay = function () {
         $http({
                 method: 'POST',
-                url: 'capture/startReplay',
+                url: 'replay/startReplay',
                 headers: {
                     'Content-Type' : 'application/json'
                 },
                 data : {
-                    'replayName' : $('#captureName').val(),
+                    'replayName' : $('#replayName').val(),
                     'captureBucket' : $('#crBucket').val(),
-                    'metricsBucket' : $('#metricsBucket').val(),
                     'dbName' : $('#dbName').val(),
                     'startDate' : $('#startDate').val(),
                     'endDate' : $('#endDate').val(),
                     'startTime' : $('#startTime').val(),
                     'endTime' : $('#endTime').val(),
-                    'mode' : $('input[name=mode]:checked').val()
-
-                    // 'storageLimit' : $('#')
-                    //unsure how to grab the value of the storage limit.
+                    'replayMode' : $('input[name=replayMode]:checked').val()
                 }
             });
       // Add code to turn on DB logging here

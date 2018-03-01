@@ -32,12 +32,12 @@ def sqlite_setup():
     db.create_all()
 
     modelsQuery.addCapture("Capture1", datetime(2018, 2, 5, 1, 0, 0), datetime(2018, 2, 5, 5, 0, 0), "myRDS1", 1, 1, "interactive", "active")
-    modelsQuery.addReplay("Replay1", datetime(2018, 2, 5, 1, 1, 1), datetime(2018, 2, 5, 1, 1, 1), "myRDS2", 1, 1, 1)
-    modelsQuery.addReplay("Replay2", datetime(2018, 2, 5, 1, 1, 1), datetime(2018, 2, 5, 1, 1, 1), "myRDS3", 2, 2, 2)
+    modelsQuery.addReplay("Replay1", datetime(2018, 2, 5, 1, 1, 1), datetime(2018, 2, 5, 1, 1, 1), "myRDS2", 1, 1, "raw", "active")
+    modelsQuery.addReplay("Replay2", datetime(2018, 2, 5, 1, 1, 1), datetime(2018, 2, 5, 1, 1, 1), "myRDS3", 2, 2, "raw", "active")
 
     modelsQuery.addCapture("Capture2", datetime(2018, 2, 5, 2, 30, 15), datetime(2018, 2, 5, 4, 30, 1), "myRDS4", 2, 2, "interactive", "active")
-    modelsQuery.addReplay("Replay3", datetime(2018, 2, 5, 1, 1, 1), datetime(2018, 2, 5, 1, 1, 1), "myRDS5", 3, 3, 3)
-    modelsQuery.addReplay("Replay4", datetime(2018, 2, 5, 1, 1, 1), datetime(2018, 2, 5, 1, 1, 1), "myRDS6", 4, 4, 4)
+    modelsQuery.addReplay("Replay3", datetime(2018, 2, 5, 1, 1, 1), datetime(2018, 2, 5, 1, 1, 1), "myRDS5", 3, 3, "raw", "active")
+    modelsQuery.addReplay("Replay4", datetime(2018, 2, 5, 1, 1, 1), datetime(2018, 2, 5, 1, 1, 1), "myRDS6", 4, 4, "raw", "active")
 
     modelsQuery.addCapture("Capture3", datetime(2018, 2, 5, 2, 30, 15), datetime(2018, 2, 5, 4, 30, 1), "myRDS4", 2, 2,
                            "interactive", "active")

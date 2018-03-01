@@ -1,7 +1,6 @@
 from capture import capture_api
 from flask import jsonify, request
 from capture import startCapture, stopCapture
-from models import Capture
 import modelsQuery
 from models import Capture
 
@@ -18,7 +17,7 @@ def getAllCaptures():
 
 
 @capture_api.route('/startCapture', methods=["POST"])
-def captureRoute():
+def startCapture():
     data = request.json
     print(data)
     captureName = data['captureName']

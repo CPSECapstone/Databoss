@@ -143,9 +143,6 @@ app.controller('capture', function ($scope, $location, $uibModal, $http) {
                 'startTime' : $('#startTime').val(),
                 'endTime' : $('#endTime').val(),
                 'mode' : $('input[name=mode]:checked').val()
-
-                // 'storageLimit' : $('#')
-                //unsure how to grab the value of the storage limit.
             }
         });
 
