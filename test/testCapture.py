@@ -6,20 +6,7 @@ import json
 import os.path
 
 
-loc = "us-west-1"
-s3 = boto3.client(
-        service_name='s3'
-    )
-s3_resource = s3 = boto3.resource(
-        service_name='s3'
-    )
 
-rds = boto3.client(
-        service_name='rds',
-        region_name=loc
-    )
-
-bucketName = 'capture-test-13'
 # def pytest_namespace():
 #     return {'bucketName': 'capture-test-6'}
 #
@@ -38,6 +25,21 @@ bucketName = 'capture-test-13'
 
 
 def test_BucketCreation():
+    loc = "us-west-1"
+    s3 = boto3.client(
+        service_name='s3'
+    )
+    s3_resource = s3 = boto3.resource(
+        service_name='s3'
+    )
+
+    rds = boto3.client(
+        service_name='rds',
+        region_name=loc
+    )
+
+    bucketName = 'capture-test-5'
+
     bucket_list = [bucket.name for bucket in s3.buckets.all()]
     capture.createBucket(bucketName)
     bucket_list = [bucket.name for bucket in s3.buckets.all()]
@@ -47,6 +49,21 @@ def test_BucketCreation():
 
 
 def test_BucketExists():
+    loc = "us-west-1"
+    s3 = boto3.client(
+        service_name='s3'
+    )
+    s3_resource = s3 = boto3.resource(
+        service_name='s3'
+    )
+
+    rds = boto3.client(
+        service_name='rds',
+        region_name=loc
+    )
+
+    bucketName = 'capture-test-5'
+
     bucket_list = [bucket.name for bucket in s3.buckets.all()]
     initialSize = bucket_list.__len__()
     capture.createBucketName(bucketName, bucketName)
