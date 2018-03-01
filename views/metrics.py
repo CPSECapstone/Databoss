@@ -32,9 +32,3 @@ def getMetrics():
 def getS3Metrics(bucket, file):
     obj = capture.s3.Object(bucket, file).get()
     return ParsedMetrics(obj['Body'].read().decode('utf-8'))
-
-#TODO : move this to models.query.py
-def add(name, bucket, file):
-    newMetrics = Metric(name=name, bucket=bucket, file=file)
-    db.session.add(newMetrics)
-    db.session.commit()

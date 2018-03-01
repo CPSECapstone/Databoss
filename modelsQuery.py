@@ -18,7 +18,7 @@ def getDBConnectionByName(name):
     return conn
 
 def getDBConnectionAll():
-    conn_list = models.DBConnection.query.with_entities(models.DBConnection.name)
+    conn_list = models.DBConnection.query.all()
     return conn_list
 
 # Add capture to capture table with references to associated files
@@ -50,8 +50,8 @@ def getCaptureAll():
     return cap_list
 
 # Add replay to replay table with references to associated files
-def addReplay(name, startTime, endTime, dbName, logfileId, metricId, captureId):
-    new_rep = models.Replay(name, startTime, endTime, dbName, logfileId, metricId, captureId)
+def addReplay(name, startTime, endTime, dbName, metricId, captureId, mode, status):
+    new_rep = models.Replay(name, startTime, endTime, dbName, metricId, captureId, mode, status)
     models.db.session.add(new_rep)
     models.db.session.commit()
 
@@ -62,6 +62,8 @@ def getReplayById(replayId):
 def getReplayByName(replayName):
     replay = models.Replay.query.filter_by(name=replayName).first()
     return replay
+
+#get log file given capture name
 
 # Return all replays in the replay table
 def getReplayAll():
@@ -118,6 +120,9 @@ def getLogfileById(logfileId):
 def getLogfileByName(logfileName):
     log = models.Logfile.query.filter_by(name=logfileName).first()
     return log
+
+#def getLogfileByCaptureName(captureName):
+    #cap = models.Capture.query.filter_by(name=captureName).first()
 
 def getCaptureBucket(logfileID):
     log = models.Logfile.query.filter_by(id=logfileID).first()

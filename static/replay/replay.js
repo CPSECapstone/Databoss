@@ -24,18 +24,18 @@ app.controller('replay', function($scope, $http, $location) {
     hideButtons(dateContainer, timeContainer, storageContainer);
 
     $('input[name=mode]').on('change', function(event) {
-      selectedMode = $("input[name=mode]:checked").attr('id');
+      selectedMode = $("input[name=mode]:checked").val();
       console.log("value " + selectedMode);
-      if (selectedMode === "capture-int") {
+      if (selectedMode === "interactive") {
         console.log("updating to interactive view");
         hideButtons(dateContainer, timeContainer, storageContainer);
       }
-      else if (selectedMode === "capture-time") {
+      else if (selectedMode === "time") {
         console.log("updating to time constrained view");
         showButtons(dateContainer, timeContainer);
         hideButtons(storageContainer);
       }
-      else if (selectedMode === "capture-storage") {
+      else if (selectedMode === "storage") {
         console.log("updating to storage view");
         hideButtons(dateContainer, timeContainer);
         showButtons(storageContainer);
@@ -71,6 +71,23 @@ app.controller('replay', function($scope, $http, $location) {
     });
 
     $scope.startReplay = function () {
+        $http({
+                method: 'POST',
+                url: 'replay/startReplay',
+                headers: {
+                    'Content-Type' : 'application/json'
+                },
+                data : {
+                    'replayName' : $('#replayName').val(),
+                    'captureBucket' : $('#crBucket').val(),
+                    'dbName' : $('#dbName').val(),
+                    'startDate' : $('#startDate').val(),
+                    'endDate' : $('#endDate').val(),
+                    'startTime' : $('#startTime').val(),
+                    'endTime' : $('#endTime').val(),
+                    'replayMode' : $('input[name=replayMode]:checked').val()
+                }
+            });
       // Add code to turn on DB logging here
       console.log("starting Replay!")
       $location.path('/progress');
@@ -88,4 +105,39 @@ app.controller('replay', function($scope, $http, $location) {
         document.getElementById('mb-button').classList.remove('active');
       }
     }
+
+    populateCaptures($http, $scope);
+    getDBConnections($http, $scope);
+
 });
+
+var populateCaptures = function($http, $scope) {
+    $http({
+        method: 'GET',
+        url: 'capture/getAll',
+        headers: {
+        'Content-Type': 'application/json'
+        },
+    }).then(function successCallback(response) {
+        $scope.captures = response.data;
+        calculateProgress($scope.captures);
+        console.log('success');
+    }, function errorCallback(response) {
+        console.log('error retrieving captures');
+    })
+};
+var getDBConnections = function($http, $scope) {
+    $http({
+        method: 'GET',
+        url: 'capture/listDBinstances',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+    }).then(function successCallback(response) {
+        $scope.DBConnections = response.data;
+        console.log('success');
+    }, function errorCallback(response) {
+        console.log('error');
+    });
+};
+

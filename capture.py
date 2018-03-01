@@ -93,7 +93,6 @@ def list_buckets():
 
 
 # Creating 2 buckets if they don't already exist
-#@app.route()
 def createBucket(bucketName):
     if s3_resource.Bucket(bucketName) in s3_resource.buckets.all():
         print("Found " + bucketName + " bucket")
@@ -280,6 +279,7 @@ def stopCapture(startTime, endTime, captureName, captureBucket, metricBucket, ca
         if os.path.exists(captureFileName):
             os.remove(captureFileName)
 
+        modelsQuery.updateCaptureStatus(captureName, "finished")
         sendMetrics(metricBucket, metricFileName)
 
 

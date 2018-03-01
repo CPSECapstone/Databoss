@@ -4,21 +4,20 @@
     <div class="center-block">
       <div class="form-group">
         <label for="replayName">Replay Name</label>
-        <input type="text" class="form-control" id="replay-name" aria-describedby="replayName">
+        <input type="text" class="form-control" id="replayName">
       </div>
       <div class="form-group">
         <label for="crBucket">Capture to Replay</label>
-        <select class="form-control">
+        <select class="form-control" id="crBucket">
           <option disabled selected value> -- Select Capture -- </option>
-          <option ng-repeat="bucket in buckets" value="{{bucket}}">{{bucket}}</option>
+          <option ng-repeat="capture in captures" value="{{capture}}">{{capture.name}}</option>
         </select>
       </div>
-
       <div class="form-group">
-        <label for="metricsBucket">Replay Server</label>
-        <select class="form-control" id="replayServer">
-          <option disabled selected value> -- Select Server -- </option>
-          <option ng-repeat="bucket in buckets" value="{{bucket}}">{{bucket}}</option>
+        <label for="dbName">Database:</label>
+        <select class="form-control" id="dbName">
+          <option disabled selected value> -- Select Database -- </option>
+          <option ng-repeat="db in DBConnections" value="{{db.DBInstanceIdentifier}}">{{db.DBInstanceIdentifier}}</option>
         </select>
       </div>
 
@@ -26,27 +25,14 @@
       <h5>Replay Mode:</h5>
       <div class="btn-group center-block" name="replayMode" data-toggle="buttons">
         <label class="btn btn-primary active">
-          <input type="radio" name="mode" autocomplete="off" checked > Raw
+          <input type="radio" name="replayMode" autocomplete="off" value="replay-raw" checked > Raw
         </label>
         <label class="btn btn-primary">
-          <input type="radio" name="mode" autocomplete="off"> Time-Preserving
-        </label>
-      </div>
-      <!-- Make sure to rename the name of this mode!!!!  -->
-      <h5>Mode:</h5>
-      <div id="capture-mode-bar" class="btn-group" data-toggle="buttons">
-        <label class="btn btn-primary">
-          <input type="radio" name="mode" autocomplete="off" id="capture-int" checked=""> Interactive
-        </label>
-        <label class="btn btn-primary">
-          <input type="radio" name="mode" autocomplete="off" id="capture-time" checked="checked"> Time-Constrained
-        </label>
-        <label class="btn btn-primary">
-          <input type="radio" name="mode" autocomplete="off" id="capture-storage" checked=""> Storage-Constrained
+          <input type="radio" name="replayMode" autocomplete="off" value="replay-time"> Time-Preserving
         </label>
       </div>
 
-      <!-- <div class="date-container "> -->
+
       <div id="date-container" class="row">
         <span>Start Date: <input id="startDate" width="276" /> </span>
         <span>End Date: <input id="endDate" width="276" /> </span>
