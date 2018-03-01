@@ -52,7 +52,8 @@ def testAddCapture():
     logfileId = 1
     metricId = 1
     mode = "interactive"
-    modelsQuery.addCapture(name, startTime, endTime, dbName, logfileId, metricId, mode)
+    status = "active"
+    modelsQuery.addCapture(name, startTime, endTime, dbName, logfileId, metricId, mode, status)
     result = models.Capture.query.get(1)
     assert result.name == name
     assert result.startTime == startTime
@@ -61,6 +62,7 @@ def testAddCapture():
     assert result.logfileId == logfileId
     assert result.metricId == metricId
     assert result.mode == mode
+    assert result.status == status
 
 def testGetCapture():
     list = modelsQuery.getCaptureAll().count()
@@ -72,7 +74,8 @@ def testGetCapture():
     logfileId = 1
     metricId = 1
     mode = "interactive"
-    modelsQuery.addCapture(name, startTime, endTime, dbName, logfileId, metricId, mode)
+    status = "active"
+    modelsQuery.addCapture(name, startTime, endTime, dbName, logfileId, metricId, mode, status)
     list = modelsQuery.getCaptureAll().count()
     assert list == 2
 

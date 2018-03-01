@@ -15,8 +15,8 @@ def getAllCaptures():
     captures = Capture.query.all()
     return jsonify([i.serialize for i in captures])
 
-def add(name, startTime, endTime, dbName, logfileId, metricId, mode):
-    modelsQuery.addCapture(name, startTime, endTime, dbName, logfileId, metricId, mode)
+def add(name, startTime, endTime, dbName, logfileId, metricId, mode, status):
+    modelsQuery.addCapture(name, startTime, endTime, dbName, logfileId, metricId, mode, status)
 
 
 @capture_api.route('/startCapture', methods=["POST"])
@@ -33,7 +33,6 @@ def startCapture():
     startTime = data['startTime']
     endTime = data['endTime']
 
-    print(data)
     startCapture(captureName, captureBucket, metricsBucket, dbName, startDate, endDate, startTime, endTime, None, captureMode)
     return "ok"
 
