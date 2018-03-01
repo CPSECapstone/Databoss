@@ -41,10 +41,10 @@ ec2_resource = boto3.resource(
 #    return credentials
 
 #this will attach the user's required iam instance profile (which should have the proper permissions) to an ec2 instance
-def login(imageId, ipName):
-    ec2_resource.create_instances(ImageId='ami-327f5352', #should be replaced with imageId
+#def login(imageId, ipName):
+ec2_resource.create_instances(ImageId='ami-327f5352', #should be replaced with imageId
                      InstanceType='t2.micro',
                      MinCount=1, MaxCount=1,
                      IamInstanceProfile={
-                            'Name': ipName
+                            'Name': 'attempt3'
                      })
