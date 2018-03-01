@@ -15,7 +15,7 @@ app.controller('login', function($scope, $location, $http) {
             }
         }).then(function successCallback(response) {
             console.log('success');
-            $location.path('/capture');
+            $location.path('/home');
         }, function errorCallback(response) {
             console.log('error');
         });
