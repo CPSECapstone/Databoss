@@ -25,25 +25,13 @@
       <h5>Replay Mode:</h5>
       <div class="btn-group center-block" name="replayMode" data-toggle="buttons">
         <label class="btn btn-primary active">
-          <input type="radio" name="mode" autocomplete="off" checked > Raw
+          <input type="radio" name="replayMode" autocomplete="off" value="replay-raw" checked > Raw
         </label>
         <label class="btn btn-primary">
-          <input type="radio" name="mode" autocomplete="off"> Time-Preserving
+          <input type="radio" name="replayMode" autocomplete="off" value="replay-time"> Time-Preserving
         </label>
       </div>
-      <!-- Make sure to rename the name of this mode!!!!  -->
-      <h5>Mode:</h5>
-      <div id="capture-mode-bar" class="btn-group" data-toggle="buttons">
-        <label class="btn btn-primary">
-          <input type="radio" name="mode" autocomplete="off" value="interactive" checked=""> Interactive
-        </label>
-        <label class="btn btn-primary">
-          <input type="radio" name="mode" autocomplete="off" value="time" checked="checked"> Time-Constrained
-        </label>
-        <label class="btn btn-primary">
-          <input type="radio" name="mode" autocomplete="off" value="storage" checked=""> Storage-Constrained
-        </label>
-      </div>
+
 
       <div id="date-container" class="row">
         <span>Start Date: <input id="startDate" width="276" /> </span>
