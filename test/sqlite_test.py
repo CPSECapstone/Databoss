@@ -115,6 +115,7 @@ def testGetReplay():
     list = modelsQuery.getReplayAll().count()
     assert list == 2
 
+
 def testCleanup():
     db.drop_all()
     db.create_all()

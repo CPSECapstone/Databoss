@@ -61,7 +61,6 @@ class Logfile(db.Model):
     file = db.Column(db.String(100))
     db.UniqueConstraint(bucket, file)
     capture = db.relationship('Capture', backref='logfile', lazy=True, uselist=False)
-    replay = db.relationship('Replay', backref='logfile', lazy=True, uselist=False)
 
     @property
     def serialize(self):
