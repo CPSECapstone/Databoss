@@ -1,26 +1,78 @@
 <div>
   <h1> Home Screen </h1>
-  <!--<div class="center-block text-center">-->
-    <!--<button ng-click="goCapture()" type="button" class="btn btn-primary">Go to Capture</button>-->
-  <!--</div>-->
-  <div class="tableWrapper">
-  <h4 class="text-center"> Currently Running Captures</h4>
-    <table class="table center-block">
-      <thead>
-        <tr>
-          <th>Name</th>
-          <th>Start Date</th>
-          <th>End Date</th>
-          <th>Progress</th>
-        </tr>
-      </thead>
-      <tbody ng-repeat="capture in captures">
-        <tr>
-            <th><a href="#!/progress?id={{capture.id}}">{{capture.name}}</a></th>
-            <td>{{capture.startTime}}</td>
-            <td>{{capture.endTime}}</td>
-            <td>{{capture.progress}}</td>
-        </tr>
-      </tbody>
-    </table>
+
+  <h2>Active Captures</h2>
+  <div class="container2">
+    <div class="row" >
+      <div class="col-xs-3" ng-repeat="capture in activeCaptures">
+
+        <a href="#!/progress?name={{capture.name}}">
+          <div class="box">
+            <div class="capture-name text-center">
+              {{capture.name}}
+            </div>
+            <div class="date-container text-center">
+              <span class="time-label">Start: </span>
+              {{capture.formattedStart}}
+            </div>
+            <div class="home-progress text-center">
+              <span class="progress-num">{{capture.progress}}</span>
+              <!-- <span class="progress-percent">%</span> -->
+            </div>
+
+            <div class="home-completed text-center">
+              % COMPLETED
+            </div>
+          </div>
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <h2>Finished Captures</h2>
+  <div class="container2">
+    <div class="row" >
+      <div class="col-xs-3" ng-repeat="capture in finishedCaptures">
+
+        <a href="#!/metrics?captureId={{capture.id}}">
+          <div class="box">
+            <div class="capture-name text-center">
+              {{capture.name}}
+            </div>
+            <div class="date-container text-center">
+              <span class="time-label">Start: </span>
+              {{capture.formattedStart}}
+            </div>
+            <div class="date-container text-center">
+              <span class="time-label">End: </span>
+              {{capture.formattedEnd}}
+            </div>
+
+          </div>
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <!-- <div class="wrapper">
+  <div class="box">
+  <div class="capture-name text-center">
+  {{capture.name}}
+</div>
+<div class="date-container text-center">
+Feb 25, 2018 at 10:16:35
+{{capture.startTime}}
+</div>
+<div class="home-progress text-center">
+<span class="progress-num">{{capture.progress}}</span>
+<span class="progress-percent">%</span>
+</div>
+<div class="home-completed text-center">
+% COMPLETED
+</div>
+</div> -->
+<!-- <div class="four">Four</div> -->
+<!-- <div class="five">Five</div> -->
+<!-- <div class="six">Six</div> -->
+</div>
 </div>
