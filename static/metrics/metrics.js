@@ -1,5 +1,16 @@
 //Initialize the angular application for this AngularJS controller
-var app = angular.module('MyCRT');
+var app = angular.module('MyCRT').directive('onFinishRender', function ($timeout) {
+    return {
+        restrict: 'A',
+        link: function (scope, element, attr) {
+            if (scope.$last === true) {
+                $timeout(function () {
+                    scope.$emit(attr.onFinishRender);
+                });
+            }
+        }
+    }
+});
 
 //whenever an action occurs on the metrics page, the controller will handle it
 app.controller('metrics', function($scope, $location, $http, Metrics) {
@@ -10,6 +21,14 @@ app.controller('metrics', function($scope, $location, $http, Metrics) {
 
    getCaptures($http, $scope);
    getReplays($http, $scope);
+
+   $scope.$on('updateSelectionFromQueryParameters', function(ngRepeatFinishedEvent) {
+     var captureId = $location.search()['captureId'];
+
+     if (captureId) {
+       $('#capture-checkbox' + captureId).click();
+     }
+  });
 
    // Function that is called whenever a checkbox is checked or unchecked
    // Handles calling the appropriate functions for updating the charts

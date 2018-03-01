@@ -27,7 +27,6 @@ app.controller('progress', function($scope, $location, $http) {
             data: $scope.capture
         }).then(function successCallback(response) {
             console.log('success');
-
             $location.path('/metrics');
         }, function errorCallback(response) {
             console.log('error retrieving replays');
@@ -41,10 +40,8 @@ var calculateProgressCapture = function(capture) {
     var endTime = new Date(capture.endTime);
     endTime.setHours(endTime.getHours() + 8);
     var totalTimeMS = endTime - startTime;
-    var currentTime = new Date(endTime);
-    currentTime.setHours(currentTime.getHours() - 1);
+    var currentTime = Date.now();
     var elapsedTimeMS = currentTime - startTime;
     var percentage = (elapsedTimeMS/totalTimeMS) * 100;
     capture.progress = percentage.toFixed(0) + "%";
-    console.log("capture progress: "  + capture.progress);
   }
