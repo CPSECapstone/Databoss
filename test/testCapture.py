@@ -20,14 +20,10 @@ else:
     print("ERROR: could not find credentials")
 
 s3 = boto3.client(
-        service_name='s3',
-        aws_access_key_id=access_key,
-        aws_secret_access_key=secret_key,
+        service_name='s3'
     )
 s3_resource = s3 = boto3.resource(
-        service_name='s3',
-        aws_access_key_id=access_key,
-        aws_secret_access_key=secret_key
+        service_name='s3'
     )
 
 def test_BucketCreation(bucketName):
@@ -56,7 +52,7 @@ def test_Storage(size, db_name):
     res = testStorage.checkStorageCacity(size, db_name)
     assert (res == 0)
 
-test_BucketCreation('capture-test-5')
-test_BucketExists('capture-test-3')
+test_BucketCreation('capture-test-6')
+test_BucketExists('capture-test-6')
 #test_StorageMax(5, 'storagedb')
 #test_Storage(25, 'storagedb')
