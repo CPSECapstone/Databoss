@@ -1,3 +1,5 @@
 {
-  "parse_test.py::test_parse": true
+  "parse_test.py::test_parse": true,
+  "testCapture.py::test_BucketCreation": true,
+  "testCapture.py::test_BucketExists": true
 }
