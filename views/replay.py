@@ -9,6 +9,3 @@ replay_api = Blueprint('replay_api', __name__)
 def getAllReplays():
     replays = Replay.query.all()
     return jsonify([i.serialize for i in replays])
-
-def add(name, startTime, endTime, dbName, logfileId, metricId, captureId):
-    modelsQuery.addReplay(name, startTime, endTime, dbName, logfileId, metricId, captureId)
