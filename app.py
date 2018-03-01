@@ -39,6 +39,17 @@ def sqlite_setup():
     modelsQuery.addReplay("Replay3", datetime(2018, 2, 5, 1, 1, 1), datetime(2018, 2, 5, 1, 1, 1), "myRDS5", 3, 3, 3)
     modelsQuery.addReplay("Replay4", datetime(2018, 2, 5, 1, 1, 1), datetime(2018, 2, 5, 1, 1, 1), "myRDS6", 4, 4, 4)
 
+    modelsQuery.addCapture("Capture3", datetime(2018, 2, 5, 2, 30, 15), datetime(2018, 2, 5, 4, 30, 1), "myRDS4", 2, 2,
+                           "interactive", "active")
+    modelsQuery.addCapture("Capture4", datetime(2018, 2, 5, 2, 30, 15), datetime(2018, 2, 5, 4, 30, 1), "myRDS4", 2, 2,
+                           "interactive", "active")
+    modelsQuery.addCapture("Capture5", datetime(2018, 2, 5, 2, 30, 15), datetime(2018, 2, 5, 4, 30, 1), "myRDS4", 2, 2,
+                           "interactive", "active")
+    modelsQuery.addCapture("Capture3", datetime(2018, 2, 5, 2, 30, 15), datetime(2018, 2, 5, 4, 30, 1), "myRDS4", 2, 2,
+                           "interactive", "active")
+    modelsQuery.addCapture("Capture3", datetime(2018, 2, 5, 2, 30, 15), datetime(2018, 2, 5, 4, 30, 1), "myRDS4", 2, 2,
+                           "interactive", "active")
+
     modelsQuery.addMetric("Metrics1", "crt-metrics-test", "metric-file.txt")
     modelsQuery.addMetric("Metrics2", "crt-metrics-test", "metric-file-2.txt")
 

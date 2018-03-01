@@ -149,12 +149,9 @@ app.controller('capture', function ($scope, $location, $uibModal, $http) {
             }
         });
 
-<<<<<<< HEAD
         // code to turn on DB logging goes here
-        $location.path('/progress');
-=======
-        $location.path('progress').search({name : $('#captureName').val()});
->>>>>>> origin/master
+        $location.path('progress').search({
+          name : $('#captureName').val()});
     }
 
     $scope.setStorageSize = function (id) {

@@ -41,6 +41,15 @@
   background: #111111;
   /* background: #222222; */
   padding: 20px;
+  margin-bottom: 30px;
+}
+a, a:hover, a:visited {
+  color: white;
+  text-decoration: none;
+}
+
+.box:hover, .box:active {
+  background-color: #000000;
 }
 
 .capture-name {
