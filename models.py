@@ -142,6 +142,6 @@ class Replay(db.Model):
         self.endTime = endTime
         self.dbName = dbName
         self.metricId = metricId
-        self.captureId = captureId,
-        self.mode = mode,
+        self.captureId = captureId
+        self.mode = mode
         self.status = status
