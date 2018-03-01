@@ -41,10 +41,10 @@ def test_BucketCreation(bucketName):
 def test_BucketExists(bucketName):
     bucket_list = [bucket.name for bucket in s3.buckets.all()]
     initialSize = bucket_list.__len__()
-    capture.createBucket(bucketName)
+    capture.createBucketName(bucketName, bucketName)
     bucket_list = [bucket.name for bucket in s3.buckets.all()]
     sizeAfterAdd = bucket_list.__len__()
-    assert (initialSize== sizeAfterAdd)
+    assert (initialSize == sizeAfterAdd)
 
 def test_StorageMax(size, db_name):
     testStorage.startRDS(db_name, "sthanawa", "sthanawa", "storagedb.coircswctb4r.us-west-1.rds.amazonaws.com")
@@ -56,7 +56,7 @@ def test_Storage(size, db_name):
     res = testStorage.checkStorageCacity(size, db_name)
     assert (res == 0)
 
-test_BucketCreation('capture-test3')
-test_BucketExists('capture-does-not-exist')
+test_BucketCreation('capture-test-5')
+test_BucketExists('capture-test-3')
 #test_StorageMax(5, 'storagedb')
 #test_Storage(25, 'storagedb')

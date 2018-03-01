@@ -94,7 +94,7 @@ def list_buckets():
 #@app.route()
 def createBucket(bucketName):
     if s3_resource.Bucket(bucketName) in s3_resource.buckets.all():
-        print("Found " + bucketName + " bucket")
+        #print("Found " + bucketName + " bucket")
         return s3_resource.Bucket(bucketName)
     else:
         return s3.create_bucket(
@@ -107,12 +107,13 @@ def createBucket(bucketName):
 def createBucketName(bucketName, string):
     try:
         captureReplayBucket = createBucket(bucketName)
-        print("Created " + bucketName + " bucket")
+        #print("Created " + bucketName + " bucket")
         return bucketName
     except:
         # bucketName = -1
+        #this only comes here if the bucket name is not valid
         testBucketName(bucketName, string)
-        # return -1
+        #return -1
 
 
 def testBucketName(bucketName, string):
