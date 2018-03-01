@@ -7,6 +7,8 @@ app.controller('home', function($scope, $location, $http) {
     }
     populateActiveCaptures($http, $scope);
     populateFinishedCaptures($http, $scope);
+    populateScheduledCaptures($http, $scope);
+
 });
 var options = {
   year: 'numeric',
@@ -24,6 +26,7 @@ var populateActiveCaptures = function($http, $scope) {
         'Content-Type': 'application/json'
         },
     }).then(function successCallback(response) {
+      console.log("active!!!! ");
         $scope.activeCaptures = response.data;
         calculateProgress($scope.activeCaptures);
         console.log('success');
@@ -40,8 +43,26 @@ var populateFinishedCaptures = function($http, $scope) {
         'Content-Type': 'application/json'
         },
     }).then(function successCallback(response) {
+      console.log("finished!!!! ");
         $scope.finishedCaptures = response.data;
         formatDates($scope.finishedCaptures);
+        console.log('success');
+    }, function errorCallback(response) {
+        console.log('error retrieving captures');
+    })
+};
+
+var populateScheduledCaptures = function($http, $scope) {
+    $http({
+        method: 'GET',
+        url: 'capture/scheduled',
+        headers: {
+        'Content-Type': 'application/json'
+        },
+    }).then(function successCallback(response) {
+      console.log("scheduled!!!! ");
+        $scope.scheduledCaptures= response.data;
+        formatDates($scope.scheduledCaptures);
         console.log('success');
     }, function errorCallback(response) {
         console.log('error retrieving captures');

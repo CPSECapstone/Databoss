@@ -19,7 +19,6 @@ app.controller('progress', function($scope, $location, $http) {
     },
   }).then(function successCallback(response) {
     $scope.capture = response.data;
-    console.log("EHRERHEHRHERHEHRE");
     if ($scope.capture.status !== "scheduled") {
       calculateProgressCapture($scope.capture);
     }
