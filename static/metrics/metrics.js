@@ -14,6 +14,7 @@ var app = angular.module('MyCRT').directive('onFinishRender', function ($timeout
 
 //whenever an action occurs on the metrics page, the controller will handle it
 app.controller('metrics', function($scope, $location, $http, Metrics) {
+   Metrics.resetUsedColors();
    Metrics.setCPUChart(createChart('cpuChart', 'CPU (Percent)', 'Time (seconds)'));
    Metrics.setReadIOChart(createChart('readIOChart', 'Read IO (count/second)', 'Time (seconds)'));
    Metrics.setWriteIOChart(createChart('writeIOChart', 'Write IO (count/second)', 'Time (seconds)'));

@@ -61,6 +61,9 @@ app.factory('Metrics', function() {
             if (index > -1) {
                 usedColors.splice(index, 1);
             }
+        },
+        resetUsedColors : function() {
+            usedColors = [];
         }
     }
 });
