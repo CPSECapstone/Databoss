@@ -97,7 +97,7 @@ class Capture(db.Model):
             'dbName': self.dbName,
             'logfileId': self.logfileId,
             'metricId': self.metricId,
-            'mode' : self.mode,
+            'mode': self.mode,
             'status': self.status
         }
 
@@ -142,6 +142,6 @@ class Replay(db.Model):
         self.endTime = endTime
         self.dbName = dbName
         self.metricId = metricId
-        self.captureId = captureId,
-        self.mode = mode,
+        self.captureId = captureId
+        self.mode = mode
         self.status = status
