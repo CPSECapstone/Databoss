@@ -2,7 +2,6 @@
 var app = angular.module('MyCRT');
 
 app.controller('replay', function($scope, $http, $location) {
-    console.log("in replay");
     const dateContainer = $('#date-container');
     const timeContainer = $('#time-container');
     const storageContainer = $('#storage-container');
@@ -24,19 +23,15 @@ app.controller('replay', function($scope, $http, $location) {
     hideButtons(dateContainer, timeContainer, storageContainer);
 
     $('input[name=mode]').on('change', function(event) {
-      selectedMode = $("input[name=mode]:checked").val();
-      console.log("value " + selectedMode);
-      if (selectedMode === "interactive") {
-        console.log("updating to interactive view");
+      selectedMode = $("input[name=mode]:checked").attr('id');
+      if (selectedMode === "capture-int") {
         hideButtons(dateContainer, timeContainer, storageContainer);
       }
-      else if (selectedMode === "time") {
-        console.log("updating to time constrained view");
+      else if (selectedMode === "capture-time") {
         showButtons(dateContainer, timeContainer);
         hideButtons(storageContainer);
       }
-      else if (selectedMode === "storage") {
-        console.log("updating to storage view");
+      else if (selectedMode === "capture-storage") {
         hideButtons(dateContainer, timeContainer);
         showButtons(storageContainer);
       }
@@ -89,12 +84,13 @@ app.controller('replay', function($scope, $http, $location) {
                 }
             });
       // Add code to turn on DB logging here
-      console.log("starting Replay!")
+      console.log("Starting Replay!")
+      // @TODO Need to fix the reroute to the started replay.
       $location.path('/progress');
+
     }
 
     $scope.setStorageSize = function (id) {
-      console.log(id);
       //clear active
       if (id === "mb-button") {
         document.getElementById(id).classList.add('active');
@@ -140,4 +136,3 @@ var getDBConnections = function($http, $scope) {
         console.log('error');
     });
 };
-
