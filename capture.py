@@ -207,6 +207,7 @@ def updateDatabase(sTime, eTime, cName, cBucket, mBucket, cFile, mFile, dialect,
     modelsQuery.addCapture(cName, sTime, eTime, str(dbName), logfileID, metricID, mode, status)
 
 def startCapture(captureName, captureBucket, metricsBucket, db_name, startDate, endDate, startTime, endTime, storage_limit, mode):
+    print("In start capture function")
     status_of_db = get_list_of_instances(db_name)['DBInstances'][0]['DBInstanceStatus']
     storage_max_db = get_list_of_instances(db_name)['DBInstances'][0]['AllocatedStorage']
     endpoint = get_list_of_instances(db_name)['DBInstances'][0]['Endpoint']['Address']
@@ -217,6 +218,7 @@ def startCapture(captureName, captureBucket, metricsBucket, db_name, startDate, 
     username = rds_config.db_username
 
     if (startDate == "" and endDate == "" and startTime == "" and endTime == ""):
+        print("Here")
         startDate = datetime.now().date()
         endDate = datetime.now().date() + timedelta(days=1)
         startTime = datetime.now().time()
