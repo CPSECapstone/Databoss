@@ -121,9 +121,6 @@ def getLogfileByName(logfileName):
     log = models.Logfile.query.filter_by(name=logfileName).first()
     return log
 
-#def getLogfileByCaptureName(captureName):
-    #cap = models.Capture.query.filter_by(name=captureName).first()
-
 def getCaptureBucket(logfileID):
     log = models.Logfile.query.filter_by(id=logfileID).first()
     return log.bucket

@@ -207,6 +207,7 @@ def updateDatabase(sTime, eTime, cName, cBucket, mBucket, cFile, mFile, dialect,
     modelsQuery.addCapture(cName, sTime, eTime, str(dbName), logfileID, metricID, mode, status)
 
 def startCapture(captureName, captureBucket, metricsBucket, db_name, startDate, endDate, startTime, endTime, storage_limit, mode):
+    print("START CAPTUREE")
     status_of_db = get_list_of_instances(db_name)['DBInstances'][0]['DBInstanceStatus']
     storage_max_db = get_list_of_instances(db_name)['DBInstances'][0]['AllocatedStorage']
     endpoint = get_list_of_instances(db_name)['DBInstances'][0]['Endpoint']['Address']

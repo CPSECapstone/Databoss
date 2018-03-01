@@ -18,6 +18,7 @@ def getAllCaptures():
 
 @capture_api.route('/startCapture', methods=["POST"])
 def startCapture():
+    print("entering startCapture")
     data = request.json
     print(data)
     captureName = data['captureName']
