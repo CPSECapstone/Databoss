@@ -3,7 +3,6 @@ var app = angular.module('MyCRT');
 
 //app.controller('capture', ['$scope', '$location', '$modal', function($scope, $location, $modal) {
 app.controller('capture', function ($scope, $location, $uibModal, $http) {
-    console.log("in capture");
 
     // setting variables
     const captureModeBar = document.getElementById('capture-mode-bar');
@@ -33,23 +32,20 @@ app.controller('capture', function ($scope, $location, $uibModal, $http) {
 
     $('input[name=mode]').on('change', function(event) {
       selectedMode = $("input[name=mode]:checked").attr('id');
-      console.log("value " + selectedMode);
+      // Updating view based on selected mode
       if (selectedMode === "capture-int") {
-        console.log("updating to interactive view");
         hideButtons(dateContainer, timeContainer, storageContainer);
       }
       else if (selectedMode === "capture-time") {
-        console.log("updating to time constrained view");
         showButtons(dateContainer, timeContainer);
         hideButtons(storageContainer);
       }
       else if (selectedMode === "capture-storage") {
-        console.log("updating to storage view");
         hideButtons(dateContainer, timeContainer);
         showButtons(storageContainer);
       }
       else {
-        console.log("NO MODE SELECTED");
+        console.error("NO MODE SELECTED");
       }
     });
 
@@ -151,7 +147,6 @@ app.controller('capture', function ($scope, $location, $uibModal, $http) {
         });
 
         // code to turn on DB logging goes here
-        console.log("---- STARTING CAPTURE ----")
         $location.path('/progress');
     }
 

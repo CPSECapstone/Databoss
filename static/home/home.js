@@ -26,7 +26,6 @@ var populateCaptures = function($http, $scope) {
 };
 
 var calculateProgress = function(captures) {
-  console.log("HERE CALCULATING PROGRESS");
   var totalTimeMS = null;
   var startTime = null;
   var endTime = null;
@@ -44,7 +43,6 @@ var calculateProgress = function(captures) {
     elapsedTimeMS = currentTime - startTime;
     percentage = (elapsedTimeMS/totalTimeMS) * 100;
     captures[i].progress = percentage.toFixed(0) + "%";
-    console.log("progress: "  + captures[i].progress);
   }
 
 }

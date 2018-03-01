@@ -2,7 +2,6 @@
 var app = angular.module('MyCRT');
 
 app.controller('replay', function($scope, $http, $location) {
-    console.log("in replay");
     const dateContainer = $('#date-container');
     const timeContainer = $('#time-container');
     const storageContainer = $('#storage-container');
@@ -25,18 +24,14 @@ app.controller('replay', function($scope, $http, $location) {
 
     $('input[name=mode]').on('change', function(event) {
       selectedMode = $("input[name=mode]:checked").attr('id');
-      console.log("value " + selectedMode);
       if (selectedMode === "capture-int") {
-        console.log("updating to interactive view");
         hideButtons(dateContainer, timeContainer, storageContainer);
       }
       else if (selectedMode === "capture-time") {
-        console.log("updating to time constrained view");
         showButtons(dateContainer, timeContainer);
         hideButtons(storageContainer);
       }
       else if (selectedMode === "capture-storage") {
-        console.log("updating to storage view");
         hideButtons(dateContainer, timeContainer);
         showButtons(storageContainer);
       }
@@ -72,12 +67,13 @@ app.controller('replay', function($scope, $http, $location) {
 
     $scope.startReplay = function () {
       // Add code to turn on DB logging here
-      console.log("starting Replay!")
+      console.log("Starting Replay!")
+      // @TODO Need to fix the reroute to the started replay.
       $location.path('/progress');
+
     }
 
     $scope.setStorageSize = function (id) {
-      console.log(id);
       //clear active
       if (id === "mb-button") {
         document.getElementById(id).classList.add('active');

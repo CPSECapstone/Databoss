@@ -2,7 +2,6 @@
 var app = angular.module('MyCRT');
 
 app.controller('progress', function($scope, $location, $http) {
-    console.log("on progress page");
 
     var captureId = $location.search()['id'];
     $http({
@@ -37,7 +36,6 @@ app.controller('progress', function($scope, $location, $http) {
 });
 
 var calculateProgressCapture = function(capture) {
-  console.log("HERE CALCULATING PROGRESS in progress page");
     var startTime = new Date(capture.startTime);
     startTime.setHours(startTime.getHours() + 8);
     var endTime = new Date(capture.endTime);
