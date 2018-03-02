@@ -147,13 +147,14 @@ app.controller('capture', function ($scope, $location, $uibModal, $http) {
                 'startTime' : $('#startTime').val(),
                 'endTime' : $('#endTime').val(),
                 'mode' : $('input[name=mode]:checked').val()
-
-                // 'storageLimit' : $('#')
-                //unsure how to grab the value of the storage limit.
             }
         });
-
-        $location.path('progress').search({name : $('#captureName').val()});
+        if ($('input[name=mode]:checked').val() == 'time') {
+            $location.path('home'); 
+        }
+        else {
+            $location.path('progress').search({name : $('#captureName').val()});
+        }
     }
 
     $scope.setStorageSize = function (id) {
