@@ -42,7 +42,8 @@ app.config(['$routeProvider', function($routeProvider) {
    })
    .when('/home', {
       templateUrl: 'static/home/home.html',
-      controller: 'home'
+      controller: 'home',
+      css: 'static/css/home.css'
    })
    .when('/information', {
       templateUrl: 'static/information/information.html',

@@ -49,6 +49,18 @@ def getCaptureAll():
     cap_list = models.Capture.query.with_entities(models.Capture.id, models.Capture.name, models.Capture.startTime)
     return cap_list
 
+def getCaptureFinished():
+    captures = models.Capture.query.filter_by(status="finished")
+    return captures
+
+def getCaptureActive():
+    captures = models.Capture.query.filter_by(status="active")
+    return captures
+
+def getCaptureScheduled():
+    captures = models.Capture.query.filter_by(status="scheduled")
+    return captures
+
 # Add replay to replay table with references to associated files
 def addReplay(name, startTime, endTime, dbName, metricId, captureId, mode, status):
     new_rep = models.Replay(name, startTime, endTime, dbName, metricId, captureId, mode, status)
