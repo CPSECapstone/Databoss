@@ -20,7 +20,7 @@ app.controller('progress', function($scope, $location, $http) {
   }).then(function successCallback(response) {
     $scope.capture = response.data;
     if ($scope.capture.status !== "scheduled") {
-      calculateProgressCapture($scope.capture);
+      calculateProgressCapture($scope.capture, $location);
     }
     else {
       var startTime = new Date($scope.capture.startTime);
@@ -47,9 +47,10 @@ app.controller('progress', function($scope, $location, $http) {
       console.log('error retrieving replays');
     });
   }
+
 });
 
-var calculateProgressCapture = function(capture) {
+var calculateProgressCapture = function(capture, $location) {
   var startTime = new Date(capture.startTime);
   startTime.setHours(startTime.getHours() + 8);
   var endTime = new Date(capture.endTime);
@@ -59,4 +60,9 @@ var calculateProgressCapture = function(capture) {
   var elapsedTimeMS = currentTime - startTime;
   var percentage = (elapsedTimeMS/totalTimeMS) * 100;
   capture.progress = percentage.toFixed(0) + "%";
+
+
+  if (percentage == 100) {
+     $location.path('/metrics');
+  }
 }
