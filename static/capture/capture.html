@@ -1,10 +1,11 @@
 <div>
   <h1>Capture</h1>
+  <form name="form">
   <div class="row">
     <div class="center-block">
       <div class="form-group">
         <label for="captureName">Capture Name</label>
-        <input type="text" class="form-control" id="captureName">
+        <input type="text" class="form-control" id="captureName" ng-required="required">
       </div>
       <div class="form-group">
         <label for="crBucket">Capture Replay Bucket:</label>
@@ -42,7 +43,6 @@
       </label>
     </div>
 
-    <!-- <div class="date-container "> -->
     <div id="date-container" class="row">
       <span>Start Date: <input id="startDate" width="276" /> </span>
       <span>End Date: <input id="endDate" width="276" /> </span>
@@ -92,4 +92,6 @@
     </div>
     </div>
   </div>
+  </form>
 </div>
+

@@ -11,7 +11,7 @@ app.controller('capture', function ($scope, $location, $uibModal, $http) {
     const timeContainer = $('#time-container');
     const storageContainer = $('#storage-container');
     var selectedMode = "";
-
+    $scope.required = true;
 
     //setting an observer for the captureModeBar to change input view when clicked
     const hideButtons = function() {
