@@ -11,7 +11,7 @@ app.controller('capture', function ($scope, $location, $uibModal, $http) {
     const timeContainer = $('#time-container');
     const storageContainer = $('#storage-container');
     var selectedMode = "";
-
+    $scope.required = true;
 
     //setting an observer for the captureModeBar to change input view when clicked
     const hideButtons = function() {
@@ -149,8 +149,12 @@ app.controller('capture', function ($scope, $location, $uibModal, $http) {
                 'mode' : $('input[name=mode]:checked').val()
             }
         });
-
-        $location.path('progress').search({name : $('#captureName').val()});
+        if ($('input[name=mode]:checked').val() == 'time') {
+            $location.path('home'); 
+        }
+        else {
+            $location.path('progress').search({name : $('#captureName').val()});
+        }
     }
 
     $scope.setStorageSize = function (id) {
