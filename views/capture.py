@@ -16,6 +16,21 @@ def getAllCaptures():
     captures = Capture.query.all()
     return jsonify([i.serialize for i in captures])
 
+@capture_api.route('/finished')
+def getFinishedCaptures():
+    captures = modelsQuery.getCaptureFinished()
+    return jsonify([i.serialize for i in captures])
+
+@capture_api.route('/active')
+def getActiveCaptures():
+    captures = modelsQuery.getCaptureActive()
+    return jsonify([i.serialize for i in captures])
+
+@capture_api.route('/scheduled')
+def getScheduledCaptures():
+    captures = modelsQuery.getCaptureScheduled()
+    return jsonify([i.serialize for i in captures])
+
 def add(name, startTime, endTime, dbName, logfileId, metricId, mode, status):
     modelsQuery.addCapture(name, startTime, endTime, dbName, logfileId, metricId, mode, status)
 

@@ -37,7 +37,8 @@ def endCapture(captureObj, startTime, endTime):
     print(captureObj)
     captureFileName = captureObj.name + " " + "capture file"
     metricFileName = captureObj.name + " " + "metric file"
+    modelsQuery.updateCaptureStatus(captureObj.name, "finished")
 
     print("stop capture")
     capture.stopCapture(startTime, endTime, captureObj.name, captureObj.logfileId, captureObj.metricId, captureFileName, metricFileName)
-    modelsQuery.updateCaptureStatus(captureObj.name, "inactive")
+

@@ -93,7 +93,6 @@ def list_buckets():
 
 
 # Creating 2 buckets if they don't already exist
-#@app.route()
 def createBucket(bucketName):
     if s3_resource.Bucket(bucketName) in s3_resource.buckets.all():
         print("Found " + bucketName + " bucket")
@@ -208,6 +207,7 @@ def updateDatabase(sTime, eTime, cName, cBucket, mBucket, cFile, mFile, dialect,
     modelsQuery.addCapture(cName, sTime, eTime, str(dbName), logfileID, metricID, mode, status)
 
 def startCapture(captureName, captureBucket, metricsBucket, db_name, startDate, endDate, startTime, endTime, storage_limit, mode):
+    print("In start capture function")
     status_of_db = get_list_of_instances(db_name)['DBInstances'][0]['DBInstanceStatus']
     storage_max_db = get_list_of_instances(db_name)['DBInstances'][0]['AllocatedStorage']
     endpoint = get_list_of_instances(db_name)['DBInstances'][0]['Endpoint']['Address']
@@ -218,6 +218,7 @@ def startCapture(captureName, captureBucket, metricsBucket, db_name, startDate, 
     username = rds_config.db_username
 
     if (startDate == "" and endDate == "" and startTime == "" and endTime == ""):
+        print("Here")
         startDate = datetime.now().date()
         endDate = datetime.now().date() + timedelta(days=1)
         startTime = datetime.now().time()
@@ -280,6 +281,7 @@ def stopCapture(startTime, endTime, captureName, captureBucket, metricBucket, ca
         if os.path.exists(captureFileName):
             os.remove(captureFileName)
 
+        modelsQuery.updateCaptureStatus(captureName, "finished")
         sendMetrics(metricBucket, metricFileName)
 
 

@@ -170,4 +170,3 @@ app.controller('capture', function ($scope, $location, $uibModal, $http) {
       }
     }
 });
-

@@ -10,12 +10,12 @@
           <th>Display</th>
         </tr>
       </thead>
-      <tbody ng-repeat="capture in captures">
+      <tbody ng-repeat="capture in captures" on-finish-render="updateSelectionFromQueryParameters">
         <tr>
             <th ng-click=toggleReplays(capture.id)>{{capture.name}}</th>
             <td>{{capture.date}}</td>
             <td>
-                <input type="checkbox" ng-model="captureSelection"
+                <input id="capture-checkbox{{capture.id}}" type="checkbox" ng-model="captureSelection"
                        ng-change="updateSelection('capture', capture.name, capture.id, captureSelection)">
             </td>
         </tr>
