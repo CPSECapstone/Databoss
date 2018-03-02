@@ -13,6 +13,7 @@ from time import mktime
 import modelsQuery
 import rds_config
 import scheduler
+import json
 
 VOWELS = "aeiou"
 CONSONANTS = "".join(set(string.ascii_lowercase) - set(VOWELS))
@@ -36,6 +37,11 @@ cloudwatch = None
 captureReplayBucket = None
 metricBucket = None
 
+class MyEncoder(json.JSONEncoder):
+    def default(self, obj):
+        if isinstance(obj, datetime):
+            return int(mktime(obj.timetuple()))
+        return json.JSONEncoder.default(self, obj)
 
 # Configure boto3 to use access/secret key for s3 and rds
 def aws_config():
@@ -248,18 +254,17 @@ def startCapture(captureName, captureBucket, metricsBucket, db_name, startDate, 
         updateDatabase(sTimeCombined, eTimeCombined, captureName, captureBucket, metricsBucket,
                        captureFileName, metricFileName, dbDialect, db_name, endpoint, port, username, mode, "active")
 
-def stopCapture(startTime, endTime, captureName, captureBucket, metricBucket, captureFileName, metricFileName):
+def stopCapture(startTime, endTime, captureName, captureBucket, metricBucket, captureFileName, metricFileName, dbName):
     captureFileName = captureName + " " + "capture file"
     metricFileName = captureName + " " + "metric file"
     username = rds_config.db_username
     password = rds_config.db_password
-    db_name = rds_config.db_name
-    endpoint = get_list_of_instances(db_name)['DBInstances'][0]['Endpoint']['Address']
-    status_of_db = get_list_of_instances(db_name)['DBInstances'][0]['DBInstanceStatus']
+    endpoint = get_list_of_instances(dbName)['DBInstances'][0]['Endpoint']['Address']
+    status_of_db = get_list_of_instances(dbName)['DBInstances'][0]['DBInstanceStatus']
 
     if status_of_db == "available":
         try:
-            conn = pymysql.connect(host=endpoint, user=username, passwd=password, db=db_name, connect_timeout=5)
+            conn = pymysql.connect(host=endpoint, user=username, passwd=password, db=dbName, connect_timeout=5)
         except:
             logger.error("ERROR: Unexpected error: Could not connect to MySql instance.")
             sys.exit()
@@ -269,9 +274,8 @@ def stopCapture(startTime, endTime, captureName, captureBucket, metricBucket, ca
             logfile = list(map(parseRow, cur))
             conn.close()
 
-        outfile = open(captureFileName, 'w')
-        for item in logfile:
-            outfile.write("%s\n" % item)
+        with open(captureFileName, 'w') as outfile:
+            outfile.write(json.dumps(logfile, cls=MyEncoder))
 
         bucketCheck = modelsQuery.getCaptureBucket(captureBucket)
 
@@ -314,12 +318,6 @@ def sendMetrics(metricBucket, metricFileName):
                                                   EndTime=datetime.utcnow(),
                                                   Period=300,
                                                   MetricName='FreeableMemory'))
-
-    class MyEncoder(json.JSONEncoder):
-        def default(self, obj):
-            if isinstance(obj, datetime):
-                return int(mktime(obj.timetuple()))
-            return json.JSONEncoder.default(self, obj)
 
     with open(metricFileName, 'w') as metricFileOpened:
         metricFileOpened.write(json.dumps(dlist, cls=MyEncoder))

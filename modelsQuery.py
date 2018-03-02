@@ -149,3 +149,12 @@ def getLogFile(logfileName, captureBucket):
 def getLogFileIdByNameAndBucket(logfileName, captureBucket):
     logObj = models.Logfile.query.filter_by(name=logfileName, bucket=captureBucket).first()
     return logObj.id
+
+def getEndpointByCapture(captureName):
+    captureObj = models.Capture.query.filter_by(name=captureName).first()
+    return captureObj.endpoint
+
+def getLogFileByCapture(captureName):
+   captureObj = models.Capture.query.filter_by(name=captureName).first()
+   logObj = models.Capture.query.filter_by(id=captureObj.logfileId)
+   return logObj.file

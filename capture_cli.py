@@ -46,6 +46,13 @@ rds = boto3.client(
 )
 
 
+class MyEncoder(json.JSONEncoder):
+    def default(self, obj):
+        if isinstance(obj, datetime):
+            return int(mktime(obj.timetuple()))
+        return json.JSONEncoder.default(self, obj)
+
+
 #Function that prints all of a user's database instances
 # @app.route('/listDBinstances')
 def list_db_instances():
@@ -263,23 +270,32 @@ def stopCapture(startTime, endTime, captureBucket, metricBucket, captureFileName
         sys.exit()
 
     with conn.cursor() as cur:
-        cur.execute("""SELECT event_time, command_type, argument FROM mysql.general_log\
-                    WHERE event_time BETWEEN '%s' AND '%s'""" % (startTime, endTime))
 
-        for row in cur:
-            print(row)
+        cur.execute("""SELECT event_time, command_type, argument FROM mysql.general_log""")
+
+
+        #for row in cur:
+            #print(row)
 
         logfile = list(map(parseRow, cur))
+        print(logfile)
+
+
 
         conn.close()
 
-    outfile = open(captureFileName, 'w')
-    for item in logfile:
-        outfile.write("%s\n" % item)
+    with open(captureFileName, 'w') as outfile:
+        outfile.write(json.dumps(logfile, cls=MyEncoder))
+
+        '''
+    with open(captureFileName, 'w') as outfile:
+        for item in logfile:
+            #print(item)
+            outfile.write("%s\n" % item)'''
 
     s3.meta.client.upload_file(outfile.name, captureBucket, outfile.name)
-    if os.path.exists(captureFileName):
-        os.remove(captureFileName)
+    #if os.path.exists(captureFileName):
+    #    os.remove(captureFileName)
 
     sendMetrics(metricBucket, metricFileName)
 
@@ -315,18 +331,12 @@ def sendMetrics(metricBucket, metricFileName):
                                                   Period=300,
                                                   MetricName='FreeableMemory'))
 
-    class MyEncoder(json.JSONEncoder):
-        def default(self, obj):
-            if isinstance(obj, datetime):
-                return int(mktime(obj.timetuple()))
-            return json.JSONEncoder.default(self, obj)
-
     with open(metricFileName, 'w') as metricFileOpened:
         metricFileOpened.write(json.dumps(dlist, cls=MyEncoder))
 
     s3.meta.client.upload_file(metricFileOpened.name, metricBucket, metricFileOpened.name)
-    if os.path.exists(metricFileName):
-        os.remove(metricFileName)
+    #if os.path.exists(metricFileName):
+    #    os.remove(metricFileName)
 
 startTime = datetime.now() - timedelta(minutes=60)
 endTime = datetime.now()
