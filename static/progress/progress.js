@@ -62,7 +62,7 @@ var calculateProgressCapture = function(capture, $location) {
   capture.progress = percentage.toFixed(0) + "%";
 
 
-  if (percentage == 100) {
+  if (percentage >= 100) {
      $location.path('/metrics');
   }
 }
