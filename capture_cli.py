@@ -12,6 +12,7 @@ import rds_config
 import botocore
 import sys
 import os
+import pprint
 
 
 user_key = input("Enter access key id: ")
@@ -110,17 +111,6 @@ def testBucketName(bucketName, string):
     bucketName = createBucketName(name, string)
 
 
-
-'''name = input("Enter name for capture and replay: ")
-captureReplayBucket = createBucketName(name, "capture and replay")
-
-name = input("Enter name for metrics bucket: ")
-metricBucket = createBucketName(name, "metrics")
-
-
-db_name = str(input("Enter RDS database name: "))
-allotted_time = input("Enter duration of capture (in minutes): ")'''
-
 captureReplayBucket = "capture-replay-info"
 metricBucket = "metric-info"
 db_name = "new"
@@ -140,39 +130,6 @@ cloudwatch = boto3.client(
 # Starting the database instance
 status_of_db = list_of_instances['DBInstances'][0]['DBInstanceStatus']
 
-'''
-if status_of_db == "stopped":
-    start_response = rds.start_db_instance(
-        DBInstanceIdentifier= db_name
-    )
-else:
-    start_response = "Starting"
-
-print(start_response + "...")
-'''
-print("Starting RDS database instance: " + db_name)
-
-'''
-# Testing RDS Database
-username = str(input("Enter username: "))
-password = str(input("Enter password: "))
-endpoint = str(input("RDS MySQL endpoint: "))
-
-username = "sonaraya"
-password = "sonaraya"
-endpoint = "new.cpguxfvypxd2.us-west-1.rds.amazonaws.com"
-
-print("Connecting...")
-
-conn = pymysql.connect(host=endpoint, user=username, passwd=password, db=db_name)
-
-print("SUCCESS: Connection to RDS MySQL instance succeeded")
-
-print("Adding value to database table 'Student'")
-#id = input("Enter student id: ")
-#student_name = str(input("Enter student name: "))
-
-numItems = 0 '''
 
 def parseRow(row):
     eventTime = row[0]
@@ -189,24 +146,6 @@ def parseRow(row):
         'message': message
     }
 
-
-'''
-if status_of_db == "available":
-    stop_response = rds.stop_db_instance(
-        DBInstanceIdentifier= db_name
-    )
-else :
-    stop_response = "stopped"
-
-print("Stopping database: " + db_name)
-print(stop_response)
-
-all_log_files = rds.describe_db_log_files(
-    DBInstanceIdentifier= db_name
-)
-print(all_log_files)
-
-'''
 
 def parseRow(row):
     eventTime = row[0]
@@ -227,7 +166,9 @@ def get_list_of_instances(db_name):
     list_of_instances = rds.describe_db_instances(
         DBInstanceIdentifier=db_name
     )
+    print(list_of_instances)
     return list_of_instances
+
 
 def get_log_file(bucket_name, file_name):
     s3 = boto3.resource('s3')
@@ -345,89 +286,10 @@ endTime = datetime.now()
 print(startTime)
 print(endTime)
 
-
-startCapture()
-stopCapture(startTime, endTime, captureReplayBucket, metricBucket, "capture", "metrics")
+res = get_list_of_instances("new")
+pprint.pprint(res, width=1)
+#startCapture()
+#stopCapture(startTime, endTime, captureReplayBucket, metricBucket, "capture", "metrics")
 print("done")
-'''
-
-bucket = s3.Bucket(captureReplayBucket)
-print("Printing location...")
-
-for key in bucket.objects.all():
-    print(key.key)
-
-client = boto3.client(
-        service_name='logs',
-        aws_access_key_id = user_key,
-        aws_secret_access_key = user_access,
-        region_name = loc
-    )
-
-
-
-
-rds_logfile = rds.download_db_log_file_portion(
-  DBInstanceIdentifier=db_name,
-  LogFileName="general/mysql-general.log",
-  Marker='0'
-)
-print(rds_logfile)
-
-logFile = input("Enter file name for log file: ")
-metricFile = input("Enter file name for metric file: ")
-
-
-
-dlist = []
-
-print("CPU Utilization: ")
-dlist.append(cloudwatch.get_metric_statistics(Namespace="AWS/RDS",
-                                              Statistics=['Average'],
-                                              StartTime=datetime.utcnow()-timedelta(minutes=60),
-                                              EndTime=datetime.utcnow(),
-                                              Period=300,
-                                              MetricName='CPUUtilization'))
-print("Read: ")
-dlist.append(cloudwatch.get_metric_statistics(Namespace="AWS/RDS",
-                                              Statistics=['Average'],
-                                              StartTime=datetime.utcnow()-timedelta(minutes=60),
-                                              EndTime=datetime.utcnow(),
-                                              Period=300,
-                                              MetricName='ReadIOPS'))
-print("Write: ")
-dlist.append(cloudwatch.get_metric_statistics(Namespace="AWS/RDS",
-                                              Statistics=['Average'],
-                                              StartTime=datetime.utcnow()-timedelta(minutes=60),
-                                              EndTime=datetime.utcnow(),
-                                              Period=300,
-                                              MetricName='WriteIOPS'))
-print("Memory: ")
-dlist.append(cloudwatch.get_metric_statistics(Namespace="AWS/RDS",
-                                              Statistics=['Average'],
-                                              StartTime=datetime.utcnow()-timedelta(minutes=60),
-                                              EndTime=datetime.utcnow(),
-                                              Period=300,
-                                              MetricName='FreeableMemory'))
-
-
-class MyEncoder(json.JSONEncoder):
-    def default(self, obj):
-        if isinstance(obj, datetime):
-            return int(mktime(obj.timetuple()))
-        return json.JSONEncoder.default(self, obj)
-
-with open(metricFile, 'w') as metricFileOpened:
-    metricFileOpened.write(json.dumps(dlist, cls=MyEncoder))
-
-s3_resource.Object(captureReplayBucket, logFile).put(Body=rds_logfile['LogFileData'], Metadata={'foo':'bar'})
-s3.meta.client.upload_file(metricFileOpened.name, metricBucket, metricFileOpened.name)
-s3_resource.Object(metricBucket, metricFile).put(Body=dlist, Metadata={'foo':'bar'})
-
-print("Done!")
-
-rds_logfile = rds.describe_db_log_files(
-    DBInstanceIdentifier= db_name
-) '''
 
 
