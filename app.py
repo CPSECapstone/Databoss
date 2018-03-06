@@ -45,10 +45,6 @@ def sqlite_setup():
                            "interactive", "finished")
     modelsQuery.addCapture("Capture5", datetime(2018, 2, 5, 2, 30, 15), datetime(2018, 2, 5, 4, 30, 1), "myRDS4", 2, 2,
                            "interactive", "finished")
-    modelsQuery.addCapture("Capture6", datetime(2018, 3, 1, 8, 15, 15), datetime(2018, 3, 1, 11, 15, 1), "kimtan", 2, 2,
-                           "interactive", "active")
-
-
     modelsQuery.addMetric("Metrics1", "crt-metrics-test", "metric-file.txt")
     modelsQuery.addMetric("Metrics2", "crt-metrics-test", "metric-file-2.txt")
 
