@@ -285,37 +285,37 @@ def stopCapture(startTime, endTime, captureName, captureBucket, metricBucket, ca
             os.remove(captureFileName)
 
         modelsQuery.updateCaptureStatus(captureName, "finished")
-        sendMetrics(metricBucket, metricFileName)
+        sendMetrics(metricBucket, metricFileName, startTime, endTime)
 
 
-def sendMetrics(metricBucket, metricFileName):
+def sendMetrics(metricBucket, metricFileName, startTime, endTime):
     dlist = []
 
     dlist.append(cloudwatch.get_metric_statistics(Namespace="AWS/RDS",
                                                   Statistics=['Average'],
-                                                  StartTime=datetime.utcnow() - timedelta(minutes=60),
-                                                  EndTime=datetime.utcnow(),
+                                                  StartTime=startTime,
+                                                  EndTime=endTime,
                                                   Period=300,
                                                   MetricName='CPUUtilization'))
 
     dlist.append(cloudwatch.get_metric_statistics(Namespace="AWS/RDS",
                                                   Statistics=['Average'],
-                                                  StartTime=datetime.utcnow() - timedelta(minutes=60),
-                                                  EndTime=datetime.utcnow(),
+                                                  StartTime=startTime,
+                                                  EndTime=endTime,
                                                   Period=300,
                                                   MetricName='ReadIOPS'))
 
     dlist.append(cloudwatch.get_metric_statistics(Namespace="AWS/RDS",
                                                   Statistics=['Average'],
-                                                  StartTime=datetime.utcnow() - timedelta(minutes=60),
-                                                  EndTime=datetime.utcnow(),
+                                                  StartTime=startTime,
+                                                  EndTime=endTime,
                                                   Period=300,
                                                   MetricName='WriteIOPS'))
 
     dlist.append(cloudwatch.get_metric_statistics(Namespace="AWS/RDS",
                                                   Statistics=['Average'],
-                                                  StartTime=datetime.utcnow() - timedelta(minutes=60),
-                                                  EndTime=datetime.utcnow(),
+                                                  StartTime=startTime,
+                                                  EndTime=endTime,
                                                   Period=300,
                                                   MetricName='FreeableMemory'))
 

@@ -61,6 +61,20 @@ def getCaptureScheduled():
     captures = models.Capture.query.filter_by(status="scheduled")
     return captures
 
+def getCaptureStartTime(captureName):
+    capture = models.Capture.query.filter_by(name=captureName).first()
+    return capture.startTime
+
+def getCaptureEndTime(captureName):
+    capture = models.Capture.query.filter_by(name=captureName).first()
+    return capture.endTime
+
+def getCaptureBucket(captureName):
+    capture = models.Capture.query.filter_by(name=captureName).first()
+    logObj = models.Capture.query.filter_by(id=capture.logfileId)
+    return logObj.bucket
+
+
 # Add replay to replay table with references to associated files
 def addReplay(name, startTime, endTime, dbName, metricId, captureId, mode, status):
     new_rep = models.Replay(name, startTime, endTime, dbName, metricId, captureId, mode, status)
