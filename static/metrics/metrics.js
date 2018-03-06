@@ -1,3 +1,46 @@
+// Module for managing the line colors for charts
+var ChartColors = (function() {
+    // array of colors to use for the metrics charts
+    var colors = [
+        'cornflowerblue',
+        'tomato',
+        'palegreen',
+        'pink',
+        'orange',
+        'lemonchiffon',
+        'aqua',
+        'darkorchid',
+        'lime',
+        'red',
+        'yellow',
+        'violet'
+    ];
+    // array to keep track of used colors so line colors are unique
+    var usedColors = [];
+
+    return {
+        getNextColor : function() {
+            var availableColors = colors.filter(function(obj) { return usedColors.indexOf(obj) == -1; });
+            usedColors.push(availableColors[0]);
+            return availableColors[0];
+        },
+        removeUsedColor : function(color) {
+            var index = usedColors.indexOf(color);
+            if (index > -1) {
+                usedColors.splice(index, 1);
+            }
+        },
+        resetUsedColors : function() {
+            usedColors = [];
+        }
+    };
+})();
+
+var cpuChart;
+var readIOChart;
+var writeIOChart;
+var memoryChart;
+
 //Initialize the angular application for this AngularJS controller
 var app = angular.module('MyCRT').directive('onFinishRender', function ($timeout) {
     return {
@@ -13,12 +56,18 @@ var app = angular.module('MyCRT').directive('onFinishRender', function ($timeout
 });
 
 //whenever an action occurs on the metrics page, the controller will handle it
-app.controller('metrics', function($scope, $location, $http, Metrics) {
-   Metrics.resetUsedColors();
-   Metrics.setCPUChart(createChart('cpuChart', 'CPU (Percent)', 'Time (seconds)'));
-   Metrics.setReadIOChart(createChart('readIOChart', 'Read IO (count/second)', 'Time (seconds)'));
-   Metrics.setWriteIOChart(createChart('writeIOChart', 'Write IO (count/second)', 'Time (seconds)'));
-   Metrics.setMemoryChart(createChart('memoryChart', 'Memory (bytes)', 'Time (seconds)'));
+app.controller('metrics', function($scope, $location, $http) {
+    // Destroy any existing charts before creating new ones
+    Chart.helpers.each(Chart.instances, function(instance) {
+       instance.destroy();
+    });
+
+   ChartColors.resetUsedColors();
+
+   cpuChart = createChart('cpuChart', 'CPU (Percent)', 'Time (seconds)');
+   readIOChart = createChart('readIOChart', 'Read IO (count/second)', 'Time (seconds)');
+   writeIOChart = createChart('writeIOChart', 'Write IO (count/second)', 'Time (seconds)');
+   memoryChart = createChart('memoryChart', 'Memory (bytes)', 'Time (seconds)');
 
    getCaptures($http, $scope);
    getReplays($http, $scope);
@@ -35,9 +84,9 @@ app.controller('metrics', function($scope, $location, $http, Metrics) {
    // Handles calling the appropriate functions for updating the charts
    $scope.updateSelection = function(type, name, id, value) {
       if (value === true)
-         getMetrics($http, Metrics, name, type, id);
+         getMetrics($http, name, type, id);
       else
-        removeMetricsFromCharts(Metrics, name);
+        removeMetricsFromCharts(name);
    };
 
    $scope.toggleReplays = function(captureId) {
@@ -57,7 +106,7 @@ var addMetricsToChart = function(chart, label, data, time, color) {
 };
 
 // Removes a specific metrics dataset from all the metrics charts
-var removeMetricsFromCharts = function(Metrics, name) {
+var removeMetricsFromCharts = function(name) {
     var color;
 
     Chart.helpers.each(Chart.instances, function(instance) {
@@ -70,8 +119,7 @@ var removeMetricsFromCharts = function(Metrics, name) {
         // Set the color for the dataset to be available
         if (!color) {
             color = datasets[index].borderColor;
-            console.log(color);
-            Metrics.removeUsedColor(color);
+            ChartColors.removeUsedColor(color);
         }
 
         datasets.splice(index, 1);
@@ -84,7 +132,7 @@ var removeMetricsFromCharts = function(Metrics, name) {
 // Updates the time labels for every chart to be consistent with the datasets
 var updateAllChartTimes = function() {
     var time = [];
-    var datasets = Chart.instances[0].chart.config.data.datasets;
+    var datasets = cpuChart.data.datasets;
 
     // Combine the times for each dataset and keep only the unique values
     datasets.forEach(function(dataset) {
@@ -111,8 +159,8 @@ var convertTimeArrayFromEpoch = function(times) {
     return relativeTimes;
 }
 
-// Function to execute an HTTP request to get CPU Metrics
-var getMetrics = function($http, Metrics, name, type, id) {
+// Function to execute an HTTP request to get Metrics
+var getMetrics = function($http, name, type, id) {
     $http({
         method: 'GET',
         url: '/metrics/getMetrics?type=' + type + '&id=' + id,
@@ -130,12 +178,12 @@ var getMetrics = function($http, Metrics, name, type, id) {
         var memory = response.data.memory;
         var memoryTime = convertTimeArrayFromEpoch(response.data.memoryTime);
 
-        var color = Metrics.getNextColor();
+        var color = ChartColors.getNextColor();
 
-        addMetricsToChart(Metrics.getCPUChart(), name, cpu, cpuTime, color);
-        addMetricsToChart(Metrics.getReadIOChart(), name, readIO, readIOTime, color);
-        addMetricsToChart(Metrics.getWriteIOChart(), name, writeIO, writeIOTime, color);
-        addMetricsToChart(Metrics.getMemoryChart(), name, memory, memoryTime, color);
+        addMetricsToChart(cpuChart, name, cpu, cpuTime, color);
+        addMetricsToChart(readIOChart, name, readIO, readIOTime, color);
+        addMetricsToChart(writeIOChart, name, writeIO, writeIOTime, color);
+        addMetricsToChart(memoryChart, name, memory, memoryTime, color);
     }, function errorCallback(response) {
         console.log('error');
     });
