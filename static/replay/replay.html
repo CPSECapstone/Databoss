@@ -1,57 +1,42 @@
 <div>
   <h1>Replay</h1>
   <div class="row">
-    <div class="center-block">
-      <div class="form-group">
-        <label for="replayName">Replay Name</label>
-        <input type="text" class="form-control" id="replayName">
-      </div>
-      <div class="form-group">
-        <label for="crBucket">Capture to Replay</label>
-        <select class="form-control" id="crBucket">
-          <option disabled selected value> -- Select Capture -- </option>
-          <option ng-repeat="capture in captures" value="{{capture}}">{{capture.name}}</option>
-        </select>
-      </div>
-      <div class="form-group">
-        <label for="dbName">Database:</label>
-        <select class="form-control" id="dbName">
-          <option disabled selected value> -- Select Database -- </option>
-          <option ng-repeat="db in DBConnections" value="{{db.DBInstanceIdentifier}}">{{db.DBInstanceIdentifier}}</option>
-        </select>
-      </div>
-
-
-      <h5>Replay Mode:</h5>
-      <div class="btn-group center-block" name="replayMode" data-toggle="buttons">
-        <label class="btn btn-primary active">
-          <input type="radio" name="replayMode" autocomplete="off" value="replay-raw" checked > Raw
-        </label>
-        <label class="btn btn-primary">
-          <input type="radio" name="replayMode" autocomplete="off" value="replay-time"> Time-Preserving
-        </label>
-      </div>
-
-
-      <div id="date-container" class="row">
-        <span>Start Date: <input id="startDate" width="276" /> </span>
-        <span>End Date: <input id="endDate" width="276" /> </span>
-      </div>
-      <div id="time-container" class="row">
-        <span>Start Time: <input id="startTime" width="276" /> </span>
-        <span>End Time: <input id="endTime" width="276" /> </span>
-      </div>
-
-      <!-- storage mode  -->
-      <div id="storage-container" placeholder="size" class="row input-group">
-        <input type="number" class="form-control">
-        <div class="input-group-append">
-          <button id="mb-button" class="btn btn-outline-success" type="button" ng-click="setStorageSize('mb-button')">MB</button>
-          <button id="gb-button" class="btn btn-outline-success" type="button" ng-click="setStorageSize('gb-button')">GB</button>
+    <div class = "col-4"></div>
+    <div class = "col-4">
+      <div class="center-block">
+        <div class="form-group">
+          <label for="replayName">Replay Name</label>
+          <input type="text" class="form-control" id="replayName">
         </div>
-      </div>
-      <div>
-        <button type="button" ng-click="startReplay()" class="btn center-block btn-success">Replay</button>
+        <div class="form-group">
+          <label for="crBucket">Capture to Replay</label>
+          <select class="form-control" id="crBucket">
+            <option disabled selected value> -- Select Capture -- </option>
+            <option ng-repeat="capture in captures" value="{{capture}}">{{capture.name}}</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label for="dbName">Database:</label>
+          <select class="form-control" id="dbName">
+            <option disabled selected value> -- Select Database -- </option>
+            <option ng-repeat="db in DBConnections" value="{{db.DBInstanceIdentifier}}">{{db.DBInstanceIdentifier}}</option>
+          </select>
+        </div>
+
+        <h5>Replay Mode:</h5>
+          <div class="btn-group center-block" name="replayMode" data-toggle="buttons">
+            <label class="btn btn-primary active long-btn">
+              <input type="radio" name="replayMode" autocomplete="off" value="replay-raw" checked > Raw
+            </label>
+            <label class="btn btn-primary long-btn">
+              <input type="radio" name="replayMode" autocomplete="off" value="replay-time"> Time-Preserving
+            </label>
+          </div>
+
+          <div class = "row">
+            <button type="button" ng-click="startReplay()" class="btn center-block btn-success">Replay</button>
+          </div>
+        </div>
       </div>
     </div>
   </div>
