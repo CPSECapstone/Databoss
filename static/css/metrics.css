@@ -2,4 +2,16 @@
    height: 300px;
    width: 300px;
    overflow : auto;
+   position: relative;
 }
+
+.table {
+    border: 1px solid white;
+
+}
+
+.wholeTable {
+    height: 250px;
+    overflow: scroll    ;
+}
+
