@@ -1,6 +1,6 @@
 .tableWrapper {
    height: 300px;
-   width: 300px;
+   width: 500px;
    overflow : auto;
    position: fixed;
 }
@@ -20,4 +20,7 @@
     padding-left: 150px;
     margin-top: 0px;
     padding-bottom:10px;
+}
+i {
+    color: white
 }
