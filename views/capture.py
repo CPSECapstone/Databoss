@@ -62,8 +62,11 @@ def endCapture():
     data = request.json
     print(data)
     captureName = data.get('name')
-    rdsInstance = data.get('rdsInstance')
+    # rdsInstance = data.get('rdsInstance')
     dbName = data.get('dbName')
+
+    rdsInstance, database = dbName.split("/")
+    print("rdsInstance: " + rdsInstance + ", database: " + database)
 
     startTime = data.get('startTime')
     endTime = data.get('endTime')
@@ -72,7 +75,7 @@ def endCapture():
     captureFileName = data.get('captureFileName')
     metricFileName = data.get('metricFileName')
 
-    stopCapture(rdsInstance, dbName, startTime, endTime, captureName,
+    stopCapture(rdsInstance, database, startTime, endTime, captureName,
                 captureBucket, metricBucket, captureFileName, metricFileName)
 
     return "ok"
