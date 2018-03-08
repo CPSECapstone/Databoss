@@ -13,10 +13,14 @@ import botocore
 import sys
 import os
 import pprint
+import modelsQuery
+import capture
+from ast import literal_eval
 
-
-user_key = input("Enter access key id: ")
-user_access = input("Enter secret key: ")
+user_key = "AKIAJXXFYNOZBX67UZXA"
+user_access = "xPOlSWTwu3vKdovf39JTvILUCA7m1IedgIQuGbN7"
+#user_key = input("Enter access key id: ")
+#user_access = input("Enter secret key: ")
 loc = "us-west-1"
 bucket_name = "Capture " + str(time.strftime("%x"))
 
@@ -47,6 +51,13 @@ rds = boto3.client(
 )
 
 
+class MyEncoder(json.JSONEncoder):
+    def default(self, obj):
+        if isinstance(obj, datetime):
+            return int(mktime(obj.timetuple()))
+        return json.JSONEncoder.default(self, obj)
+
+
 #Function that prints all of a user's database instances
 # @app.route('/listDBinstances')
 def list_db_instances():
@@ -59,6 +70,17 @@ def list_buckets():
     bucket_list = [bucket.name for bucket in s3.buckets.all()]
     for i in bucket_list:
         print(i)
+
+def download_file(captureName, bucketName, fileName):
+    s3 = boto3.resource('s3')
+
+    try:
+        s3.Bucket(bucketName).download_file(fileName, captureName + " " + "tempLogFile")
+    except botocore.exceptions.ClientError as e:
+        if e.response['Error']['Code'] == "404":
+            print("The file does not exist.")
+        else:
+            raise
 
 # Creating 2 buckets if they don't already exist
 def createBucket(bucketName):
@@ -204,25 +226,77 @@ def stopCapture(startTime, endTime, captureBucket, metricBucket, captureFileName
         sys.exit()
 
     with conn.cursor() as cur:
-        cur.execute("""SELECT event_time, command_type, argument FROM mysql.general_log\
-                    WHERE event_time BETWEEN '%s' AND '%s'""" % (startTime, endTime))
 
-        for row in cur:
-            print(row)
+        cur.execute("""SELECT event_time, command_type, argument FROM mysql.general_log""")
+
+
+        #for row in cur:
+            #print(row)
 
         logfile = list(map(parseRow, cur))
+        print(logfile)
+
+
 
         conn.close()
 
-    outfile = open(captureFileName, 'w')
-    for item in logfile:
-        outfile.write("%s\n" % item)
+    with open(captureFileName, 'w') as outfile:
+        outfile.write(json.dumps(logfile, cls=MyEncoder))
+
+        '''
+    with open(captureFileName, 'w') as outfile:
+        for item in logfile:
+            #print(item)
+            outfile.write("%s\n" % item)'''
 
     s3.meta.client.upload_file(outfile.name, captureBucket, outfile.name)
-    if os.path.exists(captureFileName):
-        os.remove(captureFileName)
+    #if os.path.exists(captureFileName):
+    #    os.remove(captureFileName)
 
     sendMetrics(metricBucket, metricFileName)
+
+
+def startReplay(replayName, captureName, dbName, startDate, endDate):
+    #logfile = modelsQuery.getLogFileByCapture(captureName)
+    username = rds_config.db_username
+    password = rds_config.db_password
+    endpoint = capture.get_list_of_instances(dbName)['DBInstances'][0]['Endpoint']['Address']
+    status_of_db = capture.get_list_of_instances(dbName)['DBInstances'][0]['DBInstanceStatus']
+
+    #download_file(logfile)
+    count = 0
+
+    with open(captureName + " " + "tempLogFile", 'r') as tempFile:
+        finalList = []
+        for line in tempFile:
+            entireList = literal_eval(line)
+            for i in range(len(entireList)):
+                dict = entireList[i]
+                if dict['message'].startswith('Query'):
+                    executableQuery = str(dict['message'][7:])
+
+                    if status_of_db == "available":
+                        try:
+                            conn = pymysql.connect(host=endpoint, user=username, passwd=password, db=db_name,
+                                                   connect_timeout=5)
+                        except:
+                            logger.error("ERROR: Unexpected error: Could not connect to MySql instance.")
+                            sys.exit()
+                        with conn.cursor() as cur:
+                            cur.execute("""%s""", executableQuery)
+        conn.close()
+
+
+            #newlist = [x for x in currentLine if x[2] ]
+            #if currentLine[2] == "query":
+            #print(line + "\n")
+
+            # get log file that corresponds to the capture
+            # connect to database dbName
+            # execute queries in file
+            # get metrics from cloudwatch
+            # update database for a replay
+            # modelsQuery.addReplay(replayName, )
 
 
 def sendMetrics(metricBucket, metricFileName):
@@ -256,18 +330,12 @@ def sendMetrics(metricBucket, metricFileName):
                                                   Period=300,
                                                   MetricName='FreeableMemory'))
 
-    class MyEncoder(json.JSONEncoder):
-        def default(self, obj):
-            if isinstance(obj, datetime):
-                return int(mktime(obj.timetuple()))
-            return json.JSONEncoder.default(self, obj)
-
     with open(metricFileName, 'w') as metricFileOpened:
         metricFileOpened.write(json.dumps(dlist, cls=MyEncoder))
 
     s3.meta.client.upload_file(metricFileOpened.name, metricBucket, metricFileOpened.name)
-    if os.path.exists(metricFileName):
-        os.remove(metricFileName)
+    #if os.path.exists(metricFileName):
+    #    os.remove(metricFileName)
 
 startTime = datetime.now() - timedelta(minutes=60)
 endTime = datetime.now()
@@ -279,7 +347,10 @@ print(endTime)
 res = get_list_of_instances("new")
 pprint.pprint(res, width=1)
 #startCapture()
-#stopCapture(startTime, endTime, captureReplayBucket, metricBucket, "capture", "metrics")
+replayName = "replay 5"
+captureName = "capture"
+dbName = rds_config.db_name
+startReplay(replayName, captureName, dbName, startTime, endTime)
 print("done")
 
 

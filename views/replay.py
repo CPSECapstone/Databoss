@@ -18,5 +18,4 @@ def add(name, startTime, endTime, dbName, logfileId, metricId, captureId):
 def startReplay():
 
     data = request.json
-    startReplay(data['replayName'], data['captureBucket'], data['dbName'], data['startDate'],
-                data['endDate'], data['startTime'], data['endTime'], None, data['mode'])
+    startReplay(data['replayName'], data['captureBucket'], data['dbName'], None, data['mode'])

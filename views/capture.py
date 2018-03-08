@@ -66,5 +66,5 @@ def endCapture():
     captureFileName = data.get('captureFileName')
     metricFileName = data.get('metricFileName')
 
-    stopCapture(startTime, endTime, captureName, captureBucket, metricBucket, captureFileName, metricFileName)
+    stopCapture(startTime, endTime, captureName, captureBucket, metricBucket, captureFileName, metricFileName, dbName)
     return "ok"
