@@ -89,17 +89,16 @@ app.controller('metrics', function($scope, $location, $http) {
         removeMetricsFromCharts(name);
    };
 
-   $scope.toggleReplays = function(captureId, icon) {
-      if (icon == "fa-caret-down") {
-        $scope.icon = "fa-caret-side";
+   $scope.toggleReplays = function(captureId, event) {
+      if (event.target.classList.value == 'fa fa-caret-down') {
+        event.target.classList.replace('fa-caret-down', 'fa-caret-right');
       }
       else {
-        $scope.icon = "fa-caret-down";
+        event.target.classList.replace('fa-caret-right', 'fa-caret-down');
       }
+
       $('.collapse' + captureId).toggle();
    };
-
-
 });
 
 var addMetricsToChart = function(chart, label, data, time, color) {

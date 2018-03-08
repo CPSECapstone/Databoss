@@ -15,7 +15,7 @@
           <tbody ng-repeat="capture in captures" on-finish-render="updateSelectionFromQueryParameters">
             <tr>
                 <th>
-                    <i class="fa {{icon}}" ng-click=toggleReplays(capture.id)></i>
+                    <i class="fa fa-caret-down" ng-click=toggleReplays(capture.id,$event)></i>
                     {{capture.name}}
                 </th>
                 <td>{{capture.date}}</td>
@@ -31,8 +31,8 @@
                 <td><input type="checkbox" ng-model="replaySelection"
                            ng-change="updateSelection('replay', replay.name, replay.id, replaySelection)"></td>
                  <td><i class="fa fa-arrow-circle-o-down fa-inverse"></i></td>
-             </tr>
-             </tbody>
+            </tr>
+          </tbody>
           </table>
       </div>
 
