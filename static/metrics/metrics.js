@@ -89,9 +89,17 @@ app.controller('metrics', function($scope, $location, $http) {
         removeMetricsFromCharts(name);
    };
 
-   $scope.toggleReplays = function(captureId) {
+   $scope.toggleReplays = function(captureId, icon) {
+      if (icon == "fa-caret-down") {
+        $scope.icon = "fa-caret-side";
+      }
+      else {
+        $scope.icon = "fa-caret-down";
+      }
       $('.collapse' + captureId).toggle();
    };
+
+
 });
 
 var addMetricsToChart = function(chart, label, data, time, color) {
