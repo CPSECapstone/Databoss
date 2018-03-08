@@ -23,14 +23,14 @@
                     <input id="capture-checkbox{{capture.id}}" type="checkbox" ng-model="captureSelection"
                            ng-change="updateSelection('capture', capture.name, capture.id, captureSelection)">
                 </td>
-                <td><i class="fa fa-arrow-circle-o-down fa-inverse"></i></td>
+                <td><i class="fa fa-arrow-circle-o-down" ng-click="routeToS3(capture)"></i></td>
             </tr>
             <tr class="{{ 'collapse' + capture.id }}" ng-repeat="replay in replays" ng-if="replay.captureId == capture.id">
                 <td>{{replay.name}}</td>
                 <td>{{replay.date}}</td>
                 <td><input type="checkbox" ng-model="replaySelection"
                            ng-change="updateSelection('replay', replay.name, replay.id, replaySelection)"></td>
-                 <td><i class="fa fa-arrow-circle-o-down fa-inverse"></i></td>
+                 <td><i class="fa fa-arrow-circle-o-down" ng-click="routeToS3(capture)"></i></td>
             </tr>
           </tbody>
           </table>

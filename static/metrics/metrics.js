@@ -99,6 +99,29 @@ app.controller('metrics', function($scope, $location, $http) {
 
       $('.collapse' + captureId).toggle();
    };
+
+   $scope.routeToS3 = function(capture) {
+       //retrieves the capture bucket name
+       var captureBucket;
+       var logFileName;
+
+       $http({
+            method: 'GET',
+            url: 'metrics/getLogfileObj',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            params : {'logfileId' : capture.logfileId}
+        }).then(function successCallback(response) {
+            logfileObj = response.data;
+            console.log(logfileObj);
+            //how do we make sure that the user is logged into their S3 instance?
+            window.open('https://s3-us-west-1.amazonaws.com/' + logfileObj.bucket + '/' + logfileObj.file, '_blank');
+        }, function errorCallback(response) {
+            console.log('Error in retrieving capture bucket from capture name');
+        });
+   };
+
 });
 
 var addMetricsToChart = function(chart, label, data, time, color) {

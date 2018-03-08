@@ -106,8 +106,6 @@ def updateReplayStatus(replayName, status):
     replay.status = status
     models.db.session.commit()
 
-#get log file given capture name
-
 # Return all replays in the replay table
 def getReplayAll():
     rep_list = models.Replay.query.with_entities(models.Replay.id, models.Replay.name, models.Replay.startTime)
@@ -164,18 +162,10 @@ def getLogfileByName(logfileName):
     log = models.Logfile.query.filter_by(name=logfileName).first()
     return log
 
-def getCaptureBucket(logfileID):
-    log = models.Logfile.query.filter_by(id=logfileID).first()
-    return log.bucket
-
 def updateLogFile(logfileID, file):
     log = models.Logfile.query.filter_by(id=logfileID).first()
     log.file = file
     models.db.session.commit()
-
-def getLogFile(logfileName, captureBucket):
-    logObj = models.Logfile.query.filter_by(name=logfileName, bucket=captureBucket).first()
-    return logObj
 
 def getLogFileIdByNameAndBucket(logfileName, captureBucket):
     logObj = models.Logfile.query.filter_by(name=logfileName, bucket=captureBucket).first()
@@ -188,4 +178,4 @@ def getEndpointByCapture(captureName):
 def getLogFileByCapture(captureName):
    captureObj = models.Capture.query.filter_by(name=captureName).first()
    logObj = models.Capture.query.filter_by(id=captureObj.logfileId)
-   return logObj.file
+   return logObj
