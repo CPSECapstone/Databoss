@@ -90,11 +90,11 @@ app.controller('capture', function ($scope, $location, $uibModal, $http) {
 
         modalInstance.result.then(function() {
             console.log("do we get here?")
-            $scope.getDBConnections();
+            $scope.getRDSInstances();
         });
     };
 
-    $scope.getDBConnections = function() {
+    $scope.getRDSInstances = function() {
         console.log("getting db connections");
 
         $http({
@@ -104,14 +104,41 @@ app.controller('capture', function ($scope, $location, $uibModal, $http) {
                 'Content-Type': 'application/json'
             },
         }).then(function successCallback(response) {
-            $scope.DBConnections = response.data;
+            console.log("rds instances:");
+            console.log(response.data);
+            $scope.RDSInstances = response.data;
             console.log('success');
         }, function errorCallback(response) {
             console.log('error');
         });
     };
 
-    $scope.getDBConnections();
+    $scope.getRDSInstances();
+
+    $scope.getInstanceDbs = function(instance) {
+        if (instance) {
+            console.log("instance:");
+            var endpoint = JSON.stringify(JSON.parse(instance).Endpoint);
+            console.log(JSON.stringify(JSON.parse(instance).Endpoint));
+            $http({
+                method: 'POST',
+                url: 'capture/listInstanceDbs/' + endpoint,
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                data: {
+                    'username': $scope.username,
+                    'password': $scope.password
+                }
+            }).then(function successCallback(response) {
+                console.log(response.data);
+                $scope.instanceDbs = response.data;
+                console.log('success');
+            }, function errorCallback(response) {
+                console.log('error');
+            });
+        }
+    };
 
     var getBuckets = function() {
         $http({
@@ -131,6 +158,7 @@ app.controller('capture', function ($scope, $location, $uibModal, $http) {
     getBuckets();
 
     $scope.startCapture = function () {
+        console.log("rdsInstance type: " + typeof($('#rdsInstance').val()));
         $http({
             method: 'POST',
             url: 'capture/startCapture',
@@ -141,7 +169,10 @@ app.controller('capture', function ($scope, $location, $uibModal, $http) {
                 'captureName' : $('#captureName').val(),
                 'captureBucket' : $('#crBucket').val(),
                 'metricsBucket' : $('#metricsBucket').val(),
-                'dbName' : $('#dbName').val(),
+                'rdsInstance' : JSON.parse($('#rdsInstance').val()).DBInstanceIdentifier,
+                'dbName': $('#dbName').val(),
+                'username': $scope.username,
+                'password': $scope.password,
                 'startDate' : $('#startDate').val(),
                 'endDate' : $('#endDate').val(),
                 'startTime' : $('#startTime').val(),

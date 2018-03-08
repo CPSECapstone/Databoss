@@ -38,25 +38,31 @@ def add(name, startTime, endTime, dbName, logfileId, metricId, mode, status):
 @capture_api.route('/startCapture', methods=["POST"])
 def captureRoute():
     data = request.json
-    print(data)
     captureName = data['captureName']
     captureBucket = data['captureBucket']
     metricsBucket = data['metricsBucket']
+    rdsInstance = data['rdsInstance']
     dbName = data['dbName']
+    username = data['username']
+    password = data['password']
     captureMode = data['mode']
     startDate = data['startDate']
     endDate = data['endDate']
     startTime = data['startTime']
     endTime = data['endTime']
 
-    startCapture(captureName, captureBucket, metricsBucket, dbName, startDate, endDate, startTime, endTime, None, captureMode)
+    startCapture(captureName, captureBucket, metricsBucket, rdsInstance, dbName, username, password,
+                        startDate, endDate, startTime, endTime, None, captureMode)
     return "ok"
 
+
+# TODO get the db connection given the dbName
 @capture_api.route('/endCapture', methods=["POST"])
 def endCapture():
     data = request.json
     print(data)
     captureName = data.get('name')
+    rdsInstance = data.get('rdsInstance')
     dbName = data.get('dbName')
 
     startTime = data.get('startTime')
@@ -66,5 +72,6 @@ def endCapture():
     captureFileName = data.get('captureFileName')
     metricFileName = data.get('metricFileName')
 
-    stopCapture(startTime, endTime, captureName, captureBucket, metricBucket, captureFileName, metricFileName)
+    stopCapture(rdsInstance, dbName, startTime, endTime, captureName,
+                captureBucket, metricBucket, captureFileName, metricFileName)
     return "ok"
