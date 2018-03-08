@@ -100,23 +100,26 @@ app.controller('metrics', function($scope, $location, $http) {
       $('.collapse' + captureId).toggle();
    };
 
-   $scope.generateS3Link = function(capture) {
-       $http({
-                method: 'GET',
-                url: 'metrics/getCaptureBucket',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-            }).then(function successCallback(response) {
-                captureBucket = response.data;
-            }, function errorCallback(response) {
-                console.log('Error in retrieving capture bucket from capture name');
-            });
+   $scope.routeToS3 = function(capture) {
+       //retrieves the capture bucket name
+       var captureBucket;
+       var logFileName;
 
-      //from the capture id, get the
-      "https://s3-us-west-1.amazonaws.com/" +
-      capture-replay-info/laui+capture+file"
-      $location.path();
+       $http({
+            method: 'GET',
+            url: 'metrics/getLogFileObject',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            params : {'logfileId' : capture.logfileId}
+        }).then(function successCallback(response) {
+            logfileObj = response.data;
+            console.log(logfileObj);
+            //how do we make sure that the user is logged into their S3 instance? 
+            window.open('https://s3-us-west-1.amazonaws.com/" + logfileObj.bucket + "/" + logfileObj.name', '_blank');
+        }, function errorCallback(response) {
+            console.log('Error in retrieving capture bucket from capture name');
+        });
    };
 
 });

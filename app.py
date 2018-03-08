@@ -47,6 +47,7 @@ def sqlite_setup():
                            "interactive", "finished")
     modelsQuery.addMetric("Metrics1", "crt-metrics-test", "metric-file.txt")
     modelsQuery.addMetric("Metrics2", "crt-metrics-test", "metric-file-2.txt")
+    modelsQuery.addLogfile("Logfile1", "my-bucket", "my-file")
 
 
 if __name__ == "__main__":
