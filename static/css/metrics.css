@@ -2,6 +2,24 @@
    height: 300px;
    width: 500px;
    overflow : auto;
+   position: fixed;
+}
+
+.table {
+    border: 1px solid white;
+}
+
+.wholeTable {
+    height: 250px;
+    overflow: scroll;
+}
+
+.chartWrapper {
+    max-width: 800px;
+    margin-bottom: 100px;
+    padding-left: 150px;
+    margin-top: 0px;
+    padding-bottom:10px;
 }
 i {
     color: red
