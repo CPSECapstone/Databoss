@@ -1,8 +1,7 @@
 <div>
   <h1>Replay</h1>
   <div class="row">
-    <div class = "col-4"></div>
-    <div class = "col-4">
+    <div class = "col-4 center-block">
       <div class="center-block">
         <div class="form-group">
           <label for="replayName">Replay Name</label>
@@ -24,20 +23,22 @@
         </div>
 
         <h5>Replay Mode:</h5>
-          <div class="btn-group center-block" name="replayMode" data-toggle="buttons">
-            <label class="btn btn-primary active long-btn">
+        <div id="button-bar" class="text-center">
+          <div class="btn-group" name="replayMode" data-toggle="buttons">
+            <label class="btn btn-primary active">
               <input type="radio" name="replayMode" autocomplete="off" value="replay-raw" checked > Raw
             </label>
-            <label class="btn btn-primary long-btn">
+            <label class="btn btn-primary">
               <input type="radio" name="replayMode" autocomplete="off" value="replay-time"> Time-Preserving
             </label>
           </div>
+        </div>
 
-          <div class = "row">
-            <button type="button" ng-click="startReplay()" class="btn center-block btn-success">Replay</button>
-          </div>
+        <div class = "row">
+          <button type="button" ng-click="startReplay()" class="btn center-block btn-success">Replay</button>
         </div>
       </div>
     </div>
   </div>
+</div>
 </div>
