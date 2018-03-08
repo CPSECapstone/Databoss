@@ -25,7 +25,7 @@
                 </td>
                 <td><i class="fa fa-arrow-circle-o-down" ng-click="routeToS3(capture)"></i></td>
             </tr>
-            <tr class="{{ 'collapse' + capture.id }}" ng-repeat="replay in replays" ng-if="replay.captureId == capture.id">
+            <tr id="{{ 'collapse' + capture.id }}" ng-repeat="replay in replays" ng-if="replay.captureId == capture.id">
                 <td>{{replay.name}}</td>
                 <td>{{replay.date}}</td>
                 <td><input type="checkbox" ng-model="replaySelection"

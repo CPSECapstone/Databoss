@@ -90,14 +90,14 @@ app.controller('metrics', function($scope, $location, $http) {
    };
 
    $scope.toggleReplays = function(captureId, event) {
-      if (event.target.classList.value == 'fa fa-caret-down') {
-        event.target.classList.replace('fa-caret-down', 'fa-caret-right');
-      }
-      else {
+      if (event.target.classList.value == 'fa fa-caret-right') {
         event.target.classList.replace('fa-caret-right', 'fa-caret-down');
       }
+      else {
+        event.target.classList.replace('fa-caret-down', 'fa-caret-right');
+      }
 
-      $('.collapse' + captureId).toggle();
+      $('#collapse' + captureId).toggle();
    };
 
    $scope.routeToS3 = function(capture) {
