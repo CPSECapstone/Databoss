@@ -33,16 +33,15 @@
     <h5>Capture Mode:</h5>
     <div id="capture-mode-bar" class="btn-group" data-toggle="buttons">
       <label class="btn btn-primary">
-        <input type="radio" name="mode" autocomplete="off" value="interactive" checked=""> Interactive
+        <input type="radio" name="mode" autocomplete="off" value="interactive"> Interactive
       </label>
       <label class="btn btn-primary">
-        <input type="radio" name="mode" autocomplete="off" value="time" checked="checked"> Time-Constrained
+        <input type="radio" name="mode" autocomplete="off" value="time"> Time-Constrained
       </label>
       <label class="btn btn-primary">
-        <input type="radio" name="mode" autocomplete="off" value="storage" checked=""> Storage-Constrained
+        <input type="radio" name="mode" autocomplete="off" value="storage"> Storage-Constrained
       </label>
     </div>
-
     <div id="date-container" class="row">
       <span>Start Date: <input id="startDate" width="276" /> </span>
       <span>End Date: <input id="endDate" width="276" /> </span>
@@ -67,7 +66,7 @@
       iconsLibrary: 'fontawesome',
       minDate: today,
       maxDate: function () {
-        return $('#endDate').val();
+          return $('#endDate').val();
       }
     });
     $('#endDate').datepicker({
@@ -79,11 +78,11 @@
     });
     $('#startTime').timepicker({
       uiLibrary: 'bootstrap4',
-      iconsLibrary: 'fontawesome',
+      iconsLibrary: 'fontawesome'
     });
     $('#endTime').timepicker({
       uiLibrary: 'bootstrap4',
-      iconsLibrary: 'fontawesome',
+      iconsLibrary: 'fontawesome'
     });
     </script>
 
