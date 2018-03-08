@@ -99,6 +99,26 @@ app.controller('metrics', function($scope, $location, $http) {
 
       $('.collapse' + captureId).toggle();
    };
+
+   $scope.generateS3Link = function(capture) {
+       $http({
+                method: 'GET',
+                url: 'metrics/getCaptureBucket',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+            }).then(function successCallback(response) {
+                captureBucket = response.data;
+            }, function errorCallback(response) {
+                console.log('Error in retrieving capture bucket from capture name');
+            });
+
+      //from the capture id, get the
+      "https://s3-us-west-1.amazonaws.com/" +
+      capture-replay-info/laui+capture+file"
+      $location.path();
+   };
+
 });
 
 var addMetricsToChart = function(chart, label, data, time, color) {

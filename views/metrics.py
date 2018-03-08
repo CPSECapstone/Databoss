@@ -1,7 +1,6 @@
 from flask import Blueprint, jsonify, request
 from parseMetrics import ParsedMetrics
 from models import Metric
-from web_app import db
 
 import capture
 
@@ -32,3 +31,9 @@ def getMetrics():
 def getS3Metrics(bucket, file):
     obj = capture.s3.Object(bucket, file).get()
     return ParsedMetrics(obj['Body'].read().decode('utf-8'))
+
+@metrics_api.route("/getCaptureBucket", methods=["GET"])
+def getCaptureBucket():
+    #call the capture bucket
+    #
+
