@@ -61,6 +61,32 @@ def getCaptureScheduled():
     captures = models.Capture.query.filter_by(status="scheduled")
     return captures
 
+def getCaptureStartTime(captureName):
+    capture = models.Capture.query.filter_by(name=captureName).first()
+    return capture.startTime
+
+def getCaptureID(captureName):
+    capture = models.Capture.query.filter_by(name=captureName).first()
+    return capture.id
+
+def getCaptureEndTime(captureName):
+    capture = models.Capture.query.filter_by(name=captureName).first()
+    return capture.endTime
+
+def getCaptureMetric(captureName):
+    capture = models.Capture.query.filter_by(name=captureName).first()
+    return capture.metricId
+
+def getCaptureBucket(captureName):
+    capture = models.Capture.query.filter_by(name=captureName).first()
+    logObj = models.Capture.query.filter_by(id=capture.logfileId)
+    return logObj.bucket
+
+def getCaptureMetricBucket(captureName):
+    capture = models.Capture.query.filter_by(name=captureName).first()
+    metricObj = models.Capture.query.filter_by(id=capture.metricId)
+    return metricObj.bucket
+
 # Add replay to replay table with references to associated files
 def addReplay(name, startTime, endTime, dbName, metricId, captureId, mode, status):
     new_rep = models.Replay(name, startTime, endTime, dbName, metricId, captureId, mode, status)
@@ -74,6 +100,11 @@ def getReplayById(replayId):
 def getReplayByName(replayName):
     replay = models.Replay.query.filter_by(name=replayName).first()
     return replay
+
+def updateReplayStatus(replayName, status):
+    replay = models.Replay.query.filter_by(name=replayName).first()
+    replay.status = status
+    models.db.session.commit()
 
 #get log file given capture name
 
@@ -133,9 +164,6 @@ def getLogfileByName(logfileName):
     log = models.Logfile.query.filter_by(name=logfileName).first()
     return log
 
-#def getLogfileByCaptureName(captureName):
-    #cap = models.Capture.query.filter_by(name=captureName).first()
-
 def getCaptureBucket(logfileID):
     log = models.Logfile.query.filter_by(id=logfileID).first()
     return log.bucket
@@ -152,3 +180,12 @@ def getLogFile(logfileName, captureBucket):
 def getLogFileIdByNameAndBucket(logfileName, captureBucket):
     logObj = models.Logfile.query.filter_by(name=logfileName, bucket=captureBucket).first()
     return logObj.id
+
+def getEndpointByCapture(captureName):
+    captureObj = models.Capture.query.filter_by(name=captureName).first()
+    return captureObj.endpoint
+
+def getLogFileByCapture(captureName):
+   captureObj = models.Capture.query.filter_by(name=captureName).first()
+   logObj = models.Capture.query.filter_by(id=captureObj.logfileId)
+   return logObj.file
