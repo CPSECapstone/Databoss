@@ -11,8 +11,12 @@
   margin: 50px 80px 50px 90px;
 }
 
-h2 {
+h3{
   margin-left: 70px;
+  font-weight: 400;
+  text-transform: uppercase;
+  letter-spacing: .15em;
+  font-size: 1.3em;
 }
 
 .time-label {
