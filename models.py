@@ -119,7 +119,7 @@ class Replay(db.Model):
     dbName = db.Column(db.String(100), db.ForeignKey('dbconnection.name'), nullable=False)
     metricId = db.Column(db.Integer, db.ForeignKey('metric.id'), nullable=False)
     captureId = db.Column(db.Integer, db.ForeignKey('capture.id'), nullable=False)
-    mode = db.Column(db.String(100), nullable=False)
+    mode = db.Column(db.String(100))
     status = db.Column(db.String(100))
 
     @property

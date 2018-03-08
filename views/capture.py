@@ -74,4 +74,5 @@ def endCapture():
 
     stopCapture(rdsInstance, dbName, startTime, endTime, captureName,
                 captureBucket, metricBucket, captureFileName, metricFileName)
+
     return "ok"

@@ -89,7 +89,14 @@ app.controller('metrics', function($scope, $location, $http) {
         removeMetricsFromCharts(name);
    };
 
-   $scope.toggleReplays = function(captureId) {
+   $scope.toggleReplays = function(captureId, event) {
+      if (event.target.classList.value == 'fa fa-caret-down') {
+        event.target.classList.replace('fa-caret-down', 'fa-caret-right');
+      }
+      else {
+        event.target.classList.replace('fa-caret-right', 'fa-caret-down');
+      }
+
       $('.collapse' + captureId).toggle();
    };
 });

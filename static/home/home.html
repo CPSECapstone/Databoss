@@ -1,7 +1,31 @@
 <div>
-  <h1> Home Screen </h1>
+  <h1></h1>
+  <h3>Scheduled Captures</h3>
+  <div class="container2">
+    <div class="row" >
+      <div class="col-xs-3" ng-repeat="capture in scheduledCaptures">
 
-  <h2>Active Captures</h2>
+        <a href="#!/progress?name={{capture.name}}">
+          <div class="box">
+            <div class="capture-name text-center">
+              {{capture.name}}
+            </div>
+            <div class="date-container text-center">
+              <span class="time-label">Start: </span>
+              {{capture.formattedStart}}
+            </div>
+            <div class="date-container text-center">
+              <span class="time-label">End: </span>
+              {{capture.formattedEnd}}
+            </div>
+
+          </div>
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <h3>Active Captures</h3>
   <div class="container2">
     <div class="row" >
       <div class="col-xs-3" ng-repeat="capture in activeCaptures">
@@ -29,37 +53,12 @@
     </div>
   </div>
 
-  <h2>Finished Captures</h2>
+  <h3>Finished Captures</h3>
   <div class="container2">
     <div class="row" >
       <div class="col-xs-3" ng-repeat="capture in finishedCaptures">
 
         <a href="#!/metrics?captureId={{capture.id}}">
-          <div class="box">
-            <div class="capture-name text-center">
-              {{capture.name}}
-            </div>
-            <div class="date-container text-center">
-              <span class="time-label">Start: </span>
-              {{capture.formattedStart}}
-            </div>
-            <div class="date-container text-center">
-              <span class="time-label">End: </span>
-              {{capture.formattedEnd}}
-            </div>
-
-          </div>
-        </a>
-      </div>
-    </div>
-  </div>
-
-  <h2>Scheduled Captures</h2>
-  <div class="container2">
-    <div class="row" >
-      <div class="col-xs-3" ng-repeat="capture in scheduledCaptures">
-
-        <a href="#!/progress?name={{capture.name}}">
           <div class="box">
             <div class="capture-name text-center">
               {{capture.name}}
