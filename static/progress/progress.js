@@ -19,6 +19,7 @@ app.controller('progress', function($scope, $location, $http) {
     },
   }).then(function successCallback(response) {
     $scope.capture = response.data;
+    prettyParseDate($scope.capture);
     if ($scope.capture.status !== "scheduled") {
       calculateProgressCapture($scope.capture, $location);
     }
@@ -49,6 +50,24 @@ app.controller('progress', function($scope, $location, $http) {
   }
 
 });
+
+var prettyParseDate = function (capture) {
+  var startDate, startTime, endDate, endTime;
+  var start = new Date(capture.startTime);
+  var end = new Date(capture.endTime);
+  var convertedStartTime = start.toLocaleString('en-US', {timeZone: 'UTC'});
+  var convertedEndTime = end.toLocaleString('en-US', {timeZone: 'UTC'});
+  var startArray = convertedStartTime.split(", ");
+  var endArray = convertedEndTime.split(", ");
+  startDate = startArray[0];
+  startTime = startArray[1];
+  endDate = endArray[0];
+  endTime = endArray[1];
+  capture.prettyStartDate = startDate;
+  capture.prettyStartTime = startTime;
+  capture.prettyEndDate = endDate;
+  capture.prettyEndTime = endTime;
+};
 
 var calculateProgressCapture = function(capture, $location) {
   var startTime = new Date(capture.startTime);
