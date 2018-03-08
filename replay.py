@@ -1,19 +1,15 @@
 import boto3
-import time
 import pymysql
 import botocore
-import random
 import sys
 import capture
-import string
 import logging
-from flask import Blueprint, jsonify
-from datetime import timedelta
 from datetime import datetime
-from time import mktime
 import rds_config
 import modelsQuery
 from ast import literal_eval
+from threading import Timer
+
 
 logger = logging.getLogger()
 logger.setLevel(logging.INFO)
@@ -29,19 +25,31 @@ def download_file(captureName, bucketName, fileName):
         else:
             raise
 
-def startReplay(replayName, captureName, dbName, startDate, endDate, startTime, endTime, storage_limit, mode):
+def startReplay(replayName, captureName, dbName, mode):
     logfile = modelsQuery.getLogFileByCapture(captureName)
     username = rds_config.db_username
     password = rds_config.db_password
     endpoint = capture.get_list_of_instances(dbName)['DBInstances'][0]['Endpoint']['Address']
     status_of_db = capture.get_list_of_instances(dbName)['DBInstances'][0]['DBInstanceStatus']
 
+    metricFileName = replayName + " " + "metric file"
+
     captureStartTime = modelsQuery.getCaptureStartTime(captureName)
     captureEndTime = modelsQuery.getCaptureEndTime(captureName)
+    metricFile = modelsQuery.getCaptureMetric(captureName)
+    captureID = modelsQuery.getCaptureID(captureName)
+    captureBucket = modelsQuery.getCaptureBucket(captureName)
 
-
+    modelsQuery.addMetric(metricFileName, captureBucket, None)
+    modelsQuery.addReplay(replayName, captureStartTime, captureEndTime, dbName, metricFile, captureID, mode, "active")
     download_file(logfile)
 
+    t2 = Timer(datetime.now(), executeReplay, [replayName, captureName, username, password, dbName, status_of_db, endpoint, metricFile, datetime.now()])
+    t2.start()
+
+
+def executeReplay(replayName, captureName, username, password, dbName, status_of_db, endpoint, metricFile, startTime):
+    metricBucket = modelsQuery.getCaptureMetricBucket(captureName)
     with open(captureName + " " + "tempLogFile", 'r') as tempFile:
         for line in tempFile:
             entireList = literal_eval(line)
@@ -49,7 +57,6 @@ def startReplay(replayName, captureName, dbName, startDate, endDate, startTime, 
                 dict = entireList[i]
                 if dict['message'].startswith('Query'):
                     executableQuery = str(dict['message'][7:])
-
                     if status_of_db == "available":
                         try:
                             conn = pymysql.connect(host=endpoint, user=username, passwd=password, db=dbName,
@@ -59,12 +66,7 @@ def startReplay(replayName, captureName, dbName, startDate, endDate, startTime, 
                             sys.exit()
                         with conn.cursor() as cur:
                             cur.execute("""%s""", executableQuery)
-        conn.close()
 
-
-    #get log file that corresponds to the capture
-    #connect to database dbName
-    #execute queries in file
-    #get metrics from cloudwatch
-    #update database for a replay
-    #modelsQuery.addReplay(replayName, )
+    endTime = datetime.now()
+    modelsQuery.updateReplayStatus(replayName, "finished")
+    capture.sendMetrics(metricBucket, metricFile, startTime, endTime)
