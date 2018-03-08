@@ -61,7 +61,6 @@ var calculateProgressCapture = function(capture, $location) {
   var percentage = (elapsedTimeMS/totalTimeMS) * 100;
   capture.progress = percentage.toFixed(0) + "%";
 
-
   if (percentage >= 100) {
      $location.path('/metrics');
   }
