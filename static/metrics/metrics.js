@@ -107,7 +107,7 @@ app.controller('metrics', function($scope, $location, $http) {
 
        $http({
             method: 'GET',
-            url: 'metrics/getLogFileObject',
+            url: 'metrics/getLogfileObj',
             headers: {
                 'Content-Type': 'application/json'
             },
@@ -115,8 +115,8 @@ app.controller('metrics', function($scope, $location, $http) {
         }).then(function successCallback(response) {
             logfileObj = response.data;
             console.log(logfileObj);
-            //how do we make sure that the user is logged into their S3 instance? 
-            window.open('https://s3-us-west-1.amazonaws.com/" + logfileObj.bucket + "/" + logfileObj.name', '_blank');
+            //how do we make sure that the user is logged into their S3 instance?
+            window.open('https://s3-us-west-1.amazonaws.com/' + logfileObj.bucket + '/' + logfileObj.file, '_blank');
         }, function errorCallback(response) {
             console.log('Error in retrieving capture bucket from capture name');
         });

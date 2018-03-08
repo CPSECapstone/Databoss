@@ -32,7 +32,7 @@ def getS3Metrics(bucket, file):
     obj = capture.s3.Object(bucket, file).get()
     return ParsedMetrics(obj['Body'].read().decode('utf-8'))
 
-@metrics_api.route("/getLogFileObject", methods=["GET"])
+@metrics_api.route("/getLogfileObj", methods=["GET"])
 def getLogFileObject():
     logfileId = request.args.get('logfileId')
     logfileObj = modelsQuery.getLogfile(logfileId)
