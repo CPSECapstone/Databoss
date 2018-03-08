@@ -58,6 +58,9 @@ body {
 
 h1 {
   padding: 40px 70px 20px;
+  text-transform: uppercase;
+  letter-spacing: .1em;
+  font-weight: 200;
 }
 
 .myview {

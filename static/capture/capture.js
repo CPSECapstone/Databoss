@@ -131,6 +131,16 @@ app.controller('capture', function ($scope, $location, $uibModal, $http) {
     getBuckets();
 
     $scope.startCapture = function () {
+        if ($('#captureName').val() == '' || $('#crBucket').val() == null ||
+            $('#metricsBucket').val() == null ) {
+            return;
+        }
+        if ($('input[name=mode]:checked').val() == 'time' &&
+            ($('#startDate').val() == '' || $('#endDate').val() == '' ||
+             $('#startTime').val() == '' || $('#endTime').val() == '' ||
+             ($('#startDate').val() == $('#endDate').val() && $('#startTime').val() > $('#endTime').val()))) {
+            return;
+        }
         $http({
             method: 'POST',
             url: 'capture/startCapture',
@@ -150,7 +160,7 @@ app.controller('capture', function ($scope, $location, $uibModal, $http) {
             }
         });
         if ($('input[name=mode]:checked').val() == 'time') {
-            $location.path('home'); 
+            $location.path('home');
         }
         else {
             $location.path('progress').search({name : $('#captureName').val()});
