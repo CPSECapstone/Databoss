@@ -1,8 +1,7 @@
 //Initialize the angular application for this AngularJS controller
 var app = angular.module('MyCRT');
 
-//app.controller('capture', ['$scope', '$location', '$modal', function($scope, $location, $modal) {
-app.controller('capture', function ($scope, $location, $uibModal, $http) {
+app.controller('capture', function ($scope, $location, $http) {
     console.log("in capture");
 
     // setting variables
@@ -53,47 +52,6 @@ app.controller('capture', function ($scope, $location, $uibModal, $http) {
       }
     });
 
-    $scope.open = function () {
-        console.log('opening pop up');
-        var modalInstance = $uibModal.open({
-            templateUrl: '/static/capture/addDatabaseModal.html',
-            controller: function ($scope, $uibModalInstance) {
-                $scope.add = function () {
-                    $http({
-                        method: 'POST',
-                        url: '/dbc/add',
-                        headers: {
-                            'Content-Type': 'application/json'
-                        },
-                        data: {
-                            'name': $scope.name,
-                            'host': $scope.host,
-                            'port': $scope.port,
-                            'username': $scope.username,
-                            'password': $scope.password,
-                            'database': $scope.database
-                        }
-                    }).then(function successCallback(response) {
-                        console.log('success');
-                    }, function errorCallback(response) {
-                        console.log('error');
-                    });
-
-                    $uibModalInstance.close();
-                };
-
-                $scope.cancel = function () {
-                    $uibModalInstance.dismiss('cancel');
-                };
-            }
-        });
-
-        modalInstance.result.then(function() {
-            console.log("do we get here?")
-            $scope.getRDSInstances();
-        });
-    };
-
     $scope.getRDSInstances = function() {
         console.log("getting db connections");
 
@@ -104,8 +62,6 @@ app.controller('capture', function ($scope, $location, $uibModal, $http) {
                 'Content-Type': 'application/json'
             },
         }).then(function successCallback(response) {
-            console.log("rds instances:");
-            console.log(response.data);
             $scope.RDSInstances = response.data;
             console.log('success');
         }, function errorCallback(response) {
@@ -115,11 +71,16 @@ app.controller('capture', function ($scope, $location, $uibModal, $http) {
 
     $scope.getRDSInstances();
 
+    $scope.authenticateInstance = function(instance) {
+        if (instance) {
+            $scope.currentRDSInstance = JSON.parse(instance).DBInstanceIdentifier;
+            $('#authenticationModal').modal('show');
+        }
+    }
+
     $scope.getInstanceDbs = function(instance) {
         if (instance) {
-            console.log("instance:");
             var endpoint = JSON.stringify(JSON.parse(instance).Endpoint);
-            console.log(JSON.stringify(JSON.parse(instance).Endpoint));
             $http({
                 method: 'POST',
                 url: 'capture/listInstanceDbs/' + endpoint,

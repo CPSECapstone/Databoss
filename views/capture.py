@@ -56,17 +56,14 @@ def captureRoute():
     return "ok"
 
 
-# TODO get the db connection given the dbName
 @capture_api.route('/endCapture', methods=["POST"])
 def endCapture():
     data = request.json
     print(data)
     captureName = data.get('name')
-    # rdsInstance = data.get('rdsInstance')
     dbName = data.get('dbName')
 
     rdsInstance, database = dbName.split("/")
-    print("rdsInstance: " + rdsInstance + ", database: " + database)
 
     startTime = data.get('startTime')
     endTime = data.get('endTime')

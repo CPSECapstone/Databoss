@@ -38,8 +38,29 @@ cloudwatch = None
 captureReplayBucket = None
 metricBucket = None
 
-_username = None
-_password = None
+inProgressCaptures = []
+
+
+def addInProgressCapture(captureName, username, password):
+    inProgressCaptures.append({'captureName': captureName, 'username': username, 'password': password})
+
+
+def getInProgressCapture(captureName):
+    for capture in inProgressCaptures:
+        if capture.get('captureName') == captureName:
+            return capture
+
+    return None
+
+
+def removeInProgressCapture(captureName):
+    for capture in inProgressCaptures:
+        if capture.get('captureName') == captureName:
+            inProgressCaptures.remove(capture)
+
+#
+# _username = None
+# _password = None
 class MyEncoder(json.JSONEncoder):
     def default(self, obj):
         if isinstance(obj, datetime):
@@ -255,7 +276,6 @@ def startCapture(captureName, captureBucket, metricsBucket, rdsInstance, db_name
     captureFileName = captureName + " " + "capture file"
     metricFileName = captureName + " " + "metric file"
     dbDialect = "mysql"
-    # username = rds_config.db_username
 
     if startDate == "" and endDate == "" and startTime == "" and endTime == "":
         print("Here")
@@ -289,27 +309,23 @@ def startCapture(captureName, captureBucket, metricsBucket, rdsInstance, db_name
         updateDatabase(sTimeCombined, eTimeCombined, captureName, captureBucket, metricsBucket,
                        captureFileName, metricFileName, dbDialect, rdsInstance, db_name, port, username, mode, "active")
 
-        global _username
-        global _password
-        _username = username
-        _password = password
+    addInProgressCapture(captureName, username, password)
 
 
 def stopCapture(rdsInstance, dbName, startTime, endTime, captureName,
                 captureBucket, metricBucket, captureFileName, metricFileName):
     captureFileName = captureName + " " + "capture file"
     metricFileName = captureName + " " + "metric file"
-    # username = rds_config.db_username
-    # password = rds_config.db_password
-    # db_name = rds_config.db_name
 
     endpoint = get_list_of_instances(rdsInstance)['DBInstances'][0]['Endpoint']['Address']
     status_of_db = get_list_of_instances(rdsInstance)['DBInstances'][0]['DBInstanceStatus']
 
-    # TODO store list of captureIds, username and password get username and password from there
     if status_of_db == "available":
         try:
-            conn = pymysql.connect(host=endpoint, user=_username, passwd=_password, db=dbName, connect_timeout=5)
+            inProgressCapture = getInProgressCapture(captureName)
+            username = inProgressCapture.get('username')
+            password = inProgressCapture.get('password')
+            conn = pymysql.connect(host=endpoint, user=username, passwd=password, db=dbName, connect_timeout=5)
 
         except:
             logger.error("ERROR: Unexpected error: Could not connect to MySql instance.")
@@ -332,6 +348,8 @@ def stopCapture(rdsInstance, dbName, startTime, endTime, captureName,
 
         modelsQuery.updateCaptureStatus(captureName, "finished")
         sendMetrics(metricBucket, metricFileName, startTime, endTime)
+
+        removeInProgressCapture(captureName)
 
 
 def sendMetrics(metricBucket, metricFileName, startTime, endTime):
