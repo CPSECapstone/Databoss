@@ -3,6 +3,45 @@ from datetime import timedelta
 from datetime import datetime
 import capture
 import modelsQuery
+import logging
+import sys
+
+
+logger = logging.getLogger()
+logger.setLevel(logging.INFO)
+
+
+def pollStorage(userStorageInput, maxUserStorage):
+
+        t = Timer(datetime.now(), capture.checkStorageCapacity(userStorageInput, maxUserStorage))
+        t.start()
+
+def parseJson(jsonString, storage_limit):
+    freeSpace = (jsonString['Datapoints'][0]['Average'])/(10 **9)
+    if (storage_limit > freeSpace):
+        logger.error("ERROR: Not enough space for this.")
+        sys.exit()
+    else:
+        storageRem = freeSpace - storage_limit
+        for element in jsonString['Datapoints'][1:]:
+            gbVal = (element['Average'])/(10 ** 9)
+            #if (gbVal <= storageRem):   #Storage limit has been met
+                #CALL stopCapture()
+
+#storage_limit should be in gb
+def checkStorageCapacity(storage_limit, storage_max_db):
+    db_name = rds_config.db_name
+    if (storage_limit > storage_max_db):
+        print("ERROR: Storage specified is greater than what", db_name, "has allocated")
+        sys.exit()
+    else:
+        parseJson(cloudwatch.get_metric_statistics(Namespace = 'AWS/RDS',
+                                    MetricName = 'FreeStorageSpace',
+                                    StartTime=datetime.utcnow() - timedelta(minutes=60),
+                                    EndTime=datetime.utcnow(),
+                                    Period= 300,
+                                    Statistics=['Average']
+                                        ), storage_limit)
 
 def scheduleCapture(captureName):
     captureObj = modelsQuery.getCaptureByName(captureName)
