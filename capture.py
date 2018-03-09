@@ -339,7 +339,7 @@ def stopCapture(rdsInstance, dbName, startTime, endTime, captureName,
         with open(captureFileName, 'w') as outfile:
             outfile.write(json.dumps(logfile, cls=MyEncoder))
 
-        bucketCheck = modelsQuery.getCaptureBucket(captureBucket)
+        bucketCheck = modelsQuery.getCaptureBucket(captureName)
 
         modelsQuery.updateLogFile(captureBucket, outfile.name)
         s3.meta.client.upload_file(outfile.name, bucketCheck, outfile.name)
