@@ -292,6 +292,9 @@ def startCapture(captureName, captureBucket, metricsBucket, rdsInstance, db_name
     sTimeCombined = datetime.combine(startDate, startTime)
     eTimeCombined = datetime.combine(endDate, endTime)
 
+    print(sTimeCombined)
+    print(eTimeCombined)
+
     if mode == "time":
         updateDatabase(sTimeCombined, eTimeCombined, captureName, captureBucket, metricsBucket,
                        captureFileName, metricFileName, dbDialect, rdsInstance, db_name, port, username, mode, "scheduled")
