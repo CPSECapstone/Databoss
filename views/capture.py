@@ -36,24 +36,12 @@ def add(name, startTime, endTime, dbName, logfileId, metricId, mode, status):
 
 
 @capture_api.route('/startCapture', methods=["POST"])
-def captureRoute():
+def startCapture():
     data = request.json
-    captureName = data['captureName']
-    captureBucket = data['captureBucket']
-    metricsBucket = data['metricsBucket']
-    rdsInstance = data['rdsInstance']
-    dbName = data['dbName']
-    username = data['username']
-    password = data['password']
-    captureMode = data['mode']
-    startDate = data['startDate']
-    endDate = data['endDate']
-    startTime = data['startTime']
-    endTime = data['endTime']
-
-    startCapture(captureName, captureBucket, metricsBucket, rdsInstance, dbName, username, password,
-                        startDate, endDate, startTime, endTime, None, captureMode)
-    return "ok"
+    startCapture(data['captureName'], data['captureBucket'], data['metricsBucket'], data['rdsInstance'], data['dbName'],
+                 data['username'], data['password'], data['startDate'], data['endDate'], data['startTime'], data['endTime'],
+                 None, data['mode'])
+    return {}
 
 
 @capture_api.route('/endCapture', methods=["POST"])

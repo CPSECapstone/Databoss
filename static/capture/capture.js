@@ -150,13 +150,16 @@ app.controller('capture', function ($scope, $location, $http) {
                 'endTime' : $('#endTime').val(),
                 'mode' : $('input[name=mode]:checked').val()
             }
+        }).then(function successCallback(response) {
+            if ($('input[name=mode]:checked').val() == 'time') {
+                $location.path('home');
+            }
+            else {
+                $location.path('progress').search({name : $('#captureName').val()});
+            }
+        }, function errorCallback(response) {
+            console.log('Error POSTing capture object to database.');
         });
-        if ($('input[name=mode]:checked').val() == 'time') {
-            $location.path('home');
-        }
-        else {
-            $location.path('progress').search({name : $('#captureName').val()});
-        }
     }
 
     $scope.setStorageSize = function (id) {

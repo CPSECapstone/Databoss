@@ -49,6 +49,10 @@
   letter-spacing: .01em;
 }
 
+.type-container {
+  margin-top: 30px;
+}
+
 h2 {
   margin-left: 70px;
 }
