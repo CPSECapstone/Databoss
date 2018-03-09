@@ -10,7 +10,7 @@ import sys
 logger = logging.getLogger()
 logger.setLevel(logging.INFO)
 
-
+'''
 def pollStorage(userStorageInput, maxUserStorage):
 
         t = Timer(datetime.now(), capture.checkStorageCapacity(userStorageInput, maxUserStorage))
@@ -42,7 +42,7 @@ def checkStorageCapacity(storage_limit, storage_max_db):
                                     Period= 300,
                                     Statistics=['Average']
                                         ), storage_limit)
-
+'''
 def scheduleCapture(captureName):
     captureObj = modelsQuery.getCaptureByName(captureName)
     startTime = captureObj.startTime
