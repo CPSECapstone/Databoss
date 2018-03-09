@@ -1,12 +1,13 @@
 import boto3
 import time
 import pymysql
+import pymysql.cursors
 import botocore
 import random
 import sys
 import string
 import logging
-from flask import Blueprint, jsonify
+from flask import Blueprint, jsonify, request
 from datetime import timedelta
 from datetime import datetime
 from time import mktime
@@ -37,6 +38,29 @@ cloudwatch = None
 captureReplayBucket = None
 metricBucket = None
 
+inProgressCaptures = []
+
+
+def addInProgressCapture(captureName, username, password):
+    inProgressCaptures.append({'captureName': captureName, 'username': username, 'password': password})
+
+
+def getInProgressCapture(captureName):
+    for capture in inProgressCaptures:
+        if capture.get('captureName') == captureName:
+            return capture
+
+    return None
+
+
+def removeInProgressCapture(captureName):
+    for capture in inProgressCaptures:
+        if capture.get('captureName') == captureName:
+            inProgressCaptures.remove(capture)
+
+#
+# _username = None
+# _password = None
 class MyEncoder(json.JSONEncoder):
     def default(self, obj):
         if isinstance(obj, datetime):
@@ -88,6 +112,34 @@ def list_db_instances():
         print(i['DBInstanceIdentifier'])
         db_identifiers.append({'name': i['DBInstanceIdentifier']})
     return jsonify(all_instances['DBInstances'])
+
+
+# Route to get all the databases for a given RDS Endpoint
+@capture_api.route('/listInstanceDbs/<endpointString>', methods=['POST'])
+def list_instance_dbs(endpointString):
+    data = request.json
+    username = data.get('username')
+    password = data.get('password')
+    endpoint = json.loads(endpointString)
+    host = endpoint.get('Address')
+    port = endpoint.get('Port')
+
+    # Connect to the database
+    connection = pymysql.connect(host=host,
+                                 user=username,
+                                 port=port,
+                                 password=password)
+
+    try:
+        with connection.cursor() as cursor:
+            cursor.execute("show databases")
+            result = cursor.fetchall()
+
+            result = [i[0] for i in result]
+    finally:
+        connection.close()
+
+    return jsonify(result)
 
 
 @capture_api.route('/listbuckets')
@@ -204,25 +256,28 @@ def checkStorageCapacity(storage_limit, storage_max_db):
                                         ), storage_limit)
 
 
-def updateDatabase(sTime, eTime, cName, cBucket, mBucket, cFile, mFile, dialect, dbName, endpoint, port, username, mode, status):
+def updateDatabase(sTime, eTime, cName, cBucket, mBucket, cFile, mFile, dialect, rdsInstance, dbName, port, username, mode, status):
+    endpoint = get_list_of_instances(rdsInstance)['DBInstances'][0]['Endpoint']['Address']
     modelsQuery.addLogfile(cFile, cBucket, None)
     modelsQuery.addMetric(mFile, mBucket, None)
-    modelsQuery.addDBConnection(dialect, dbName, endpoint, port, "", username)
+    # TODO check if db connection exists and don't add it if it does; what is a unique db connection name?
+    modelsQuery.addDBConnection(dialect, str(rdsInstance + "/" + dbName), endpoint, port, dbName, username)
     metricID = modelsQuery.getMetricIDByNameAndBucket(mFile, mBucket)
     logfileID = modelsQuery.getLogFileIdByNameAndBucket(cFile, cBucket)
-    modelsQuery.addCapture(cName, sTime, eTime, str(dbName), logfileID, metricID, mode, status)
+    modelsQuery.addCapture(cName, sTime, eTime, str(rdsInstance + "/" + dbName), logfileID, metricID, mode, status)
 
-def startCapture(captureName, captureBucket, metricsBucket, db_name, startDate, endDate, startTime, endTime, storage_limit, mode):
-    status_of_db = get_list_of_instances(db_name)['DBInstances'][0]['DBInstanceStatus']
-    storage_max_db = get_list_of_instances(db_name)['DBInstances'][0]['AllocatedStorage']
-    endpoint = get_list_of_instances(db_name)['DBInstances'][0]['Endpoint']['Address']
-    port = get_list_of_instances(db_name)['DBInstances'][0]['Endpoint']['Port']
+
+def startCapture(captureName, captureBucket, metricsBucket, rdsInstance, db_name, username, password,
+                 startDate, endDate, startTime, endTime, storage_limit, mode):
+    status_of_db = get_list_of_instances(rdsInstance)['DBInstances'][0]['DBInstanceStatus']
+    storage_max_db = get_list_of_instances(rdsInstance)['DBInstances'][0]['AllocatedStorage']
+    port = get_list_of_instances(rdsInstance)['DBInstances'][0]['Endpoint']['Port']
+
     captureFileName = captureName + " " + "capture file"
     metricFileName = captureName + " " + "metric file"
     dbDialect = "mysql"
-    username = rds_config.db_username
 
-    if (startDate == "" and endDate == "" and startTime == "" and endTime == ""):
+    if startDate == "" and endDate == "" and startTime == "" and endTime == "":
         print("Here")
         startDate = datetime.now().date()
         endDate = datetime.now().date() + timedelta(days=1)
@@ -237,34 +292,41 @@ def startCapture(captureName, captureBucket, metricsBucket, db_name, startDate, 
     sTimeCombined = datetime.combine(startDate, startTime)
     eTimeCombined = datetime.combine(endDate, endTime)
 
-    if (mode == "time"):
+    if mode == "time":
         updateDatabase(sTimeCombined, eTimeCombined, captureName, captureBucket, metricsBucket,
-                       captureFileName, metricFileName, dbDialect, db_name, endpoint, port, username, mode, "scheduled")
+                       captureFileName, metricFileName, dbDialect, rdsInstance, db_name, port, username, mode, "scheduled")
         scheduler.scheduleCapture(captureName)
 
     else:
         if status_of_db != "available":
             rds.start_db_instance(
-                DBInstanceIdentifier=db_name
+                DBInstanceIdentifier=rdsInstance
             )
         else:
             if storage_limit != None:
                 checkStorageCapacity(storage_limit, storage_max_db)
 
         updateDatabase(sTimeCombined, eTimeCombined, captureName, captureBucket, metricsBucket,
-                       captureFileName, metricFileName, dbDialect, db_name, endpoint, port, username, mode, "active")
+                       captureFileName, metricFileName, dbDialect, rdsInstance, db_name, port, username, mode, "active")
 
-def stopCapture(startTime, endTime, captureName, captureBucket, metricBucket, captureFileName, metricFileName, dbName):
+    addInProgressCapture(captureName, username, password)
+
+
+def stopCapture(rdsInstance, dbName, startTime, endTime, captureName,
+                captureBucket, metricBucket, captureFileName, metricFileName):
     captureFileName = captureName + " " + "capture file"
     metricFileName = captureName + " " + "metric file"
-    username = rds_config.db_username
-    password = rds_config.db_password
-    endpoint = get_list_of_instances(dbName)['DBInstances'][0]['Endpoint']['Address']
-    status_of_db = get_list_of_instances(dbName)['DBInstances'][0]['DBInstanceStatus']
+
+    endpoint = get_list_of_instances(rdsInstance)['DBInstances'][0]['Endpoint']['Address']
+    status_of_db = get_list_of_instances(rdsInstance)['DBInstances'][0]['DBInstanceStatus']
 
     if status_of_db == "available":
         try:
+            inProgressCapture = getInProgressCapture(captureName)
+            username = inProgressCapture.get('username')
+            password = inProgressCapture.get('password')
             conn = pymysql.connect(host=endpoint, user=username, passwd=password, db=dbName, connect_timeout=5)
+
         except:
             logger.error("ERROR: Unexpected error: Could not connect to MySql instance.")
             sys.exit()
@@ -286,6 +348,8 @@ def stopCapture(startTime, endTime, captureName, captureBucket, metricBucket, ca
 
         modelsQuery.updateCaptureStatus(captureName, "finished")
         sendMetrics(metricBucket, metricFileName, startTime, endTime)
+
+        removeInProgressCapture(captureName)
 
 
 def sendMetrics(metricBucket, metricFileName, startTime, endTime):

@@ -22,11 +22,18 @@
         </select>
       </div>
       <div class="form-group">
+        <label for="rdsInstance">RDS Instance:</label>
+        <!--<select class="form-control" id="rdsInstance" ng-model="rdsInstance" ng-change="getInstanceDbs(rdsInstance)">-->
+      <select class="form-control" id="rdsInstance" ng-model="rdsInstance" ng-change="authenticateInstance(rdsInstance)">
+          <option disabled selected value> -- Select RDS Instance -- </option>
+          <option ng-repeat="db in RDSInstances" value="{{db}}">{{db.DBInstanceIdentifier}}</option>
+        </select>
+      </div>
+      <div ng-if="rdsInstance != undefined" class="form-group">
         <label for="dbName">Database:</label>
         <select class="form-control" id="dbName">
           <option disabled selected value> -- Select Database -- </option>
-          <option ng-repeat="db in DBConnections" value="{{db.DBInstanceIdentifier}}">{{db.DBInstanceIdentifier}}</option>
-
+          <option ng-repeat="db in instanceDbs" value="{{db}}">{{db}}</option>
         </select>
       </div>
 
@@ -92,5 +99,36 @@
     </div>
   </div>
   </form>
-</div>
 
+    <!-- Authentication Modal -->
+    <div class="container">
+        <div class="modal fade" id="authenticationModal">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content">
+
+                    <!-- Modal Header -->
+                    <div class="modal-header">
+                        <h4 class="modal-title">Authentication for <b>{{currentRDSInstance}}</b></h4>
+                        <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    </div>
+
+                    <!-- Modal body -->
+                    <div class="modal-body">
+                        <label for="username">Username:</label>
+                        <input type="text" class="form-control" id="username" ng-model="username" autofocus>
+                        <label for="password">Password:</label>
+                        <input type="password" class="form-control" id="password" ng-model="password">
+                    </div>
+
+                    <!-- Modal footer -->
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
+                        <button type="button" class="btn btn-primary" data-dismiss="modal"
+                                ng-click="getInstanceDbs(rdsInstance)" id="authenticate">Authenticate</button>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

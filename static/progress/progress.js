@@ -33,6 +33,7 @@ app.controller('progress', function($scope, $location, $http) {
     console.log('error retrieving capture name = ' + captureName);
   });
 
+    // TODO need to get the rds instance
   $scope.endCapture = function () {
     $http({
       method: 'POST',
