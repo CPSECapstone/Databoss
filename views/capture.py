@@ -1,6 +1,6 @@
 from capture import capture_api
 from flask import jsonify, request
-from capture import startCapture, stopCapture
+import capture
 from models import Capture
 import modelsQuery
 from models import Capture
@@ -36,20 +36,12 @@ def add(name, startTime, endTime, dbName, logfileId, metricId, mode, status):
 
 
 @capture_api.route('/startCapture', methods=["POST"])
-def captureRoute():
+def startCapture():
     data = request.json
-    captureName = data['captureName']
-    captureBucket = data['captureBucket']
-    metricsBucket = data['metricsBucket']
-    dbName = data['dbName']
-    captureMode = data['mode']
-    startDate = data['startDate']
-    endDate = data['endDate']
-    startTime = data['startTime']
-    endTime = data['endTime']
+    capture.startCapture(data['captureName'], data['captureBucket'], data['metricsBucket'], data['rdsInstance'], data['dbName'],
+                 data['username'], data['password'], data['startDate'], data['endDate'], data['startTime'], data['endTime'], None, data['mode'])
+    return ""
 
-    startCapture(captureName, captureBucket, metricsBucket, dbName, startDate, endDate, startTime, endTime, None, captureMode)
-    return "ok"
 
 @capture_api.route('/endCapture', methods=["POST"])
 def endCapture():
@@ -58,6 +50,8 @@ def endCapture():
     captureName = data.get('name')
     dbName = data.get('dbName')
 
+    rdsInstance, database = dbName.split("/")
+
     startTime = data.get('startTime')
     endTime = data.get('endTime')
     captureBucket = data.get('logfileId')
@@ -65,5 +59,7 @@ def endCapture():
     captureFileName = data.get('captureFileName')
     metricFileName = data.get('metricFileName')
 
-    stopCapture(startTime, endTime, captureName, captureBucket, metricBucket, captureFileName, metricFileName, dbName)
+    capture.stopCapture(rdsInstance, database, startTime, endTime, captureName,
+                captureBucket, metricBucket, captureFileName, metricFileName)
+
     return "ok"

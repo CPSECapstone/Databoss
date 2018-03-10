@@ -79,7 +79,7 @@ def getCaptureMetric(captureName):
 
 def getCaptureBucket(captureName):
     capture = models.Capture.query.filter_by(name=captureName).first()
-    logObj = models.Capture.query.filter_by(id=capture.logfileId)
+    logObj = models.Logfile.query.filter_by(id=capture.logfileId).first()
     return logObj.bucket
 
 def getCaptureMetricBucket(captureName):

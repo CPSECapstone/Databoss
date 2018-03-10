@@ -33,6 +33,7 @@ app.controller('progress', function($scope, $location, $http) {
     console.log('error retrieving capture name = ' + captureName);
   });
 
+    // TODO need to get the rds instance
   $scope.endCapture = function () {
     $http({
       method: 'POST',
@@ -67,6 +68,7 @@ var prettyParseDate = function (capture) {
   capture.prettyStartTime = startTime;
   capture.prettyEndDate = endDate;
   capture.prettyEndTime = endTime;
+  capture.mode = mode;
 };
 
 var calculateProgressCapture = function(capture, $location) {
