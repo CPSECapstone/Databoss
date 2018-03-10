@@ -1,29 +1,30 @@
 <div>
   <h1>Capture</h1>
+  <body ng-app="">
   <form name="form">
   <div class="row">
     <div class="center-block">
       <div class="form-group">
         <label for="captureName">Capture Name</label>
-        <input type="text" class="form-control" id="captureName" maxlength="20">
+        <input type="text" class="form-control" id="captureName" maxlength="20" ng-model="captureName">
       </div>
       <div class="form-group">
         <label for="crBucket">Capture Replay Bucket:</label>
-        <select class="form-control" id="crBucket">
+        <select class="form-control" id="crBucket" ng-model="crBucket">
           <option disabled selected value> -- Select Bucket -- </option>
           <option ng-repeat="bucket in buckets" value="{{bucket}}">{{bucket}}</option>
         </select>
       </div>
       <div class="form-group">
         <label for="metricsBucket">Metrics Bucket:</label>
-        <select class="form-control" id="metricsBucket">
+        <select class="form-control" id="metricsBucket" ng-model="metricsBucket">
           <option disabled selected value> -- Select Bucket -- </option>
           <option ng-repeat="bucket in buckets" value="{{bucket}}">{{bucket}}</option>
         </select>
       </div>
       <div class="form-group">
         <label for="dbName">Database:</label>
-        <select class="form-control" id="dbName">
+        <select class="form-control" id="dbName" ng-model="dbName">
           <option disabled selected value> -- Select Database -- </option>
           <option ng-repeat="db in DBConnections" value="{{db.DBInstanceIdentifier}}">{{db.DBInstanceIdentifier}}</option>
 
@@ -43,12 +44,12 @@
       </label>
     </div>
     <div id="date-container" class="row">
-      <span>Start Date: <input id="startDate" width="276" /> </span>
-      <span>End Date: <input id="endDate" width="276" /> </span>
+      <span>Start Date: <input id="startDate" ng-model="startDate" width="276" /> </span>
+      <span>End Date: <input id="endDate" ng-model="endDate" width="276" /> </span>
     </div>
     <div id="time-container" class="row">
-      <span>Start Time: <input id="startTime" width="276" /> </span>
-      <span>End Time: <input id="endTime" width="276" /> </span>
+      <span>Start Time: <input id="startTime" ng-model="startTime" width="276" /> </span>
+      <span>End Time: <input id="endTime" ng-model="endTime" width="276" /> </span>
     </div>
 
     <!-- storage mode  -->
@@ -87,10 +88,13 @@
     </script>
 
     <div class="text-center">
-      <button type="button" ng-click="startCapture()" class="btn-capture btn btn-success">Capture</button>
+      <button type="button" ng-model="button" ng-click="startCapture()" class="btn-capture btn btn-success"
+              ng-disabled="!captureName || !crBucket || !metricsBucket || !dbName">
+      Capture</button>
     </div>
     </div>
   </div>
   </form>
+  </body>
 </div>
 
