@@ -88,7 +88,6 @@ var prettyParseDate = function (capture) {
 };
 
 var calculateProgressCapture = function(capture, $location) {
-  console.log("calculating progress");
   var startTime = new Date(capture.startTime);
   startTime.setHours(startTime.getHours() + 7);
   var endTime = new Date(capture.endTime);
