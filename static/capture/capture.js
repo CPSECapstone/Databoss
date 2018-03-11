@@ -118,6 +118,22 @@ app.controller('capture', function ($scope, $location, $http) {
 
     getBuckets();
 
+    var captureNames = function () {
+        $http({
+            method: 'GET',
+            url: 'capture/listbuckets',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+        }).then(function successCallback(response) {
+            $scope.buckets = response.data;
+            console.log('success');
+        }, function errorCallback(response) {
+            console.log('error');
+        });
+    }
+
+    // Defaulted mode is interactive when no mode is chosen
     $scope.startCapture = function () {
         $http({
             method: 'POST',
