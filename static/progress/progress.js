@@ -38,7 +38,6 @@ app.controller('progress', function($scope, $location, $http) {
     console.log('error retrieving capture name = ' + captureName);
   });
 
-    // TODO need to get the rds instance
   $scope.endCapture = function () {
     $http({
       method: 'POST',
@@ -54,6 +53,24 @@ app.controller('progress', function($scope, $location, $http) {
       console.log('error retrieving replays');
     });
   };
+
+  var progressInterval = setInterval(frame, 1000);
+  function frame() {
+    if (parseInt($scope.capture.progress.split("$")[0]) >= 100) {
+      clearInterval(progressInterval);
+      $scope.$apply(function() {
+        $location.path('/metrics');
+      });
+    } else {
+      $scope.$apply(function() {
+        calculateProgressCapture($scope.capture, $location);
+      });
+    }
+  }
+
+  $scope.$on('$locationChangeStart', function (event) {
+    clearInterval(progressInterval);
+  });
 
   $scope.displayMode = function(mode) {
     var result;
@@ -89,8 +106,4 @@ var calculateProgressCapture = function(capture, $location) {
   var elapsedTimeMS = currentTime - startTime;
   var percentage = (elapsedTimeMS/totalTimeMS) * 100;
   capture.progress = percentage.toFixed(0) + "%";
-
-  if (percentage >= 100) {
-     $location.path('/metrics');
-  }
 }
