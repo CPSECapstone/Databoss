@@ -68,7 +68,6 @@ var prettyParseDate = function (capture) {
   capture.prettyStartTime = startTime;
   capture.prettyEndDate = endDate;
   capture.prettyEndTime = endTime;
-  capture.mode = mode;
 };
 
 var calculateProgressCapture = function(capture, $location) {
