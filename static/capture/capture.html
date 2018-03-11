@@ -95,7 +95,7 @@
 
     <div class="text-center">
       <button type="button" ng-model="button" ng-click="startCapture()" class="btn-capture btn btn-success"
-              ng-disabled="!captureName || !crBucket || !metricsBucket ||
+              ng-disabled="!captureName || !crBucket || !metricsBucket || !rdsInstance || 
                            (selectedMode == 'time' && (!startTime || !endTime || !startDate || !endDate ||
                             (startDate == endDate && startTime > endTime))) ||
                            (selectedMode == 'storage' && !storageNumber)">
