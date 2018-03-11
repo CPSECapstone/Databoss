@@ -5,6 +5,7 @@ import capture
 import modelsQuery
 import logging
 import sys
+import pytz
 
 
 logger = logging.getLogger()
@@ -61,23 +62,24 @@ def scheduleCapture(captureName):
     t2.start()
 
 def startCapture(captureObj):
-    dbName = captureObj.dbName
-    status_of_db = capture.get_list_of_instances(dbName)['DBInstances'][0]['DBInstanceStatus']
+    rdsInstance = captureObj.dbName.split("/")[0]
+    status_of_db = capture.get_list_of_instances(rdsInstance)['DBInstances'][0]['DBInstanceStatus']
 
     if status_of_db != "available":
         capture.rds.start_db_instance(
-            DBInstanceIdentifier=dbName
+            DBInstanceIdentifier=rdsInstance
         )
 
     modelsQuery.updateCaptureStatus(captureObj.name, "active")
 
 def endCapture(captureObj, startTime, endTime):
-    print("object")
-    print(captureObj)
     captureFileName = captureObj.name + " " + "capture file"
     metricFileName = captureObj.name + " " + "metric file"
     modelsQuery.updateCaptureStatus(captureObj.name, "finished")
 
-    print("stop capture")
-    capture.stopCapture(startTime, endTime, captureObj.name, captureObj.logfileId, captureObj.metricId, captureFileName, metricFileName)
+    rdsInstance, database = captureObj.dbName.split("/")
 
+    startTime = datetime.strftime(startTime.replace(tzinfo=pytz.utc), '%a, %d %b %Y %H:%M:%S %Z')
+
+    capture.stopCapture(rdsInstance, database, startTime, endTime, captureObj.name, captureObj.logfileId,
+                        captureObj.metricId, captureFileName, metricFileName)
