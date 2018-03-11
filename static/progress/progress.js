@@ -2,6 +2,11 @@
 var app = angular.module('MyCRT');
 
 app.controller('progress', function($scope, $location, $http) {
+  $scope.startDate = null;
+  $scope.startTime = null;
+  $scope.endDate = null;
+  $scope.endTime = null;
+
 
   var options = {
     year: 'numeric',
@@ -19,13 +24,13 @@ app.controller('progress', function($scope, $location, $http) {
     },
   }).then(function successCallback(response) {
     $scope.capture = response.data;
-    prettyParseDate($scope.capture);
+    // prettyParseDate($scope.capture);
     if ($scope.capture.status !== "scheduled") {
       calculateProgressCapture($scope.capture, $location);
     }
     else {
       var startTime = new Date($scope.capture.startTime);
-      startTime.setHours(startTime.getHours() + 8);
+      startTime.setHours(startTime.getHours() + 7);
       $scope.capture.progress = "Scheduled to start at " + startTime.toLocaleDateString('en-US', options);
       console.log($scope.capture.progress);
     }
@@ -33,7 +38,6 @@ app.controller('progress', function($scope, $location, $http) {
     console.log('error retrieving capture name = ' + captureName);
   });
 
-    // TODO need to get the rds instance
   $scope.endCapture = function () {
     $http({
       method: 'POST',
@@ -48,7 +52,7 @@ app.controller('progress', function($scope, $location, $http) {
     }, function errorCallback(response) {
       console.log('error retrieving replays');
     });
-  }
+  };
 
   var progressInterval = setInterval(frame, 1000);
   function frame() {
@@ -67,25 +71,30 @@ app.controller('progress', function($scope, $location, $http) {
   $scope.$on('$locationChangeStart', function (event) {
     clearInterval(progressInterval);
   });
-});
 
-var prettyParseDate = function (capture) {
-  var startDate, startTime, endDate, endTime;
-  var start = new Date(capture.startTime);
-  var end = new Date(capture.endTime);
-  var convertedStartTime = start.toLocaleString('en-US', {timeZone: 'UTC'});
-  var convertedEndTime = end.toLocaleString('en-US', {timeZone: 'UTC'});
-  var startArray = convertedStartTime.split(", ");
-  var endArray = convertedEndTime.split(", ");
-  startDate = startArray[0];
-  startTime = startArray[1];
-  endDate = endArray[0];
-  endTime = endArray[1];
-  capture.prettyStartDate = startDate;
-  capture.prettyStartTime = startTime;
-  capture.prettyEndDate = endDate;
-  capture.prettyEndTime = endTime;
-};
+  $scope.displayMode = function(mode) {
+    var result;
+    if (mode === "time") result = "time-constrained";
+    else if (mode === "storage") result = "time-constrained";
+    else if (mode === "interactive") result = "time-constrained";
+    else result = mode;
+    return result;
+  };
+
+  $scope.displayDate = function(date) {
+    var date = new Date(date);
+    var convertedDate = date.toLocaleString('en-US', {timeZone: 'UTC'});
+    var dateTimeArray = convertedDate.split(", ");
+    return dateTimeArray[0];
+  };
+
+  $scope.displayTime = function(date) {
+    var date = new Date(date);
+    var convertedDate = date.toLocaleString('en-US', {timeZone: 'UTC'});
+    var dateTimeArray = convertedDate.split(", ");
+    return dateTimeArray[1];
+  }
+});
 
 var calculateProgressCapture = function(capture, $location) {
   var startTime = new Date(capture.startTime);

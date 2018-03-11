@@ -72,9 +72,9 @@ var populateScheduledCaptures = function($http, $scope) {
 var formatDates = function(captures) {
   for (var i = 0; i < captures.length; i++) {
     startTime = new Date(captures[i].startTime);
-    startTime.setHours(startTime.getHours() + 8);
+    startTime.setHours(startTime.getHours() + 7);
     endTime = new Date(captures[i].endTime);
-    endTime.setHours(endTime.getHours() + 8);
+    endTime.setHours(endTime.getHours() + 7);
     captures[i].formattedStart = startTime.toLocaleDateString('en-US', options);
     captures[i].formattedEnd = endTime.toLocaleDateString('en-US', options);
   }
