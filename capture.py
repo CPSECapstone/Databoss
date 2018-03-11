@@ -15,6 +15,7 @@ import modelsQuery
 import rds_config
 import scheduler
 import json
+import pytz
 
 VOWELS = "aeiou"
 CONSONANTS = "".join(set(string.ascii_lowercase) - set(VOWELS))
@@ -319,9 +320,17 @@ def stopCapture(rdsInstance, dbName, startTime, endTime, captureName,
                 captureBucket, metricBucket, captureFileName, metricFileName):
     captureFileName = captureName + " " + "capture file"
     metricFileName = captureName + " " + "metric file"
-
+    print("start time before")
+    print(startTime)
+    startTime = datetime.strptime(startTime, '%a, %d %b %Y %H:%M:%S %Z' ).replace(tzinfo=pytz.utc).strftime("%Y-%m-%d %H:%M:%S")
+    endTime = datetime.strftime(endTime, '%Y-%m-%d %H:%M:%S')
     endpoint = get_list_of_instances(rdsInstance)['DBInstances'][0]['Endpoint']['Address']
     status_of_db = get_list_of_instances(rdsInstance)['DBInstances'][0]['DBInstanceStatus']
+
+    print("start time: ")
+    print(startTime)
+    print("end time: ")
+    print(endTime)
 
     if status_of_db == "available":
         try:
