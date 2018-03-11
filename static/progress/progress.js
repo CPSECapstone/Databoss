@@ -72,9 +72,9 @@ var prettyParseDate = function (capture) {
 
 var calculateProgressCapture = function(capture, $location) {
   var startTime = new Date(capture.startTime);
-  startTime.setHours(startTime.getHours() + 8);
+  startTime.setHours(startTime.getHours() + 7);
   var endTime = new Date(capture.endTime);
-  endTime.setHours(endTime.getHours() + 8);
+  endTime.setHours(endTime.getHours() + 7);
   var totalTimeMS = endTime - startTime;
   var currentTime = Date.now();
   var elapsedTimeMS = currentTime - startTime;
