@@ -21,13 +21,13 @@ def testAddGetMetric():
     bucket = 'metBucket'
     file = 'metFile'
     modelsQuery.addMetric(name, bucket, file)
-    result = models.Metric.query.filter_by(name=name, bucket=bucket, filename=file).count()
+    result = models.Metric.query.filter_by(name=name, bucket=bucket, file=file).count()
     assert result == 1
 
     metric = modelsQuery.getMetricById(1)
     assert metric.name == name
     assert metric.bucket == bucket
-    assert metric.filename == file
+    assert metric.file == file
 
 def testAddGetLogfile():
     id = 1
@@ -42,7 +42,7 @@ def testAddGetLogfile():
     assert log.id == id
     assert log.name == name
     assert log.bucket == bucket
-    assert log.filename == file
+    assert log.file == file
 
 def testAddCapture():
     name = 'capName'

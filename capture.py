@@ -15,7 +15,6 @@ import modelsQuery
 import rds_config
 import scheduler
 import json
-import pytz
 
 VOWELS = "aeiou"
 CONSONANTS = "".join(set(string.ascii_lowercase) - set(VOWELS))
