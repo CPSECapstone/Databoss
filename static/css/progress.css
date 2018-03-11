@@ -26,7 +26,14 @@
 }
 
 #test {
-  border: 1px solid red;
+}
+
+#progressStartTime {
+  color: #51FF89;
+}
+
+#progressEndTime {
+  color: #FF1100;
 }
 
 .tile-title {
@@ -35,13 +42,15 @@
   text-transform: uppercase;
 }
 
-.date-container {
-  /* border: 1px solid blue; */
-  text-transform: uppercase;
+
+.progress-date-container {
+  padding-top: 10px;
+  font-size: 1.3em;
 }
-.time-container {
-  /* border: 1px solid green; */
-  font-size: 2em;
+
+.progress-time-container {
+  padding-top: 5px;
+  font-size: 1.6em;
   letter-spacing: .01em;
 }
 
