@@ -371,28 +371,28 @@ def sendMetrics(metricBucket, metricFileName, startTime, endTime):
                                                   Statistics=['Average'],
                                                   StartTime=startTime,
                                                   EndTime=endTime,
-                                                  Period=300,
+                                                  Period=60,
                                                   MetricName='CPUUtilization'))
 
     dlist.append(cloudwatch.get_metric_statistics(Namespace="AWS/RDS",
                                                   Statistics=['Average'],
                                                   StartTime=startTime,
                                                   EndTime=endTime,
-                                                  Period=300,
+                                                  Period=60,
                                                   MetricName='ReadIOPS'))
 
     dlist.append(cloudwatch.get_metric_statistics(Namespace="AWS/RDS",
                                                   Statistics=['Average'],
                                                   StartTime=startTime,
                                                   EndTime=endTime,
-                                                  Period=300,
+                                                  Period=60,
                                                   MetricName='WriteIOPS'))
 
     dlist.append(cloudwatch.get_metric_statistics(Namespace="AWS/RDS",
                                                   Statistics=['Average'],
                                                   StartTime=startTime,
                                                   EndTime=endTime,
-                                                  Period=300,
+                                                  Period=60,
                                                   MetricName='FreeableMemory'))
 
     with open(metricFileName, 'w') as metricFileOpened:
