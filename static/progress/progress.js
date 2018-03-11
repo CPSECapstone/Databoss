@@ -50,6 +50,23 @@ app.controller('progress', function($scope, $location, $http) {
     });
   }
 
+  var progressInterval = setInterval(frame, 1000);
+  function frame() {
+    if (parseInt($scope.capture.progress.split("$")[0]) >= 100) {
+      clearInterval(progressInterval);
+      $scope.$apply(function() {
+        $location.path('/metrics');
+      });
+    } else {
+      $scope.$apply(function() {
+        calculateProgressCapture($scope.capture, $location);
+      });
+    }
+  }
+
+  $scope.$on('$locationChangeStart', function (event) {
+    clearInterval(progressInterval);
+  });
 });
 
 var prettyParseDate = function (capture) {
@@ -71,6 +88,7 @@ var prettyParseDate = function (capture) {
 };
 
 var calculateProgressCapture = function(capture, $location) {
+  console.log("calculating progress");
   var startTime = new Date(capture.startTime);
   startTime.setHours(startTime.getHours() + 7);
   var endTime = new Date(capture.endTime);
@@ -80,8 +98,4 @@ var calculateProgressCapture = function(capture, $location) {
   var elapsedTimeMS = currentTime - startTime;
   var percentage = (elapsedTimeMS/totalTimeMS) * 100;
   capture.progress = percentage.toFixed(0) + "%";
-
-  if (percentage >= 100) {
-     $location.path('/metrics');
-  }
 }
