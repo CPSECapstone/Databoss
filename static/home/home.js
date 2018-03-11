@@ -89,9 +89,9 @@ var calculateProgress = function(captures) {
   var percentage = null;
   for (var i = 0; i < captures.length; i++) {
     startTime = new Date(captures[i].startTime);
-    startTime.setHours(startTime.getHours() + 8);
+    startTime.setHours(startTime.getHours() + 7);
     endTime = new Date(captures[i].endTime);
-    endTime.setHours(endTime.getHours() + 8);
+    endTime.setHours(endTime.getHours() + 7);
     totalTimeMS = endTime - startTime;
     currentTime = Date.now();
     elapsedTimeMS = currentTime - startTime;
