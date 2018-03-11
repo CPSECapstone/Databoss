@@ -15,6 +15,7 @@ import modelsQuery
 import rds_config
 import scheduler
 import json
+import pytz
 
 VOWELS = "aeiou"
 CONSONANTS = "".join(set(string.ascii_lowercase) - set(VOWELS))
@@ -278,7 +279,6 @@ def startCapture(captureName, captureBucket, metricsBucket, rdsInstance, db_name
     dbDialect = "mysql"
 
     if startDate == "" and endDate == "" and startTime == "" and endTime == "":
-        print("Here")
         startDate = datetime.now().date()
         endDate = datetime.now().date() + timedelta(days=1)
         startTime = datetime.now().time()
@@ -292,8 +292,6 @@ def startCapture(captureName, captureBucket, metricsBucket, rdsInstance, db_name
     sTimeCombined = datetime.combine(startDate, startTime)
     eTimeCombined = datetime.combine(endDate, endTime)
 
-    print(sTimeCombined)
-    print(eTimeCombined)
 
     if mode == "time":
         updateDatabase(sTimeCombined, eTimeCombined, captureName, captureBucket, metricsBucket,
@@ -320,6 +318,8 @@ def stopCapture(rdsInstance, dbName, startTime, endTime, captureName,
     captureFileName = captureName + " " + "capture file"
     metricFileName = captureName + " " + "metric file"
 
+    startTime = datetime.strptime(startTime, '%a, %d %b %Y %H:%M:%S %Z' ).replace(tzinfo=pytz.utc).strftime("%Y-%m-%d %H:%M:%S")
+    endTime = datetime.strftime(endTime, '%Y-%m-%d %H:%M:%S')
     endpoint = get_list_of_instances(rdsInstance)['DBInstances'][0]['Endpoint']['Address']
     status_of_db = get_list_of_instances(rdsInstance)['DBInstances'][0]['DBInstanceStatus']
 
@@ -362,28 +362,28 @@ def sendMetrics(metricBucket, metricFileName, startTime, endTime):
                                                   Statistics=['Average'],
                                                   StartTime=startTime,
                                                   EndTime=endTime,
-                                                  Period=300,
+                                                  Period=60,
                                                   MetricName='CPUUtilization'))
 
     dlist.append(cloudwatch.get_metric_statistics(Namespace="AWS/RDS",
                                                   Statistics=['Average'],
                                                   StartTime=startTime,
                                                   EndTime=endTime,
-                                                  Period=300,
+                                                  Period=60,
                                                   MetricName='ReadIOPS'))
 
     dlist.append(cloudwatch.get_metric_statistics(Namespace="AWS/RDS",
                                                   Statistics=['Average'],
                                                   StartTime=startTime,
                                                   EndTime=endTime,
-                                                  Period=300,
+                                                  Period=60,
                                                   MetricName='WriteIOPS'))
 
     dlist.append(cloudwatch.get_metric_statistics(Namespace="AWS/RDS",
                                                   Statistics=['Average'],
                                                   StartTime=startTime,
                                                   EndTime=endTime,
-                                                  Period=300,
+                                                  Period=60,
                                                   MetricName='FreeableMemory'))
 
     with open(metricFileName, 'w') as metricFileOpened:
