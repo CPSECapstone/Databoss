@@ -1,8 +1,7 @@
 from flask import Blueprint, jsonify, request
 from parseMetrics import ParsedMetrics
 from models import Metric
-from web_app import db
-
+import modelsQuery
 import capture
 
 metrics_api = Blueprint('metrics_api', __name__)
@@ -33,8 +32,8 @@ def getS3Metrics(bucket, file):
     obj = capture.s3.Object(bucket, file).get()
     return ParsedMetrics(obj['Body'].read().decode('utf-8'))
 
-#TODO : move this to models.query.py
-def add(name, bucket, file):
-    newMetrics = Metric(name=name, bucket=bucket, file=file)
-    db.session.add(newMetrics)
-    db.session.commit()
+@metrics_api.route("/getLogfileObj", methods=["GET"])
+def getLogFileObject():
+    logfileId = request.args.get('logfileId')
+    logfileObj = modelsQuery.getLogfile(logfileId)
+    return jsonify(bucket=logfileObj.bucket, file=logfileObj.file)

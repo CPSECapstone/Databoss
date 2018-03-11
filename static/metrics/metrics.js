@@ -1,35 +1,134 @@
+// Module for managing the line colors for charts
+var ChartColors = (function() {
+    // array of colors to use for the metrics charts
+    var colors = [
+        'cornflowerblue',
+        'tomato',
+        'palegreen',
+        'pink',
+        'orange',
+        'lemonchiffon',
+        'aqua',
+        'darkorchid',
+        'lime',
+        'red',
+        'yellow',
+        'violet'
+    ];
+    // array to keep track of used colors so line colors are unique
+    var usedColors = [];
+
+    return {
+        getNextColor : function() {
+            var availableColors = colors.filter(function(obj) { return usedColors.indexOf(obj) == -1; });
+            usedColors.push(availableColors[0]);
+            return availableColors[0];
+        },
+        removeUsedColor : function(color) {
+            var index = usedColors.indexOf(color);
+            if (index > -1) {
+                usedColors.splice(index, 1);
+            }
+        },
+        resetUsedColors : function() {
+            usedColors = [];
+        }
+    };
+})();
+
+var cpuChart;
+var readIOChart;
+var writeIOChart;
+var memoryChart;
+
 //Initialize the angular application for this AngularJS controller
-var app = angular.module('MyCRT');
+var app = angular.module('MyCRT').directive('onFinishRender', function ($timeout) {
+    return {
+        restrict: 'A',
+        link: function (scope, element, attr) {
+            if (scope.$last === true) {
+                $timeout(function () {
+                    scope.$emit(attr.onFinishRender);
+                });
+            }
+        }
+    }
+});
 
 //whenever an action occurs on the metrics page, the controller will handle it
-app.controller('metrics', function($scope, $location, $http, Metrics) {
-   Metrics.setCPUChart(createChart('cpuChart', 'CPU (Percent)', 'Time (seconds)'));
-   Metrics.setReadIOChart(createChart('readIOChart', 'Read IO (count/second)', 'Time (seconds)'));
-   Metrics.setWriteIOChart(createChart('writeIOChart', 'Write IO (count/second)', 'Time (seconds)'));
-   Metrics.setMemoryChart(createChart('memoryChart', 'Memory (bytes)', 'Time (seconds)'));
+app.controller('metrics', function($scope, $location, $http) {
+    // Destroy any existing charts before creating new ones
+    Chart.helpers.each(Chart.instances, function(instance) {
+       instance.destroy();
+    });
+
+   ChartColors.resetUsedColors();
+
+   cpuChart = createChart('cpuChart', 'CPU (Percent)', 'Time (seconds)');
+   readIOChart = createChart('readIOChart', 'Read IO (count/second)', 'Time (seconds)');
+   writeIOChart = createChart('writeIOChart', 'Write IO (count/second)', 'Time (seconds)');
+   memoryChart = createChart('memoryChart', 'Memory (bytes)', 'Time (seconds)');
 
    getCaptures($http, $scope);
    getReplays($http, $scope);
+
+   $scope.$on('updateSelectionFromQueryParameters', function(ngRepeatFinishedEvent) {
+     var captureId = $location.search()['captureId'];
+
+     if (captureId) {
+       $('#capture-checkbox' + captureId).click();
+     }
+  });
 
    // Function that is called whenever a checkbox is checked or unchecked
    // Handles calling the appropriate functions for updating the charts
    $scope.updateSelection = function(type, name, id, value) {
       if (value === true)
-         getMetrics($http, Metrics, name, type, id);
+         getMetrics($http, name, type, id);
       else
         removeMetricsFromCharts(name);
    };
 
-   $scope.toggleReplays = function(captureId) {
-      $('.collapse' + captureId).toggle();
+   $scope.toggleReplays = function(captureId, event) {
+      if (event.target.classList.value == 'fa fa-caret-right') {
+        event.target.classList.replace('fa-caret-right', 'fa-caret-down');
+      }
+      else {
+        event.target.classList.replace('fa-caret-down', 'fa-caret-right');
+      }
+
+      $('#collapse' + captureId).toggle();
    };
+
+   $scope.routeToS3 = function(capture) {
+       //retrieves the capture bucket name
+       var captureBucket;
+       var logFileName;
+
+       $http({
+            method: 'GET',
+            url: 'metrics/getLogfileObj',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            params : {'logfileId' : capture.logfileId}
+        }).then(function successCallback(response) {
+            logfileObj = response.data;
+            console.log(logfileObj);
+            //how do we make sure that the user is logged into their S3 instance?
+            window.open('https://s3-us-west-1.amazonaws.com/' + logfileObj.bucket + '/' + logfileObj.file, '_blank');
+        }, function errorCallback(response) {
+            console.log('Error in retrieving capture bucket from capture name');
+        });
+   };
+
 });
 
-var addMetricsToChart = function(chart, label, data, time) {
+var addMetricsToChart = function(chart, label, data, time, color) {
    chart.data.datasets.push({
       data: data,
       label: label,
-      borderColor: 'rgba(10, 148, 255, 1)',
+      borderColor: color,
       fill: false,
       time: time
    });
@@ -38,12 +137,20 @@ var addMetricsToChart = function(chart, label, data, time) {
 
 // Removes a specific metrics dataset from all the metrics charts
 var removeMetricsFromCharts = function(name) {
+    var color;
+
     Chart.helpers.each(Chart.instances, function(instance) {
         var datasets = instance.chart.config.data.datasets;
 
         for (index = 0; index < datasets.length; index++)
             if (datasets[index].label === name)
                 break;
+
+        // Set the color for the dataset to be available
+        if (!color) {
+            color = datasets[index].borderColor;
+            ChartColors.removeUsedColor(color);
+        }
 
         datasets.splice(index, 1);
         instance.update();
@@ -55,7 +162,7 @@ var removeMetricsFromCharts = function(name) {
 // Updates the time labels for every chart to be consistent with the datasets
 var updateAllChartTimes = function() {
     var time = [];
-    var datasets = Chart.instances[0].chart.config.data.datasets;
+    var datasets = cpuChart.data.datasets;
 
     // Combine the times for each dataset and keep only the unique values
     datasets.forEach(function(dataset) {
@@ -82,8 +189,8 @@ var convertTimeArrayFromEpoch = function(times) {
     return relativeTimes;
 }
 
-// Function to execute an HTTP request to get CPU Metrics
-var getMetrics = function($http, Metrics, name, type, id) {
+// Function to execute an HTTP request to get Metrics
+var getMetrics = function($http, name, type, id) {
     $http({
         method: 'GET',
         url: '/metrics/getMetrics?type=' + type + '&id=' + id,
@@ -101,10 +208,12 @@ var getMetrics = function($http, Metrics, name, type, id) {
         var memory = response.data.memory;
         var memoryTime = convertTimeArrayFromEpoch(response.data.memoryTime);
 
-        addMetricsToChart(Metrics.getCPUChart(), name, cpu, cpuTime);
-        addMetricsToChart(Metrics.getReadIOChart(), name, readIO, readIOTime);
-        addMetricsToChart(Metrics.getWriteIOChart(), name, writeIO, writeIOTime);
-        addMetricsToChart(Metrics.getMemoryChart(), name, memory, memoryTime);
+        var color = ChartColors.getNextColor();
+
+        addMetricsToChart(cpuChart, name, cpu, cpuTime, color);
+        addMetricsToChart(readIOChart, name, readIO, readIOTime, color);
+        addMetricsToChart(writeIOChart, name, writeIO, writeIOTime, color);
+        addMetricsToChart(memoryChart, name, memory, memoryTime, color);
     }, function errorCallback(response) {
         console.log('error');
     });
@@ -121,6 +230,12 @@ var createChart = function(elementId, yAxesLabel, xAxesLabel) {
             datasets: []
         },
         options : {
+            legend: {
+                display: true,
+                labels: {
+                    fontColor: "#D9D9D9"
+                }
+            },
             scales: {
                 yAxes: [{
                     gridLines: {

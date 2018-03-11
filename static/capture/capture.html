@@ -1,10 +1,11 @@
 <div>
   <h1>Capture</h1>
+  <form name="form">
   <div class="row">
     <div class="center-block">
       <div class="form-group">
         <label for="captureName">Capture Name</label>
-        <input type="text" class="form-control" id="captureName">
+        <input type="text" class="form-control" id="captureName" maxlength="20">
       </div>
       <div class="form-group">
         <label for="crBucket">Capture Replay Bucket:</label>
@@ -21,27 +22,32 @@
         </select>
       </div>
       <div class="form-group">
+        <label for="rdsInstance">RDS Instance:</label>
+      <select class="form-control" id="rdsInstance" ng-model="rdsInstance" ng-change="authenticateInstance(rdsInstance)">
+          <option disabled selected value> -- Select RDS Instance -- </option>
+          <option ng-repeat="db in RDSInstances" value="{{db}}">{{db.DBInstanceIdentifier}}</option>
+        </select>
+      </div>
+      <div ng-if="rdsInstance != undefined" class="form-group">
         <label for="dbName">Database:</label>
         <select class="form-control" id="dbName">
           <option disabled selected value> -- Select Database -- </option>
-          <option ng-repeat="db in DBConnections" value="{{db.DBInstanceIdentifier}}">{{db.DBInstanceIdentifier}}</option>
-
+          <option ng-repeat="db in instanceDbs" value="{{db}}">{{db}}</option>
         </select>
       </div>
 
     <h5>Capture Mode:</h5>
     <div id="capture-mode-bar" class="btn-group" data-toggle="buttons">
       <label class="btn btn-primary">
-        <input type="radio" name="mode" autocomplete="off" value="interactive" checked=""> Interactive
+        <input type="radio" name="mode" autocomplete="off" value="interactive"> Interactive
       </label>
       <label class="btn btn-primary">
-        <input type="radio" name="mode" autocomplete="off" value="time" checked="checked"> Time-Constrained
+        <input type="radio" name="mode" autocomplete="off" value="time"> Time-Constrained
       </label>
       <label class="btn btn-primary">
-        <input type="radio" name="mode" autocomplete="off" value="storage" checked=""> Storage-Constrained
+        <input type="radio" name="mode" autocomplete="off" value="storage"> Storage-Constrained
       </label>
     </div>
-
     <div id="date-container" class="row">
       <span>Start Date: <input id="startDate" width="276" /> </span>
       <span>End Date: <input id="endDate" width="276" /> </span>
@@ -66,7 +72,7 @@
       iconsLibrary: 'fontawesome',
       minDate: today,
       maxDate: function () {
-        return $('#endDate').val();
+          return $('#endDate').val();
       }
     });
     $('#endDate').datepicker({
@@ -78,11 +84,11 @@
     });
     $('#startTime').timepicker({
       uiLibrary: 'bootstrap4',
-      iconsLibrary: 'fontawesome',
+      iconsLibrary: 'fontawesome'
     });
     $('#endTime').timepicker({
       uiLibrary: 'bootstrap4',
-      iconsLibrary: 'fontawesome',
+      iconsLibrary: 'fontawesome'
     });
     </script>
 
@@ -91,4 +97,37 @@
     </div>
     </div>
   </div>
+  </form>
+
+    <!-- Authentication Modal -->
+    <div class="container">
+        <div class="modal fade" id="authenticationModal">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content">
+
+                    <!-- Modal Header -->
+                    <div class="modal-header">
+                        <h4 class="modal-title">Authentication for <b>{{currentRDSInstance}}</b></h4>
+                        <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    </div>
+
+                    <!-- Modal body -->
+                    <div class="modal-body">
+                        <label for="username">Username:</label>
+                        <input type="text" class="form-control" id="username" ng-model="username" autofocus>
+                        <label for="password">Password:</label>
+                        <input type="password" class="form-control" id="password" ng-model="password">
+                    </div>
+
+                    <!-- Modal footer -->
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
+                        <button type="button" class="btn btn-primary" data-dismiss="modal"
+                                ng-click="getInstanceDbs(rdsInstance)" id="authenticate">Authenticate</button>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
 </div>

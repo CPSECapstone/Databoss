@@ -1,32 +1,41 @@
 <div>
   <h1> Metrics </h1>
   <div class="tableWrapper">
-  <h4 class="text-center"> Capture & Replays </h4>
-    <table class="table center-block">
-      <thead>
-        <tr>
-          <th>Name</th>
-          <th>Date</th>
-          <th>Display</th>
-        </tr>
-      </thead>
-      <tbody ng-repeat="capture in captures">
-        <tr>
-            <th ng-click=toggleReplays(capture.id)>{{capture.name}}</th>
-            <td>{{capture.date}}</td>
-            <td>
-                <input type="checkbox" ng-model="captureSelection"
-                       ng-change="updateSelection('capture', capture.name, capture.id, captureSelection)">
-            </td>
-        </tr>
-        <tr class="{{ 'collapse' + capture.id }}" ng-repeat="replay in replays" ng-if="replay.captureId == capture.id">
-            <td>{{replay.name}}</td>
-            <td>{{replay.date}}</td>
-            <td><input type="checkbox" ng-model="replaySelection"
-                       ng-change="updateSelection('replay', replay.name, replay.id, replaySelection)"></td>
-         </tr>
-         </tbody>
-      </table>
+      <h4 class="text-center capture-header"> Capture & Replays </h4>
+      <div class="wholeTable">
+          <table class="table center-block">
+          <thead>
+            <tr>
+              <th>Name</th>
+              <th>Date</th>
+              <th>Display</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody ng-repeat="capture in captures" on-finish-render="updateSelectionFromQueryParameters">
+            <tr>
+                <th>
+                    <i class="fa fa-caret-down" ng-click=toggleReplays(capture.id,$event)></i>
+                    {{capture.name}}
+                </th>
+                <td>{{capture.date}}</td>
+                <td>
+                    <input id="capture-checkbox{{capture.id}}" type="checkbox" ng-model="captureSelection"
+                           ng-change="updateSelection('capture', capture.name, capture.id, captureSelection)">
+                </td>
+                <td><i class="fa fa-arrow-circle-o-down" ng-click="routeToS3(capture)"></i></td>
+            </tr>
+            <tr id="{{ 'collapse' + capture.id }}" ng-repeat="replay in replays" ng-if="replay.captureId == capture.id">
+                <td>{{replay.name}}</td>
+                <td>{{replay.date}}</td>
+                <td><input type="checkbox" ng-model="replaySelection"
+                           ng-change="updateSelection('replay', replay.name, replay.id, replaySelection)"></td>
+                 <td><i class="fa fa-arrow-circle-o-down" ng-click="routeToS3(capture)"></i></td>
+            </tr>
+          </tbody>
+          </table>
+      </div>
+
    </div>
    <div class="chartWrapper">
       <h2>CPU</h2>

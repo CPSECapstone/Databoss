@@ -18,18 +18,27 @@ def getDBConnectionByName(name):
     return conn
 
 def getDBConnectionAll():
-    conn_list = models.DBConnection.query.with_entities(models.DBConnection.name)
+    conn_list = models.DBConnection.query.all()
     return conn_list
 
 # Add capture to capture table with references to associated files
-def addCapture(name, startTime, endTime, dbName, logfileID, metricID, mode):
-    new_cap = models.Capture(name, startTime, endTime, dbName, logfileID, metricID, mode)
+def addCapture(name, startTime, endTime, dbName, logfileID, metricID, mode, status):
+    new_cap = models.Capture(name, startTime, endTime, dbName, logfileID, metricID, mode, status)
     models.db.session.add(new_cap)
     models.db.session.commit()
 
 def getCaptureById(captureId):
     capture = models.Capture.query.get(captureId)
     return capture
+
+def updateCaptureStatus(captureName, status):
+    capture = models.Capture.query.filter_by(name=captureName).first()
+    capture.status = status
+    models.db.session.commit()
+
+def getScheduledCaptures():
+    listOfCaptures = models.Capture.query.filter_by(status="scheduled")
+    return listOfCaptures
 
 def getCaptureByName(captureName):
     capture = models.Capture.query.filter_by(name=captureName).first()
@@ -40,9 +49,47 @@ def getCaptureAll():
     cap_list = models.Capture.query.with_entities(models.Capture.id, models.Capture.name, models.Capture.startTime)
     return cap_list
 
+def getCaptureFinished():
+    captures = models.Capture.query.filter_by(status="finished")
+    return captures
+
+def getCaptureActive():
+    captures = models.Capture.query.filter_by(status="active")
+    return captures
+
+def getCaptureScheduled():
+    captures = models.Capture.query.filter_by(status="scheduled")
+    return captures
+
+def getCaptureStartTime(captureName):
+    capture = models.Capture.query.filter_by(name=captureName).first()
+    return capture.startTime
+
+def getCaptureID(captureName):
+    capture = models.Capture.query.filter_by(name=captureName).first()
+    return capture.id
+
+def getCaptureEndTime(captureName):
+    capture = models.Capture.query.filter_by(name=captureName).first()
+    return capture.endTime
+
+def getCaptureMetric(captureName):
+    capture = models.Capture.query.filter_by(name=captureName).first()
+    return capture.metricId
+
+def getCaptureBucket(captureName):
+    capture = models.Capture.query.filter_by(name=captureName).first()
+    logObj = models.Logfile.query.filter_by(id=capture.logfileId).first()
+    return logObj.bucket
+
+def getCaptureMetricBucket(captureName):
+    capture = models.Capture.query.filter_by(name=captureName).first()
+    metricObj = models.Capture.query.filter_by(id=capture.metricId)
+    return metricObj.bucket
+
 # Add replay to replay table with references to associated files
-def addReplay(name, startTime, endTime, dbName, logfileId, metricId, captureId):
-    new_rep = models.Replay(name, startTime, endTime, dbName, logfileId, metricId, captureId)
+def addReplay(name, startTime, endTime, dbName, metricId, captureId, mode, status):
+    new_rep = models.Replay(name, startTime, endTime, dbName, metricId, captureId, mode, status)
     models.db.session.add(new_rep)
     models.db.session.commit()
 
@@ -53,6 +100,11 @@ def getReplayById(replayId):
 def getReplayByName(replayName):
     replay = models.Replay.query.filter_by(name=replayName).first()
     return replay
+
+def updateReplayStatus(replayName, status):
+    replay = models.Replay.query.filter_by(name=replayName).first()
+    replay.status = status
+    models.db.session.commit()
 
 # Return all replays in the replay table
 def getReplayAll():
@@ -110,19 +162,20 @@ def getLogfileByName(logfileName):
     log = models.Logfile.query.filter_by(name=logfileName).first()
     return log
 
-def getCaptureBucket(logfileID):
-    log = models.Logfile.query.filter_by(id=logfileID).first()
-    return log.bucket
-
 def updateLogFile(logfileID, file):
     log = models.Logfile.query.filter_by(id=logfileID).first()
     log.file = file
     models.db.session.commit()
 
-def getLogFile(logfileName, captureBucket):
-    logObj = models.Logfile.query.filter_by(name=logfileName, bucket=captureBucket).first()
-    return logObj
-
 def getLogFileIdByNameAndBucket(logfileName, captureBucket):
     logObj = models.Logfile.query.filter_by(name=logfileName, bucket=captureBucket).first()
     return logObj.id
+
+def getEndpointByCapture(captureName):
+    captureObj = models.Capture.query.filter_by(name=captureName).first()
+    return captureObj.endpoint
+
+def getLogFileByCapture(captureName):
+   captureObj = models.Capture.query.filter_by(name=captureName).first()
+   logObj = models.Capture.query.filter_by(id=captureObj.logfileId)
+   return logObj
