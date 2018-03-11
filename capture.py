@@ -12,7 +12,6 @@ from datetime import timedelta
 from datetime import datetime
 from time import mktime
 import modelsQuery
-import rds_config
 import scheduler
 import json
 import pytz
@@ -25,8 +24,6 @@ capture_api = Blueprint('capture_api', __name__)
 logger = logging.getLogger()
 logger.setLevel(logging.INFO)
 
-access_key = None
-secret_key = None
 
 loc = "us-west-1"
 bucket_name = "Capture " + str(time.strftime("%x"))
@@ -77,28 +74,20 @@ def aws_config():
 
     s3 = boto3.client(
         service_name='s3',
-        aws_access_key_id=access_key,
-        aws_secret_access_key=secret_key,
         region_name=loc
     )
 
     s3_resource = s3 = boto3.resource(
         service_name='s3',
-        aws_access_key_id=access_key,
-        aws_secret_access_key=secret_key
     )
 
     rds = boto3.client(
         service_name='rds',
-        aws_access_key_id=access_key,
-        aws_secret_access_key=secret_key,
         region_name=loc
     )
 
     cloudwatch = boto3.client(
         service_name='cloudwatch',
-        aws_access_key_id=access_key,
-        aws_secret_access_key=secret_key,
         region_name=loc
     )
 
@@ -397,7 +386,7 @@ def sendMetrics(metricBucket, metricFileName, startTime, endTime):
 
 # configures aws credentials when app starts so they don't have to be input manually
 # TODO remove when done testing
-import json
+'''import json
 import os.path
 
 if os.path.exists("credentials.json"):
@@ -405,4 +394,4 @@ if os.path.exists("credentials.json"):
     credentials = json.load(credentialFile)
     access_key = credentials['access']
     secret_key = credentials['secret']
-    aws_config()
+    aws_config()'''
