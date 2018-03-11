@@ -119,13 +119,6 @@ app.controller('capture', function ($scope, $location, $http) {
     getBuckets();
 
     $scope.startCapture = function () {
-        if ($('input[name=mode]:checked').val() == 'time' &&
-            ($('#startDate').val() == '' || $('#endDate').val() == '' ||
-             $('#startTime').val() == '' || $('#endTime').val() == '' ||
-             ($('#startDate').val() == $('#endDate').val() && $('#startTime').val() > $('#endTime').val()))) {
-            return;
-        }
-
         $http({
             method: 'POST',
             url: 'capture/startCapture',
