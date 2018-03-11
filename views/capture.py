@@ -4,6 +4,7 @@ import capture
 from models import Capture
 import modelsQuery
 from models import Capture
+from datetime import datetime
 
 @capture_api.route('/<name>')
 def getCapture(name):
@@ -53,11 +54,13 @@ def endCapture():
     rdsInstance, database = dbName.split("/")
 
     startTime = data.get('startTime')
-    endTime = data.get('endTime')
+    #endTime = data.get('endTime')
     captureBucket = data.get('logfileId')
     metricBucket = data.get('metricId')
     captureFileName = data.get('captureFileName')
     metricFileName = data.get('metricFileName')
+
+    endTime = datetime.now()
 
     capture.stopCapture(rdsInstance, database, startTime, endTime, captureName,
                 captureBucket, metricBucket, captureFileName, metricFileName)

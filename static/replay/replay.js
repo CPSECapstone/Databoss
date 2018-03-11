@@ -103,8 +103,56 @@ app.controller('replay', function($scope, $http, $location) {
     }
 
     populateCaptures($http, $scope);
-    getDBConnections($http, $scope);
+//    getDBConnections($http, $scope);
 
+    $scope.authenticateInstance = function(instance) {
+        if (instance) {
+            $scope.currentRDSInstance = JSON.parse(instance).DBInstanceIdentifier;
+            $('#authenticationModal').modal('show');
+        }
+    };
+
+    $scope.getRDSInstances = function() {
+        console.log("getting db connections");
+
+        $http({
+            method: 'GET',
+            url: 'capture/listDBinstances',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+        }).then(function successCallback(response) {
+            $scope.RDSInstances = response.data;
+            console.log('success');
+        }, function errorCallback(response) {
+            console.log('error');
+        });
+    };
+
+    $scope.getRDSInstances();
+
+    $scope.getInstanceDbs = function(instance) {
+        if (instance) {
+            var endpoint = JSON.stringify(JSON.parse(instance).Endpoint);
+            $http({
+                method: 'POST',
+                url: 'capture/listInstanceDbs/' + endpoint,
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                data: {
+                    'username': $scope.username,
+                    'password': $scope.password
+                }
+            }).then(function successCallback(response) {
+                console.log(response.data);
+                $scope.instanceDbs = response.data;
+                console.log('success');
+            }, function errorCallback(response) {
+                console.log('error');
+            });
+        }
+    };
 });
 
 var populateCaptures = function($http, $scope) {
@@ -122,17 +170,17 @@ var populateCaptures = function($http, $scope) {
         console.log('error retrieving captures');
     })
 };
-var getDBConnections = function($http, $scope) {
-    $http({
-        method: 'GET',
-        url: 'capture/listDBinstances',
-        headers: {
-            'Content-Type': 'application/json'
-        },
-    }).then(function successCallback(response) {
-        $scope.DBConnections = response.data;
-        console.log('success');
-    }, function errorCallback(response) {
-        console.log('error');
-    });
-};
+//var getRDSInstances = function($http, $scope) {
+//    $http({
+//        method: 'GET',
+//        url: 'capture/listDBinstances',
+//        headers: {
+//            'Content-Type': 'application/json'
+//        },
+//    }).then(function successCallback(response) {
+//        $scope.DBConnections = response.data;
+//        console.log('success');
+//    }, function errorCallback(response) {
+//        console.log('error');
+//    });
+//};
