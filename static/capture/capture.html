@@ -23,7 +23,6 @@
       </div>
       <div class="form-group">
         <label for="rdsInstance">RDS Instance:</label>
-        <!--<select class="form-control" id="rdsInstance" ng-model="rdsInstance" ng-change="getInstanceDbs(rdsInstance)">-->
       <select class="form-control" id="rdsInstance" ng-model="rdsInstance" ng-change="authenticateInstance(rdsInstance)">
           <option disabled selected value> -- Select RDS Instance -- </option>
           <option ng-repeat="db in RDSInstances" value="{{db}}">{{db.DBInstanceIdentifier}}</option>
