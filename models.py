@@ -33,8 +33,8 @@ class Metric(db.Model):
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     name = db.Column(db.String(100))
     bucket = db.Column(db.String(100))
-    file = db.Column(db.String(100))
-    db.UniqueConstraint(bucket, file)
+    filename = db.Column(db.String(100))
+    db.UniqueConstraint(bucket, filename)
     capture = db.relationship('Capture', backref='metric', lazy=True, uselist=False)
     replay = db.relationship('Replay', backref='metric', lazy=True, uselist=False)
 
@@ -44,20 +44,20 @@ class Metric(db.Model):
             'id': self.id,
             'name': self.name,
             'bucket': self.bucket,
-            'file': self.file
+            'filename': self.filename
         }
 
-    def __init__(self, name, bucket, file):
+    def __init__(self, name, bucket, filename):
         self.name = name
         self.bucket = bucket
-        self.file = file
+        self.filename = filename
 
 class Logfile(db.Model):
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     name = db.Column(db.String(100))
     bucket = db.Column(db.String(100))
-    file = db.Column(db.String(100))
-    db.UniqueConstraint(bucket, file)
+    filename = db.Column(db.String(100))
+    db.UniqueConstraint(bucket, filename)
 
     @property
     def serialize(self):
@@ -65,13 +65,13 @@ class Logfile(db.Model):
             'id': self.id,
             'name': self.name,
             'bucket': self.bucket,
-            'file': self.file
+            'filename': self.filename
         }
 
-    def __init__(self, name, bucket, file):
+    def __init__(self, name, bucket, filename):
         self.name = name
         self.bucket = bucket
-        self.file = file
+        self.filename = filename
 
 class Capture(db.Model):
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
