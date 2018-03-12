@@ -23,7 +23,7 @@ app.controller('replay', function($scope, $http, $location) {
     hideButtons(dateContainer, timeContainer, storageContainer);
 
     $('input[name=mode]').on('change', function(event) {
-      selectedMode = $("input[name=mode]:checked").attr('id');
+      selectedMode = $("input[name=mode]:checked").attr('id');
       if (selectedMode === "capture-int") {
         hideButtons(dateContainer, timeContainer, storageContainer);
       }
