@@ -8,7 +8,6 @@ from datetime import datetime
 
 @capture_api.route('/<name>')
 def getCapture(name):
-    print(name)
     capture = modelsQuery.getCaptureByName(name)
     return jsonify(capture.serialize)
 
@@ -47,22 +46,17 @@ def startCapture():
 @capture_api.route('/endCapture', methods=["POST"])
 def endCapture():
     data = request.json
-    print(data)
     captureName = data.get('name')
     dbName = data.get('dbName')
-
     rdsInstance, database = dbName.split("/")
-
     startTime = data.get('startTime')
-    #endTime = data.get('endTime')
     captureBucket = data.get('logfileId')
     metricBucket = data.get('metricId')
     captureFileName = data.get('captureFileName')
     metricFileName = data.get('metricFileName')
-
     endTime = datetime.now()
 
     capture.stopCapture(rdsInstance, database, startTime, endTime, captureName,
                 captureBucket, metricBucket, captureFileName, metricFileName)
 
-    return "ok"
+    return ""
