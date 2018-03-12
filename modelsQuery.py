@@ -84,7 +84,7 @@ def getCaptureBucket(captureName):
 
 def getCaptureMetricBucket(captureName):
     capture = models.Capture.query.filter_by(name=captureName).first()
-    metricObj = models.Metric.query.filter_by(id=capture.metricId)
+    metricObj = models.Metric.query.filter_by(id=capture.metricId).first()
     return metricObj.bucket
 
 # Add replay to replay table with references to associated files
@@ -133,6 +133,11 @@ def getMetricIDByNameAndBucket(metricFileName, metricBucket):
 def getMetricBucket(metricID):
     metric = models.Metric.query.filter_by(id=metricID).first()
     return metric.bucket
+
+def getMetricBucketByName(name):
+    capture = models.Capture.query.filter_by(name=name).first()
+    metricObj = models.Metric.query.filter_by(id=capture.metricId).first()
+    return metricObj.bucket
 
 def getMetricFile(metricFileName, metricBucket):
     metricObj = models.Metric.query.filter_by(name=metricFileName, bucket=metricBucket).first()
