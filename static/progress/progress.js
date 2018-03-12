@@ -1,4 +1,4 @@
-//Initialize the angular application for this AngularJS controller
+// Initialize the angular application for this AngularJS controller
 var app = angular.module('MyCRT');
 
 app.controller('progress', function($scope, $location, $http) {
@@ -63,7 +63,15 @@ app.controller('progress', function($scope, $location, $http) {
       });
     } else {
       $scope.$apply(function() {
-        calculateProgressCapture($scope.capture, $location);
+        if ($scope.capture.status !== "scheduled") {
+          calculateProgressCapture($scope.capture, $location);
+        }
+        else {
+          var startTime = new Date($scope.capture.startTime);
+          startTime.setHours(startTime.getHours() + 7);
+          $scope.capture.progress = "Scheduled to start at " + startTime.toLocaleDateString('en-US', options);
+          console.log($scope.capture.progress);
+        }
       });
     }
   }
