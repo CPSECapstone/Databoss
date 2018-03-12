@@ -31,7 +31,7 @@
       </div>
       <div ng-if="rdsInstance != undefined" class="form-group">
         <label for="dbName">Database:</label>
-        <select class="form-control" id="dbName" ng-model="dbName">
+        <select class="form-control" id="dbName" ng-model="$parent.dbName">
           <option disabled selected value> -- Select Database -- </option>
           <option ng-repeat="db in instanceDbs" value="{{db}}">{{db}}</option>
         </select>
@@ -95,7 +95,7 @@
 
     <div class="text-center">
       <button type="button" ng-model="button" ng-click="startCapture()" class="btn-capture btn btn-success"
-              ng-disabled="!captureName || !crBucket || !metricsBucket || !rdsInstance || 
+              ng-disabled="!captureName || !crBucket || !metricsBucket || !rdsInstance || !dbName ||
                            (selectedMode == 'time' && (!startTime || !endTime || !startDate || !endDate ||
                             (startDate == endDate && startTime > endTime))) ||
                            (selectedMode == 'storage' && !storageNumber)">
