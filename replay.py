@@ -62,7 +62,7 @@ def startReplay(replayName, captureObj, dbName, mode, username, password):
     captureID = modelsQuery.getCaptureID(captureName)
     captureBucket = modelsQuery.getCaptureBucket(captureName)
     metricBucket = modelsQuery.getMetricBucketByName(captureName)
-    filename = logfile.file
+    filename = logfile.filename
 
     modelsQuery.addMetric(metricFileName, metricBucket, None)
     metricID = modelsQuery.getMetricIDByNameAndBucket(metricFileName, metricBucket)
