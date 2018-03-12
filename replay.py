@@ -9,28 +9,29 @@ import rds_config
 import modelsQuery
 from ast import literal_eval
 from threading import Timer
+import json
 
 
 logger = logging.getLogger()
 logger.setLevel(logging.INFO)
 
 def download_file(captureName, bucketName, fileName):
-    s3 = boto3.resource('s3')
-
     try:
-        s3.Bucket(bucketName).download_file(fileName, captureName + " " + "tempLogFile")
+        capture.s3.Bucket(bucketName).download_file(fileName, captureName + " " + "tempLogFile")
     except botocore.exceptions.ClientError as e:
         if e.response['Error']['Code'] == "404":
             print("The file does not exist.")
         else:
             raise
 
-def startReplay(replayName, captureName, dbName, mode):
+def startReplay(replayName, captureObj, dbName, mode):
+    captureName = json.loads(captureObj)['name']
     logfile = modelsQuery.getLogFileByCapture(captureName)
     username = rds_config.db_username
     password = rds_config.db_password
     endpoint = capture.get_list_of_instances(dbName)['DBInstances'][0]['Endpoint']['Address']
     status_of_db = capture.get_list_of_instances(dbName)['DBInstances'][0]['DBInstanceStatus']
+    filename = logfile.filename
 
     metricFileName = replayName + " " + "metric file"
 
@@ -42,7 +43,7 @@ def startReplay(replayName, captureName, dbName, mode):
 
     modelsQuery.addMetric(metricFileName, captureBucket, None)
     modelsQuery.addReplay(replayName, captureStartTime, captureEndTime, dbName, metricFile, captureID, mode, "active")
-    download_file(logfile)
+    download_file(captureName, captureBucket, filename)
 
     t2 = Timer(datetime.now(), executeReplay, [replayName, captureName, username, password, dbName, status_of_db, endpoint, metricFile, datetime.now()])
     t2.start()
@@ -57,6 +58,7 @@ def executeReplay(replayName, captureName, username, password, dbName, status_of
                 dict = entireList[i]
                 if dict['message'].startswith('Query'):
                     executableQuery = str(dict['message'][7:])
+                    print(executableQuery)
                     if status_of_db == "available":
                         try:
                             conn = pymysql.connect(host=endpoint, user=username, passwd=password, db=dbName,

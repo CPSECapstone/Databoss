@@ -84,7 +84,7 @@ def getCaptureBucket(captureName):
 
 def getCaptureMetricBucket(captureName):
     capture = models.Capture.query.filter_by(name=captureName).first()
-    metricObj = models.Capture.query.filter_by(id=capture.metricId)
+    metricObj = models.Metric.query.filter_by(id=capture.metricId)
     return metricObj.bucket
 
 # Add replay to replay table with references to associated files
@@ -177,5 +177,5 @@ def getEndpointByCapture(captureName):
 
 def getLogFileByCapture(captureName):
    captureObj = models.Capture.query.filter_by(name=captureName).first()
-   logObj = models.Capture.query.filter_by(id=captureObj.logfileId)
+   logObj = models.Logfile.query.filter_by(id=captureObj.logfileId).first()
    return logObj

@@ -1,5 +1,5 @@
 from flask import jsonify, Blueprint, request
-from replay import startReplay
+import replay
 from models import Replay
 from web_app import db
 import modelsQuery
@@ -16,6 +16,6 @@ def add(name, startTime, endTime, dbName, logfileId, metricId, captureId):
 
 @replay_api.route('/startReplay', methods=["POST"])
 def startReplay():
-
     data = request.json
-    startReplay(data['replayName'], data['captureBucket'], data['dbName'], None, data['mode'])
+    replay.startReplay(data['replayName'], data['captureBucket'], data['dbName'], data['replayMode'])
+    return ""

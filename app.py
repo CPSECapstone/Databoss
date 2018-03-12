@@ -27,7 +27,7 @@ def sqlite_setup():
     conn.close()
 
     # TODO remove db additions here. for testing purposes only
-
+'''
     db.drop_all()
     db.create_all()
 
@@ -48,7 +48,7 @@ def sqlite_setup():
     modelsQuery.addMetric("Metrics1", "crt-metrics-test", "metric-file.txt")
     modelsQuery.addMetric("Metrics2", "crt-metrics-test", "metric-file-2.txt")
     modelsQuery.addLogfile("Logfile1", "my-bucket", "my-file")
-
+'''
 
 if __name__ == "__main__":
     app.run(debug=True)
