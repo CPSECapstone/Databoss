@@ -115,8 +115,6 @@ app.controller('replay', function($scope, $http, $location) {
     };
 
     $scope.getRDSInstances = function() {
-        console.log("getting db connections");
-
         $http({
             method: 'GET',
             url: 'capture/listDBinstances',
@@ -125,7 +123,6 @@ app.controller('replay', function($scope, $http, $location) {
             },
         }).then(function successCallback(response) {
             $scope.RDSInstances = response.data;
-            console.log('success');
         }, function errorCallback(response) {
             console.log('error');
         });
@@ -149,7 +146,6 @@ app.controller('replay', function($scope, $http, $location) {
             }).then(function successCallback(response) {
                 console.log(response.data);
                 $scope.instanceDbs = response.data;
-                console.log('success');
             }, function errorCallback(response) {
                 console.log('error');
             });
@@ -165,13 +161,14 @@ var populateCaptures = function($http, $scope) {
         'Content-Type': 'application/json'
         },
     }).then(function successCallback(response) {
-        $scope.captures = response.data;
-        calculateProgress($scope.captures);
-        console.log('success');
+      // Only populating finished captures
+        $scope.captures = response.data.filter(capture =>
+          capture.status === "finished");
     }, function errorCallback(response) {
         console.log('error retrieving captures');
     })
 };
+
 //var getRDSInstances = function($http, $scope) {
 //    $http({
 //        method: 'GET',

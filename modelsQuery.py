@@ -141,17 +141,11 @@ def getMetricBucketByName(name):
 
 def getMetricFile(metricFileName, metricBucket):
     metricObj = models.Metric.query.filter_by(name=metricFileName, bucket=metricBucket).first()
-    return metricObj.file
+    return metricObj.filename
 
-def updateMetricFile(metricID, file):
-    print("metric id: ")
-    print(metricID)
-    print("metric file: ")
-    print(file)
+def updateMetricFile(metricID, filename):
     metricObj = models.Metric.query.filter_by(id=metricID).first()
-    print("metric obj: ")
-    print(metricObj)
-    metricObj.file = file
+    metricObj.filename = filename
     models.db.session.commit()
 
 # Add logfile to the logfile table
@@ -167,15 +161,15 @@ def getLogfile(logfileId):
 # Return logfile associated with provided capture or replay
 def getLogfileById(logfileId):
     logObj = models.Logfile.query.filter_by(id=logfileId).first()
-    return logObj.file
+    return logObj.filename
 
 def getLogfileByName(logfileName):
     log = models.Logfile.query.filter_by(name=logfileName).first()
     return log
 
-def updateLogFile(logfileID, file):
+def updateLogFile(logfileID, filename):
     log = models.Logfile.query.filter_by(id=logfileID).first()
-    log.file = file
+    log.filename = filename
     models.db.session.commit()
 
 def getLogFileIdByNameAndBucket(logfileName, captureBucket):

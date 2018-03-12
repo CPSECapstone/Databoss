@@ -21,32 +21,41 @@
   margin-top: 30px;
 }
 
-
 #progress-details-container {
   margin-top: 50px;
 }
 
 #test {
-  border: 1px solid red;
+}
+
+#progressStartTime {
+  color: #51FF89;
+}
+
+#progressEndTime {
+  color: #FF1100;
 }
 
 .tile-title {
   font-size: 1.3em;
-  letter-spacing: .3em;
-  /* border: 1px solid red; */
-
-  text-transform: uppercase;
-
-}
-
-.date-container {
-  /* border: 1px solid blue; */
+  letter-spacing: .2em;
   text-transform: uppercase;
 }
-.time-container {
-  /* border: 1px solid green; */
-  font-size: 2em;
+
+
+.progress-date-container {
+  padding-top: 10px;
+  font-size: 1.3em;
+}
+
+.progress-time-container {
+  padding-top: 5px;
+  font-size: 1.6em;
   letter-spacing: .01em;
+}
+
+#modeText {
+  text-transform: uppercase;
 }
 
 .type-container {

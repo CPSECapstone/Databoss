@@ -19,22 +19,22 @@ def testSetup():
 def testAddGetMetric():
     name = 'metName'
     bucket = 'metBucket'
-    file = 'metFile'
-    modelsQuery.addMetric(name, bucket, file)
-    result = models.Metric.query.filter_by(name=name, bucket=bucket, file=file).count()
+    filename = 'metFile'
+    modelsQuery.addMetric(name, bucket, filename)
+    result = models.Metric.query.filter_by(name=name, bucket=bucket, filename=filename).count()
     assert result == 1
 
     metric = modelsQuery.getMetricById(1)
     assert metric.name == name
     assert metric.bucket == bucket
-    assert metric.file == file
+    assert metric.filename == filename
 
 def testAddGetLogfile():
     id = 1
     name = 'logName'
     bucket = 'logBucket'
-    file = 'logFile'
-    modelsQuery.addLogfile(name, bucket, file)
+    filename = 'logFile'
+    modelsQuery.addLogfile(name, bucket, filename)
     result = models.Logfile.query.filter_by(id=id).count()
     assert result == 1
 
@@ -42,7 +42,7 @@ def testAddGetLogfile():
     assert log.id == id
     assert log.name == name
     assert log.bucket == bucket
-    assert log.file == file
+    assert log.filename == filename
 
 def testAddCapture():
     name = 'capName'
@@ -103,7 +103,7 @@ def testGetReplay():
     list = modelsQuery.getReplayAll().count()
     assert list == 1
 
-    name = 'repName'
+    name = 'repName2'
     startTime = datetime.datetime(2018, 1, 31, 12, 12, 12)
     endTime = datetime.datetime(2018, 1, 31, 12, 13, 13)
     dbName = "rds2"
