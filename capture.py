@@ -74,7 +74,7 @@ def aws_config():
 
     s3 = boto3.client(
         service_name='s3',
-        region_name=loc
+        region_name="us-west-1"
     )
 
     s3_resource = s3 = boto3.resource(
@@ -83,12 +83,12 @@ def aws_config():
 
     rds = boto3.client(
         service_name='rds',
-        region_name=loc
+        region_name="us-west-1"
     )
 
     cloudwatch = boto3.client(
         service_name='cloudwatch',
-        region_name=loc
+        region_name="us-west-1"
     )
 
 

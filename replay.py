@@ -5,7 +5,7 @@ import sys
 import capture
 import logging
 from datetime import datetime
-import rds_config
+#import rds_config
 import modelsQuery
 from ast import literal_eval
 from threading import Timer
