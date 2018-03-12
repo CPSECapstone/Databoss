@@ -304,10 +304,14 @@ def startCapture(captureName, captureBucket, metricsBucket, rdsInstance, db_name
                 DBInstanceIdentifier=rdsInstance
             )
         else:
-            if storage_limit != None:
-                checkStorageCapacity(storage_limit, storage_max_db)
+            if mode == "storage":
+                updateDatabase(sTimeCombined, eTimeCombined, captureName, captureBucket, metricsBucket,
+                               captureFileName, metricFileName, dbDialect, rdsInstance, db_name, port, username, mode,
+                               "active")
+                scheduler.scheduleStorageCapture(datetime.now(), storage_limit, storage_max_db, captureName)
 
-        updateDatabase(sTimeCombined, eTimeCombined, captureName, captureBucket, metricsBucket,
+        if mode != "storage":
+            updateDatabase(sTimeCombined, eTimeCombined, captureName, captureBucket, metricsBucket,
                        captureFileName, metricFileName, dbDialect, rdsInstance, db_name, port, username, mode, "active")
 
     addInProgressCapture(captureName, username, password)

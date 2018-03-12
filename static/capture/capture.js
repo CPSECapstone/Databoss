@@ -164,6 +164,7 @@ app.controller('capture', function ($scope, $location, $http) {
                 'endDate' : $('#endDate').val(),
                 'startTime' : $('#startTime').val(),
                 'endTime' : $('#endTime').val(),
+                //'storageNum' : $('#storageNum').val(),
                 'mode' : $('input[name=mode]:checked').val()
             }
         }).then(function successCallback(response) {

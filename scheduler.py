@@ -7,54 +7,51 @@ import logging
 import sys
 import pytz
 
-
 logger = logging.getLogger()
 logger.setLevel(logging.INFO)
 
-'''
-def pollStorage(userStorageInput, maxUserStorage):
+storageResult = False
 
-        t = Timer(datetime.now(), capture.checkStorageCapacity(userStorageInput, maxUserStorage))
+def scheduleStorageCapture(startTime, storageLimit, allocatedStorage, captureName):
+    captureObj = modelsQuery.getCaptureByName(captureName)
+
+    t = Timer(0, pollStorage, args=[startTime, storageLimit, allocatedStorage, captureObj])
+    t.start()
+    while (storageResult == False):
+        t = Timer(3, pollStorage, args=[startTime, storageLimit, allocatedStorage, captureObj])
         t.start()
 
-def parseJson(jsonString, storage_limit):
-    freeSpace = (jsonString['Datapoints'][0]['Average'])/(10 **9)
-    if (storage_limit > freeSpace):
-        logger.error("ERROR: Not enough space for this.")
-        sys.exit()
-    else:
-        storageRem = freeSpace - storage_limit
-        for element in jsonString['Datapoints'][1:]:
-            gbVal = (element['Average'])/(10 ** 9)
-            #if (gbVal <= storageRem):   #Storage limit has been met
-                #CALL stopCapture()
+def pollStorage(startTime, userStorageInput, maxUserStorage, captureObj):
+    global storageResult
 
-#storage_limit should be in gb
-def checkStorageCapacity(storage_limit, storage_max_db):
-    db_name = rds_config.db_name
-    if (storage_limit > storage_max_db):
-        print("ERROR: Storage specified is greater than what", db_name, "has allocated")
-        sys.exit()
-    else:
-        parseJson(cloudwatch.get_metric_statistics(Namespace = 'AWS/RDS',
-                                    MetricName = 'FreeStorageSpace',
-                                    StartTime=datetime.utcnow() - timedelta(minutes=60),
-                                    EndTime=datetime.utcnow(),
-                                    Period= 300,
-                                    Statistics=['Average']
-                                        ), storage_limit)
-'''
+    storageMetrics = capture.cloudwatch.get_metric_statistics(Namespace='AWS/RDS',
+                                     MetricName='FreeStorageSpace',
+                                     StartTime=datetime.utcnow() - timedelta(seconds=5),
+                                     EndTime=datetime.utcnow(),
+                                     Period=60,
+                                     Statistics=['Average']
+                                     )
+    print("storage metrics: ")
+    print(storageMetrics)
+    freeSpace = (storageMetrics['Datapoints'][0]['Average']) /(10**6)
+    for element in storageMetrics['Datapoints'][0:]:
+        mbVal = (element['Average'])/(10**6)
+        if (freeSpace - mbVal) == userStorageInput:
+            storageResult = True
+            endCapture(captureObj, startTime, datetime.now())
+    storageResult = False
+
 def scheduleCapture(captureName):
     captureObj = modelsQuery.getCaptureByName(captureName)
     startTime = captureObj.startTime
     endTime = captureObj.endTime
 
-    timeDiff = endTime - startTime
-    if timeDiff.total_seconds() > 86400:
-        endTime = startTime + timedelta(minutes=1440)
+    #timeDiff = endTime - startTime
+    #if timeDiff.total_seconds() > 86400:
+    #    endTime = startTime + timedelta(minutes=1440)
 
     whenToStart = (startTime - datetime.now()).seconds
-    whenToEnd = (endTime - startTime).total_seconds()
+    whenToEnd = (endTime - datetime.now()).total_seconds()
 
     t1 = Timer(whenToStart, startCapture, args={captureObj})
     t2 = Timer(whenToEnd, endCapture, [captureObj, startTime, endTime])
