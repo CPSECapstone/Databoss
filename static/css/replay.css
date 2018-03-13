@@ -1,3 +1,7 @@
 #button-bar {
   padding-bottom: 15px;
 }
+
+.modal-dialog > * {
+    color: black;
+}

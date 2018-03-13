@@ -1,8 +1,7 @@
 //Initialize the angular application for this AngularJS controller
 var app = angular.module('MyCRT');
 
-//app.controller('capture', ['$scope', '$location', '$modal', function($scope, $location, $modal) {
-app.controller('capture', function ($scope, $location, $uibModal, $http) {
+app.controller('capture', function ($scope, $location, $http) {
     console.log("in capture");
 
     // setting variables
@@ -53,48 +52,7 @@ app.controller('capture', function ($scope, $location, $uibModal, $http) {
       }
     });
 
-    $scope.open = function () {
-        console.log('opening pop up');
-        var modalInstance = $uibModal.open({
-            templateUrl: '/static/capture/addDatabaseModal.html',
-            controller: function ($scope, $uibModalInstance) {
-                $scope.add = function () {
-                    $http({
-                        method: 'POST',
-                        url: '/dbc/add',
-                        headers: {
-                            'Content-Type': 'application/json'
-                        },
-                        data: {
-                            'name': $scope.name,
-                            'host': $scope.host,
-                            'port': $scope.port,
-                            'username': $scope.username,
-                            'password': $scope.password,
-                            'database': $scope.database
-                        }
-                    }).then(function successCallback(response) {
-                        console.log('success');
-                    }, function errorCallback(response) {
-                        console.log('error');
-                    });
-
-                    $uibModalInstance.close();
-                };
-
-                $scope.cancel = function () {
-                    $uibModalInstance.dismiss('cancel');
-                };
-            }
-        });
-
-        modalInstance.result.then(function() {
-            console.log("do we get here?")
-            $scope.getDBConnections();
-        });
-    };
-
-    $scope.getDBConnections = function() {
+    $scope.getRDSInstances = function() {
         console.log("getting db connections");
 
         $http({
@@ -104,14 +62,44 @@ app.controller('capture', function ($scope, $location, $uibModal, $http) {
                 'Content-Type': 'application/json'
             },
         }).then(function successCallback(response) {
-            $scope.DBConnections = response.data;
+            $scope.RDSInstances = response.data;
             console.log('success');
         }, function errorCallback(response) {
             console.log('error');
         });
     };
 
-    $scope.getDBConnections();
+    $scope.getRDSInstances();
+
+    $scope.authenticateInstance = function(instance) {
+        if (instance) {
+            $scope.currentRDSInstance = JSON.parse(instance).DBInstanceIdentifier;
+            $('#authenticationModal').modal('show');
+        }
+    }
+
+    $scope.getInstanceDbs = function(instance) {
+        if (instance) {
+            var endpoint = JSON.stringify(JSON.parse(instance).Endpoint);
+            $http({
+                method: 'POST',
+                url: 'capture/listInstanceDbs/' + endpoint,
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                data: {
+                    'username': $scope.username,
+                    'password': $scope.password
+                }
+            }).then(function successCallback(response) {
+                console.log(response.data);
+                $scope.instanceDbs = response.data;
+                console.log('success');
+            }, function errorCallback(response) {
+                console.log('error');
+            });
+        }
+    };
 
     var getBuckets = function() {
         $http({
@@ -130,9 +118,25 @@ app.controller('capture', function ($scope, $location, $uibModal, $http) {
 
     getBuckets();
 
+    var captureNames = function () {
+        $http({
+            method: 'GET',
+            url: 'capture/listbuckets',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+        }).then(function successCallback(response) {
+            $scope.buckets = response.data;
+            console.log('success');
+        }, function errorCallback(response) {
+            console.log('error');
+        });
+    }
+
+    // Defaulted mode is interactive when no mode is chosen
     $scope.startCapture = function () {
         if ($('#captureName').val() == '' || $('#crBucket').val() == null ||
-            $('#metricsBucket').val() == null ) {
+            $('#metricsBucket').val() == null || $('#dbName').val() == null) {
             return;
         }
         if ($('input[name=mode]:checked').val() == 'time' &&
@@ -141,6 +145,7 @@ app.controller('capture', function ($scope, $location, $uibModal, $http) {
              ($('#startDate').val() == $('#endDate').val() && $('#startTime').val() > $('#endTime').val()))) {
             return;
         }
+
         $http({
             method: 'POST',
             url: 'capture/startCapture',
@@ -151,20 +156,26 @@ app.controller('capture', function ($scope, $location, $uibModal, $http) {
                 'captureName' : $('#captureName').val(),
                 'captureBucket' : $('#crBucket').val(),
                 'metricsBucket' : $('#metricsBucket').val(),
-                'dbName' : $('#dbName').val(),
+                'rdsInstance' : JSON.parse($('#rdsInstance').val()).DBInstanceIdentifier,
+                'dbName': $('#dbName').val(),
+                'username': $scope.username,
+                'password': $scope.password,
                 'startDate' : $('#startDate').val(),
                 'endDate' : $('#endDate').val(),
                 'startTime' : $('#startTime').val(),
                 'endTime' : $('#endTime').val(),
                 'mode' : $('input[name=mode]:checked').val()
             }
+        }).then(function successCallback(response) {
+            if ($('input[name=mode]:checked').val() == 'time') {
+                $location.path('home');
+            }
+            else {
+                $location.path('progress').search({name : $('#captureName').val()});
+            }
+        }, function errorCallback(response) {
+            console.log('Error POSTing capture object to database.');
         });
-        if ($('input[name=mode]:checked').val() == 'time') {
-            $location.path('home');
-        }
-        else {
-            $location.path('progress').search({name : $('#captureName').val()});
-        }
     }
 
     $scope.setStorageSize = function (id) {

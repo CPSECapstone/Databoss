@@ -118,6 +118,7 @@ app.controller('metrics', function($scope, $location, $http) {
             var filenameOneSpace = (logfileObj.filename).replace(" ", "+");
             var filenameNoSpace = filenameOneSpace.replace(" ", "+");
             window.open('https://s3-us-west-1.amazonaws.com/' + logfileObj.bucket + '/' + filenameNoSpace, '_blank');
+
         }, function errorCallback(response) {
             console.log('Error in retrieving capture bucket from capture name');
         });

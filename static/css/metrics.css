@@ -1,8 +1,12 @@
 .tableWrapper {
-   height: 300px;
-   width: 500px;
+   height: 700px;
+   width: 330px;
    overflow : auto;
    position: fixed;
+}
+
+.tableWrapper .table {
+  width: 100%;
 }
 
 .table {
@@ -10,7 +14,8 @@
 }
 
 .wholeTable {
-    height: 250px;
+    height: 500px;
+    width: 300px;
     overflow: scroll;
 }
 

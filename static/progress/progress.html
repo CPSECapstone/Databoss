@@ -19,11 +19,11 @@
           <div class="tile-title text-center">
             Start Time
           </div>
-          <div class="date-container text-center">
-            {{capture.prettyStartDate}}
+          <div class="progress-date-container text-center">
+            {{displayDate(capture.startTime)}}
           </div>
-          <div class="time-container text-center">
-            {{capture.prettyStartTime}}
+          <div id="progressStartTime" class="progress-time-container text-center">
+            {{displayTime(capture.startTime)}}
           </div>
         </div>
       </div>
@@ -32,11 +32,11 @@
           <div class="tile-title text-center">
             End Time
           </div>
-          <div class="date-container text-center">
-            {{capture.prettyEndDate}}
+          <div class="progress-date-container text-center">
+            {{displayDate(capture.endTime)}}
           </div>
-          <div class="time-container text-center">
-            {{capture.prettyEndTime}}
+          <div id="progressEndTime" class="progress-time-container text-center">
+            {{displayTime(capture.endTime)}}
           </div>
         </div>
       </div>
@@ -45,8 +45,8 @@
           <div class="tile-title text-center">
             Mode
           </div>
-          <div class="type-container text-center">
-            TIME-CONSTRAINED
+          <div id="modeText" class="type-container text-center">
+            {{displayMode(capture.mode)}}
           </div>
         </div>
       </div>
