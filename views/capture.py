@@ -61,4 +61,16 @@ def endCapture():
     capture.stopCapture(rdsInstance, database, startTime, endTime, captureName,
                 captureBucket, metricBucket, captureFileName, metricFileName)
 
-    return ""
+    return "ok"
+
+
+@capture_api.route('/checkName', methods=["GET"])
+def checkName():
+    name = request.args.get('name')
+
+    captureId = modelsQuery.getCaptureID(name)
+
+    if captureId is None:
+        return "true"
+    return "false"
+

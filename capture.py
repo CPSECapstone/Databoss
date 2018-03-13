@@ -331,7 +331,7 @@ def stopCapture(rdsInstance, dbName, startTime, endTime, captureName,
             sys.exit()
         with conn.cursor() as cur:
             cur.execute("""SELECT event_time, command_type, argument FROM mysql.general_log\
-                          WHERE event_time BETWEEN '%s' AND '%s' AND user_host <> 'rdsadmin[rdsadmin] @ localhost [127.0.0.1]'""" % (startTime, endTime))
+                                WHERE event_time BETWEEN '%s' AND '%s' AND user_host <> 'rdsadmin[rdsadmin] @ localhost [127.0.0.1]'""" % (startTime, endTime))
             logfile = list(map(parseRow, cur))
             conn.close()
 
@@ -345,7 +345,9 @@ def stopCapture(rdsInstance, dbName, startTime, endTime, captureName,
         if os.path.exists(captureFileName):
             os.remove(captureFileName)
 
+        parsedEndTime = datetime.strptime(endTime, '%Y-%m-%d %H:%M:%S')
         modelsQuery.updateCaptureStatus(captureName, "finished")
+        modelsQuery.updateCaptureEndTime(captureName, parsedEndTime)
         sendMetrics(metricBucket, metricFileName, startTime, endTime)
 
         removeInProgressCapture(captureName)
@@ -393,12 +395,16 @@ def sendMetrics(metricBucket, metricFileName, startTime, endTime):
     if os.path.exists(metricFileName):
         os.remove(metricFileName)
 
-        import json
-        import os.path
+
+
+import json
+import os.path
 
 if os.path.exists("credentials.json"):
     credentialFile = open("credentials.json", "r")
     credentials = json.load(credentialFile)
     access_key = credentials['access']
     secret_key = credentials['secret']
+
     aws_config()
+
