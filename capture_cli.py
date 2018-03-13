@@ -227,16 +227,14 @@ def stopCapture(startTime, endTime, captureBucket, metricBucket, captureFileName
 
     with conn.cursor() as cur:
 
-        cur.execute("""SELECT event_time, command_type, argument FROM mysql.general_log""")
+        cur.execute("""SELECT * FROM mysql.general_log""")
 
 
-        #for row in cur:
-            #print(row)
+        for row in cur:
+            print(row)
 
         logfile = list(map(parseRow, cur))
         print(logfile)
-
-
 
         conn.close()
 
@@ -346,11 +344,12 @@ print(endTime)
 
 res = get_list_of_instances("new")
 pprint.pprint(res, width=1)
-#startCapture()
+startCapture()
+stopCapture(startTime, endTime, "capture-replay-info", "metric-info", "cFile", "mFile")
 replayName = "replay 5"
 captureName = "capture"
 dbName = rds_config.db_name
-startReplay(replayName, captureName, dbName, startTime, endTime)
+#startReplay(replayName, captureName, dbName, startTime, endTime)
 print("done")
 
 

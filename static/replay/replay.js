@@ -23,7 +23,7 @@ app.controller('replay', function($scope, $http, $location) {
     hideButtons(dateContainer, timeContainer, storageContainer);
 
     $('input[name=mode]').on('change', function(event) {
-      selectedMode = $("input[name=mode]:checked").attr('id');
+      selectedMode = $("input[name=mode]:checked").attr('id');
       if (selectedMode === "capture-int") {
         hideButtons(dateContainer, timeContainer, storageContainer);
       }
@@ -74,8 +74,10 @@ app.controller('replay', function($scope, $http, $location) {
                 },
                 data : {
                     'replayName' : $('#replayName').val(),
-                    'captureBucket' : $('#crBucket').val(),
+                    'capture' : $('#capture').val(),
                     'dbName' : $('#dbName').val(),
+                    'username': $scope.username,
+                    'password': $scope.password,
                     'startDate' : $('#startDate').val(),
                     'endDate' : $('#endDate').val(),
                     'startTime' : $('#startTime').val(),

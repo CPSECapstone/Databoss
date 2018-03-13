@@ -5,32 +5,54 @@ import sys
 import capture
 import logging
 from datetime import datetime
-import rds_config
 import modelsQuery
 from ast import literal_eval
 from threading import Timer
+import json
+import os.path
+import sys
 
 
 logger = logging.getLogger()
 logger.setLevel(logging.INFO)
 
-def download_file(captureName, bucketName, fileName):
-    s3 = boto3.resource('s3')
 
+inProgressReplays = []
+
+
+def addInProgressReplay(replayName, username, password):
+    inProgressReplays.append({'replayName': replayName, 'username': username, 'password': password})
+
+
+def getInProgressReplay(replayName):
+    for replay in inProgressReplays:
+        if replay.get('replayName') == replayName:
+            return replay
+
+    return None
+
+
+def removeInProgressReplay(replayName):
+    for replay in inProgressReplays:
+        if replay.get('replayName') == replayName:
+            inProgressReplays.remove(replay)
+
+def download_file(replayName, bucketName, fileName):
     try:
-        s3.Bucket(bucketName).download_file(fileName, captureName + " " + "tempLogFile")
+        capture.s3.Bucket(bucketName).download_file(fileName, replayName + " " + "tempLogFile")
     except botocore.exceptions.ClientError as e:
         if e.response['Error']['Code'] == "404":
             print("The file does not exist.")
         else:
             raise
 
-def startReplay(replayName, captureName, dbName, mode):
+def startReplay(replayName, captureObj, dbName, mode, username, password):
+    captureObj = json.loads(captureObj)
+    captureName = captureObj['name']
     logfile = modelsQuery.getLogFileByCapture(captureName)
-    username = rds_config.db_username
-    password = rds_config.db_password
-    endpoint = capture.get_list_of_instances(dbName)['DBInstances'][0]['Endpoint']['Address']
-    status_of_db = capture.get_list_of_instances(dbName)['DBInstances'][0]['DBInstanceStatus']
+    rdsInstance = captureObj['dbName'].split("/")[0]
+    endpoint = capture.get_list_of_instances(rdsInstance)['DBInstances'][0]['Endpoint']['Address']
+    status_of_db = capture.get_list_of_instances(rdsInstance)['DBInstances'][0]['DBInstanceStatus']
 
     metricFileName = replayName + " " + "metric file"
 
@@ -39,25 +61,33 @@ def startReplay(replayName, captureName, dbName, mode):
     metricFile = modelsQuery.getCaptureMetric(captureName)
     captureID = modelsQuery.getCaptureID(captureName)
     captureBucket = modelsQuery.getCaptureBucket(captureName)
+    metricBucket = modelsQuery.getMetricBucketByName(captureName)
+    filename = logfile.filename
 
-    modelsQuery.addMetric(metricFileName, captureBucket, None)
-    modelsQuery.addReplay(replayName, captureStartTime, captureEndTime, dbName, metricFile, captureID, mode, "active")
-    download_file(logfile)
+    modelsQuery.addMetric(metricFileName, metricBucket, None)
+    metricID = modelsQuery.getMetricIDByNameAndBucket(metricFileName, metricBucket)
+    modelsQuery.addReplay(replayName, captureStartTime, captureEndTime, dbName, metricID, captureID, mode, "active")
+    download_file(captureName, captureBucket, filename)
 
-    t2 = Timer(datetime.now(), executeReplay, [replayName, captureName, username, password, dbName, status_of_db, endpoint, metricFile, datetime.now()])
+    addInProgressReplay(replayName, username, password)
+
+    t2 = Timer(0, executeReplay, [replayName, captureName, dbName, status_of_db, endpoint, metricFile, datetime.now()])
     t2.start()
 
-
-def executeReplay(replayName, captureName, username, password, dbName, status_of_db, endpoint, metricFile, startTime):
+def executeReplay(replayName, captureName, dbName, status_of_db, endpoint, metricFile, startTime):
     metricBucket = modelsQuery.getCaptureMetricBucket(captureName)
+    inProgressReplay = getInProgressReplay(replayName)
+    username = inProgressReplay.get('username')
+    password = inProgressReplay.get('password')
     with open(captureName + " " + "tempLogFile", 'r') as tempFile:
         for line in tempFile:
             entireList = literal_eval(line)
             for i in range(len(entireList)):
                 dict = entireList[i]
                 if dict['message'].startswith('Query'):
-                    executableQuery = str(dict['message'][7:])
-                    if status_of_db == "available":
+                    executableQuery = dict['message'][7:]
+                    print("executable query: " + executableQuery)
+                    if str(status_of_db) == "available":
                         try:
                             conn = pymysql.connect(host=endpoint, user=username, passwd=password, db=dbName,
                                                    connect_timeout=5)
@@ -65,8 +95,12 @@ def executeReplay(replayName, captureName, username, password, dbName, status_of
                             logger.error("ERROR: Unexpected error: Could not connect to MySql instance.")
                             sys.exit()
                         with conn.cursor() as cur:
-                            cur.execute("""%s""", executableQuery)
+                            cur.execute(executableQuery)
+
+    if os.path.exists(captureName + " " + "tempLogFile"):
+        os.remove(captureName + " " + "tempLogFile")
 
     endTime = datetime.now()
     modelsQuery.updateReplayStatus(replayName, "finished")
-    capture.sendMetrics(metricBucket, metricFile, startTime, endTime)
+    metricID = modelsQuery.getMetricIDByNameAndBucket(replayName + " " + "metric file", metricBucket)
+    capture.sendMetrics(metricID, replayName + " " + "metric file", startTime, endTime)
