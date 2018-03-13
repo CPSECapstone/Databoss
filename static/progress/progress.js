@@ -83,8 +83,8 @@ app.controller('progress', function($scope, $location, $http) {
   $scope.displayMode = function(mode) {
     var result;
     if (mode === "time") result = "time-constrained";
-    else if (mode === "storage") result = "time-constrained";
-    else if (mode === "interactive") result = "time-constrained";
+    else if (mode === "storage") result = "storage";
+    else if (mode === "interactive") result = "interactive";
     else result = mode;
     return result;
   };
