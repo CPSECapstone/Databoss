@@ -18,7 +18,7 @@ def scheduleStorageCapture(startTime, storageLimit, allocatedStorage, captureNam
     t = Timer(0, pollStorage, args=[startTime, storageLimit, allocatedStorage, captureObj])
     t.start()
     while (storageResult == False):
-        t = Timer(3, pollStorage, args=[startTime, storageLimit, allocatedStorage, captureObj])
+        t = Timer(60, pollStorage, args=[startTime, storageLimit, allocatedStorage, captureObj])
         t.start()
 
 def pollStorage(startTime, userStorageInput, maxUserStorage, captureObj):
