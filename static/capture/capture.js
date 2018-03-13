@@ -135,6 +135,8 @@ app.controller('capture', function ($scope, $location, $http) {
 
     // Defaulted mode is interactive when no mode is chosen
     $scope.startCapture = function () {
+        console.log("Storage value: " +  $('#storageNum').val());
+
         if ($('#captureName').val() == '' || $('#crBucket').val() == null ||
             $('#metricsBucket').val() == null || $('#dbName').val() == null) {
             return;
@@ -164,7 +166,7 @@ app.controller('capture', function ($scope, $location, $http) {
                 'endDate' : $('#endDate').val(),
                 'startTime' : $('#startTime').val(),
                 'endTime' : $('#endTime').val(),
-                //'storageNum' : $('#storageNum').val(),
+                'storageNum' : $('#storageNum').val(),
                 'mode' : $('input[name=mode]:checked').val()
             }
         }).then(function successCallback(response) {
