@@ -10,6 +10,8 @@ import pytz
 logger = logging.getLogger()
 logger.setLevel(logging.INFO)
 
+STORAGE_CONVERSION = (10**6)
+
 storageResult = False
 
 def scheduleStorageCapture(startTime, storageLimit, allocatedStorage, captureName):
@@ -33,9 +35,9 @@ def pollStorage(startTime, userStorageInput, maxUserStorage, captureObj):
                                      )
     print("storage metrics: ")
     print(storageMetrics)
-    freeSpace = (storageMetrics['Datapoints'][0]['Average']) /(10**6)
+    freeSpace = (storageMetrics['Datapoints'][0]['Average']) /(STORAGE_CONVERSION)
     for element in storageMetrics['Datapoints'][0:]:
-        mbVal = (element['Average'])/(10**6)
+        mbVal = (element['Average'])/(STORAGE_CONVERSION)
         if (freeSpace - mbVal) == userStorageInput:
             storageResult = True
             endCapture(captureObj, startTime, datetime.now())
