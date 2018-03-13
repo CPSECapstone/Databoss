@@ -74,8 +74,10 @@ app.controller('replay', function($scope, $http, $location) {
                 },
                 data : {
                     'replayName' : $('#replayName').val(),
-                    'captureBucket' : $('#crBucket').val(),
+                    'capture' : $('#capture').val(),
                     'dbName' : $('#dbName').val(),
+                    'username': $scope.username,
+                    'password': $scope.password,
                     'startDate' : $('#startDate').val(),
                     'endDate' : $('#endDate').val(),
                     'startTime' : $('#startTime').val(),

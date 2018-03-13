@@ -135,17 +135,6 @@ app.controller('capture', function ($scope, $location, $http) {
 
     // Defaulted mode is interactive when no mode is chosen
     $scope.startCapture = function () {
-        if ($('#captureName').val() == '' || $('#crBucket').val() == null ||
-            $('#metricsBucket').val() == null || $('#dbName').val() == null) {
-            return;
-        }
-        if ($('input[name=mode]:checked').val() == 'time' &&
-            ($('#startDate').val() == '' || $('#endDate').val() == '' ||
-             $('#startTime').val() == '' || $('#endTime').val() == '' ||
-             ($('#startDate').val() == $('#endDate').val() && $('#startTime').val() > $('#endTime').val()))) {
-            return;
-        }
-
         $http({
             method: 'POST',
             url: 'capture/startCapture',
@@ -190,4 +179,18 @@ app.controller('capture', function ($scope, $location, $http) {
         document.getElementById('mb-button').classList.remove('active');
       }
     }
+
+    $scope.checkCaptureName = function(name) {
+        $http({
+            method: 'GET',
+            url: 'capture/checkName?name=' + name,
+            headers: {
+                'Content-Type' : 'application/json'
+            }
+        }).then(function successCallback(response) {
+            $scope.uniqueName = response.data;
+        }, function errorCallback(response) {
+
+        });
+    };
 });

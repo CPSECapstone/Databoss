@@ -21,3 +21,8 @@ h5 {
 .modal-dialog > * {
     color: black;
 }
+
+.warning {
+    color: #ff493a;
+    padding-top: 5px;
+}
