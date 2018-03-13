@@ -26,7 +26,7 @@ def pollStorage(startTime, userStorageInput, maxUserStorage, captureObj):
 
     storageMetrics = capture.cloudwatch.get_metric_statistics(Namespace='AWS/RDS',
                                      MetricName='FreeStorageSpace',
-                                     StartTime=datetime.utcnow() - timedelta(seconds=5),
+                                     StartTime=datetime.utcnow() - timedelta(minutes=1),
                                      EndTime=datetime.utcnow(),
                                      Period=60,
                                      Statistics=['Average']
@@ -45,10 +45,6 @@ def scheduleCapture(captureName):
     captureObj = modelsQuery.getCaptureByName(captureName)
     startTime = captureObj.startTime
     endTime = captureObj.endTime
-
-    #timeDiff = endTime - startTime
-    #if timeDiff.total_seconds() > 86400:
-    #    endTime = startTime + timedelta(minutes=1440)
 
     whenToStart = (startTime - datetime.now()).seconds
     whenToEnd = (endTime - datetime.now()).total_seconds()

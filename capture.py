@@ -237,7 +237,6 @@ def parseJson(jsonString, storage_limit):
 
 #storage_limit should be in gb
 def checkStorageCapacity(storage_limit, storage_max_db):
-    #db_name = rds_config.db_name
     if (storage_limit > storage_max_db):
         #print("ERROR: Storage specified is greater than what", db_name, "has allocated")
         sys.exit()
@@ -393,3 +392,13 @@ def sendMetrics(metricBucket, metricFileName, startTime, endTime):
     s3.meta.client.upload_file(metricFileOpened.name, modelsQuery.getMetricBucket(metricBucket), metricFileOpened.name)
     if os.path.exists(metricFileName):
         os.remove(metricFileName)
+
+        import json
+        import os.path
+
+if os.path.exists("credentials.json"):
+    credentialFile = open("credentials.json", "r")
+    credentials = json.load(credentialFile)
+    access_key = credentials['access']
+    secret_key = credentials['secret']
+    aws_config()
