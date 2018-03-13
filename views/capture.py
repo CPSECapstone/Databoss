@@ -66,3 +66,14 @@ def endCapture():
                 captureBucket, metricBucket, captureFileName, metricFileName)
 
     return "ok"
+
+
+@capture_api.route('/checkName', methods=["GET"])
+def checkName():
+    name = request.args.get('name')
+
+    captureId = modelsQuery.getCaptureID(name)
+
+    if captureId is None:
+        return "true"
+    return "false"

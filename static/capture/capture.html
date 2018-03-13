@@ -6,7 +6,9 @@
     <div class="center-block">
       <div class="form-group">
         <label for="captureName">Capture Name</label>
-        <input type="text" class="form-control" id="captureName" maxlength="20" ng-model="captureName">
+        <input type="text" class="form-control" id="captureName" maxlength="20" ng-model="captureName"
+               ng-change="checkCaptureName(captureName)">
+        <div class="warning" ng-if="uniqueName == 'false'">That capture name is already taken!</div>
       </div>
       <div class="form-group">
         <label for="crBucket">Capture Replay Bucket:</label>
@@ -98,7 +100,7 @@
               ng-disabled="!captureName || !crBucket || !metricsBucket || !rdsInstance || !dbName ||
                            (selectedMode == 'time' && (!startTime || !endTime || !startDate || !endDate ||
                             (startDate == endDate && startTime > endTime))) ||
-                           (selectedMode == 'storage' && !storageNumber)">
+                           (selectedMode == 'storage' && !storageNumber) || uniqueName == 'false'">
       Capture</button>
     </div>
     </div>
