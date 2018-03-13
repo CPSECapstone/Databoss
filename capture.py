@@ -391,3 +391,13 @@ def sendMetrics(metricBucket, metricFileName, startTime, endTime):
     s3.meta.client.upload_file(metricFileOpened.name, modelsQuery.getMetricBucket(metricBucket), metricFileOpened.name)
     if os.path.exists(metricFileName):
         os.remove(metricFileName)
+
+import json
+import os.path
+
+if os.path.exists("credentials.json"):
+    credentialFile = open("credentials.json", "r")
+    credentials = json.load(credentialFile)
+    access_key = credentials['access']
+    secret_key = credentials['secret']
+    aws_config()
