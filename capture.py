@@ -342,7 +342,9 @@ def stopCapture(rdsInstance, dbName, startTime, endTime, captureName,
         if os.path.exists(captureFileName):
             os.remove(captureFileName)
 
+        parsedEndTime = datetime.strptime(endTime, '%Y-%m-%d %H:%M:%S')
         modelsQuery.updateCaptureStatus(captureName, "finished")
+        modelsQuery.updateCaptureEndTime(captureName, parsedEndTime)
         sendMetrics(metricBucket, metricFileName, startTime, endTime)
 
         removeInProgressCapture(captureName)
