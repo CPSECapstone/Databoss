@@ -179,4 +179,18 @@ app.controller('capture', function ($scope, $location, $http) {
         document.getElementById('mb-button').classList.remove('active');
       }
     }
+
+    $scope.checkCaptureName = function(name) {
+        $http({
+            method: 'GET',
+            url: 'capture/checkName?name=' + name,
+            headers: {
+                'Content-Type' : 'application/json'
+            }
+        }).then(function successCallback(response) {
+            $scope.uniqueName = response.data;
+        }, function errorCallback(response) {
+
+        });
+    };
 });
