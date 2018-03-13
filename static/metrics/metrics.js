@@ -115,8 +115,9 @@ app.controller('metrics', function($scope, $location, $http) {
         }).then(function successCallback(response) {
             logfileObj = response.data;
             console.log(logfileObj);
-            //how do we make sure that the user is logged into their S3 instance?
-            window.open('https://s3-us-west-1.amazonaws.com/' + logfileObj.bucket + '/' + logfileObj.file, '_blank');
+            var filenameOneSpace = (logfileObj.filename).replace(" ", "+");
+            var filenameNoSpace = filenameOneSpace.replace(" ", "+");
+            window.open('https://s3-us-west-1.amazonaws.com/' + logfileObj.bucket + '/' + filenameNoSpace, '_blank');
         }, function errorCallback(response) {
             console.log('Error in retrieving capture bucket from capture name');
         });

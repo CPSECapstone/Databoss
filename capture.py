@@ -212,13 +212,17 @@ def updateDatabase(sTime, eTime, cName, cBucket, mBucket, cFile, mFile, dialect,
     logfileID = modelsQuery.getLogFileIdByNameAndBucket(cFile, cBucket)
     modelsQuery.addCapture(cName, sTime, eTime, str(dbName), logfileID, metricID, mode, status)
 
+
 def startCapture(captureName, captureBucket, metricsBucket, db_name, startDate, endDate, startTime, endTime, storage_limit, mode):
     status_of_db = get_list_of_instances(db_name)['DBInstances'][0]['DBInstanceStatus']
     storage_max_db = get_list_of_instances(db_name)['DBInstances'][0]['AllocatedStorage']
     endpoint = get_list_of_instances(db_name)['DBInstances'][0]['Endpoint']['Address']
     port = get_list_of_instances(db_name)['DBInstances'][0]['Endpoint']['Port']
-    captureFileName = captureName + " " + "capture file"
-    metricFileName = captureName + " " + "metric file"
+
+    captureFileName = captureName + " capture file"
+    metricFileName = captureName + " metric file"
+
+
     dbDialect = "mysql"
     username = rds_config.db_username
 
@@ -254,13 +258,15 @@ def startCapture(captureName, captureBucket, metricsBucket, db_name, startDate, 
         updateDatabase(sTimeCombined, eTimeCombined, captureName, captureBucket, metricsBucket,
                        captureFileName, metricFileName, dbDialect, db_name, endpoint, port, username, mode, "active")
 
-def stopCapture(startTime, endTime, captureName, captureBucket, metricBucket, captureFileName, metricFileName, dbName):
-    captureFileName = captureName + " " + "capture file"
-    metricFileName = captureName + " " + "metric file"
-    username = rds_config.db_username
-    password = rds_config.db_password
-    endpoint = get_list_of_instances(dbName)['DBInstances'][0]['Endpoint']['Address']
-    status_of_db = get_list_of_instances(dbName)['DBInstances'][0]['DBInstanceStatus']
+
+def stopCapture(rdsInstance, dbName, startTime, endTime, captureName,
+                captureBucket, metricBucket, captureFileName, metricFileName):
+    captureFileName = captureName + " capture file"
+    metricFileName = captureName + " metric file"
+    startTime = datetime.strptime(startTime, '%a, %d %b %Y %H:%M:%S %Z' ).replace(tzinfo=pytz.utc).strftime("%Y-%m-%d %H:%M:%S")
+    endTime = datetime.strftime(endTime, '%Y-%m-%d %H:%M:%S')
+    endpoint = get_list_of_instances(rdsInstance)['DBInstances'][0]['Endpoint']['Address']
+    status_of_db = get_list_of_instances(rdsInstance)['DBInstances'][0]['DBInstanceStatus']
 
     if status_of_db == "available":
         try:
