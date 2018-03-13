@@ -1,22 +1,25 @@
 <div>
   <h1>Capture</h1>
+  <body ng-app="">
   <form name="form">
   <div class="row">
     <div class="center-block">
       <div class="form-group">
         <label for="captureName">Capture Name</label>
-        <input type="text" class="form-control" id="captureName" maxlength="20">
+        <input type="text" class="form-control" id="captureName" maxlength="20" ng-model="captureName"
+               ng-change="checkCaptureName(captureName)">
+        <div class="warning" ng-if="uniqueName == 'false'">That capture name is already taken!</div>
       </div>
       <div class="form-group">
         <label for="crBucket">Capture Replay Bucket:</label>
-        <select class="form-control" id="crBucket">
+        <select class="form-control" id="crBucket" ng-model="crBucket">
           <option disabled selected value> -- Select Bucket -- </option>
           <option ng-repeat="bucket in buckets" value="{{bucket}}">{{bucket}}</option>
         </select>
       </div>
       <div class="form-group">
         <label for="metricsBucket">Metrics Bucket:</label>
-        <select class="form-control" id="metricsBucket">
+        <select class="form-control" id="metricsBucket" ng-model="metricsBucket">
           <option disabled selected value> -- Select Bucket -- </option>
           <option ng-repeat="bucket in buckets" value="{{bucket}}">{{bucket}}</option>
         </select>
@@ -30,36 +33,30 @@
       </div>
       <div ng-if="rdsInstance != undefined" class="form-group">
         <label for="dbName">Database:</label>
-        <select class="form-control" id="dbName">
+        <select class="form-control" id="dbName" ng-model="$parent.dbName">
           <option disabled selected value> -- Select Database -- </option>
           <option ng-repeat="db in instanceDbs" value="{{db}}">{{db}}</option>
         </select>
       </div>
 
     <h5>Capture Mode:</h5>
-    <div id="capture-mode-bar" class="btn-group" data-toggle="buttons">
-      <label class="btn btn-primary">
-        <input type="radio" name="mode" autocomplete="off" value="interactive"> Interactive
-      </label>
-      <label class="btn btn-primary">
-        <input type="radio" name="mode" autocomplete="off" value="time"> Time-Constrained
-      </label>
-      <label class="btn btn-primary">
-        <input type="radio" name="mode" autocomplete="off" value="storage"> Storage-Constrained
-      </label>
-    </div>
+    <form>
+        <input type="radio" name="mode" value="interactive" ng-model="selectedMode"> Interactive
+        <input type="radio" name="mode" value="time" ng-model="selectedMode"> Time-Constrained
+        <input type="radio" name="mode" value="storage" ng-model="selectedMode"> Storage-Constrained
+    </form>
     <div id="date-container" class="row">
-      <span>Start Date: <input id="startDate" width="276" /> </span>
-      <span>End Date: <input id="endDate" width="276" /> </span>
+      <span>Start Date: <input id="startDate" ng-model="startDate" width="276" /> </span>
+      <span>End Date: <input id="endDate" ng-model="endDate" width="276" /> </span>
     </div>
     <div id="time-container" class="row">
-      <span>Start Time: <input id="startTime" width="276" /> </span>
-      <span>End Time: <input id="endTime" width="276" /> </span>
+      <span>Start Time: <input id="startTime" ng-model="startTime" width="276" /> </span>
+      <span>End Time: <input id="endTime" ng-model="endTime" width="276" /> </span>
     </div>
 
     <!-- storage mode  -->
     <div id="storage-container" placeholder="size" class="row input-group">
-  <input type="number" class="form-control">
+  <input type="number" class="form-control" ng-model="storageNumber">
   <div class="input-group-append">
     <button id="mb-button" class="btn btn-outline-success" type="button" ng-click="setStorageSize('mb-button')">MB</button>
     <button id="gb-button" class="btn btn-outline-success" type="button" ng-click="setStorageSize('gb-button')">GB</button>
@@ -93,11 +90,17 @@
     </script>
 
     <div class="text-center">
-      <button type="button" ng-click="startCapture()" class="btn-capture btn btn-success">Capture</button>
+      <button type="button" ng-model="button" ng-click="startCapture()" class="btn-capture btn btn-success"
+              ng-disabled="!captureName || !crBucket || !metricsBucket || !rdsInstance || !dbName ||
+                           (selectedMode == 'time' && (!startTime || !endTime || !startDate || !endDate ||
+                            (startDate == endDate && startTime > endTime))) ||
+                           (selectedMode == 'storage' && !storageNumber) || uniqueName == 'false'">
+      Capture</button>
     </div>
     </div>
   </div>
   </form>
+  </body>
 
     <!-- Authentication Modal -->
     <div class="container">

@@ -72,7 +72,9 @@ def getCaptureStartTime(captureName):
 
 def getCaptureID(captureName):
     capture = models.Capture.query.filter_by(name=captureName).first()
-    return capture.id
+    if capture:
+        return capture.id
+    return None
 
 def getCaptureEndTime(captureName):
     capture = models.Capture.query.filter_by(name=captureName).first()
