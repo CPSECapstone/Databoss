@@ -18,3 +18,7 @@ rds_config.py
 
 #pytests
 test/.cache/v/cache/lastfailed
+
+.coverage
+.pytest_cache/
+htmlcov

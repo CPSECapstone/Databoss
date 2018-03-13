@@ -106,7 +106,9 @@ def getReplayById(replayId):
 
 def getReplayByName(replayName):
     replay = models.Replay.query.filter_by(name=replayName).first()
-    return replay
+    if replay:
+        return replay
+    return None
 
 def updateReplayStatus(replayName, status):
     replay = models.Replay.query.filter_by(name=replayName).first()
