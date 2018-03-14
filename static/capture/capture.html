@@ -40,11 +40,17 @@
       </div>
 
     <h5>Capture Mode:</h5>
-    <form>
-        <input type="radio" name="mode" value="interactive" ng-model="selectedMode"> Interactive
-        <input type="radio" name="mode" value="time" ng-model="selectedMode"> Time-Constrained
-        <input type="radio" name="mode" value="storage" ng-model="selectedMode"> Storage-Constrained
-    </form>
+    <div id="capture-mode-bar" class="btn-group" data-toggle="buttons">
+      <label class="btn btn-primary">
+        <input type="radio" name="mode" autocomplete="off" value="interactive"> Interactive
+      </label>
+      <label class="btn btn-primary">
+        <input type="radio" name="mode" autocomplete="off" value="time"> Time-Constrained
+      </label>
+      <label class="btn btn-primary">
+        <input type="radio" name="mode" autocomplete="off" value="storage"> Storage-Constrained
+      </label>
+    </div>
     <div id="date-container" class="row">
       <span>Start Date: <input id="startDate" ng-model="startDate" width="276" /> </span>
       <span>End Date: <input id="endDate" ng-model="endDate" width="276" /> </span>
@@ -92,9 +98,7 @@
     <div class="text-center">
       <button type="button" ng-model="button" ng-click="startCapture()" class="btn-capture btn btn-success"
               ng-disabled="!captureName || !crBucket || !metricsBucket || !rdsInstance || !dbName ||
-                           (selectedMode == 'time' && (!startTime || !endTime || !startDate || !endDate ||
-                            (startDate == endDate && startTime > endTime))) ||
-                           (selectedMode == 'storage' && !storageNumber) || uniqueName == 'false'">
+                           uniqueName == 'false'">
       Capture</button>
     </div>
     </div>
