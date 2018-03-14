@@ -4,7 +4,7 @@ from datetime import datetime
 import capture
 import modelsQuery
 import logging
-import sys
+import time
 import pytz
 
 logger = logging.getLogger()
@@ -17,13 +17,11 @@ storageResult = False
 def scheduleStorageCapture(startTime, storageLimit, allocatedStorage, captureName):
     captureObj = modelsQuery.getCaptureByName(captureName)
 
-    t = Timer(0, pollStorage, args=[startTime, storageLimit, allocatedStorage, captureObj])
-    t.start()
-    while (storageResult == False):
-        t = Timer(60, pollStorage, args=[startTime, storageLimit, allocatedStorage, captureObj])
+    if storageResult == False:
+        t = Timer(5, pollStorage, args=[startTime, storageLimit, allocatedStorage, captureName, captureObj])
         t.start()
 
-def pollStorage(startTime, userStorageInput, maxUserStorage, captureObj):
+def pollStorage(startTime, userStorageInput, maxUserStorage, captureName, captureObj):
     global storageResult
 
     storageMetrics = capture.cloudwatch.get_metric_statistics(Namespace='AWS/RDS',
@@ -41,7 +39,7 @@ def pollStorage(startTime, userStorageInput, maxUserStorage, captureObj):
         if (freeSpace - mbVal) == userStorageInput:
             storageResult = True
             endCapture(captureObj, startTime, datetime.now())
-    storageResult = False
+    scheduleStorageCapture(startTime, userStorageInput, maxUserStorage, captureName)
 
 def scheduleCapture(captureName):
     captureObj = modelsQuery.getCaptureByName(captureName)
