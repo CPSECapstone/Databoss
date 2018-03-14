@@ -276,7 +276,8 @@ var getCaptures = function($http, $scope) {
         'Content-Type': 'application/json'
         },
     }).then(function successCallback(response) {
-        $scope.captures = response.data;
+        $scope.captures = response.data.filter(capture =>
+          capture.status === "finished");;
         console.log('success');
     }, function errorCallback(response) {
         console.log('error retrieving captures');

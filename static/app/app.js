@@ -27,9 +27,9 @@ app.config(['$routeProvider', function($routeProvider) {
    $routeProvider
    //This is the home page
    .when('/', {
-      templateUrl: 'static/login/login.html',
-      controller: 'login',
-      css: 'static/css/login.css'
+      templateUrl: 'static/home/home.html',
+      controller: 'home',
+      css: 'static/css/home.css'
    })
    .when('/capture', {
       templateUrl: 'static/capture/capture.html',
