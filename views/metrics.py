@@ -37,3 +37,9 @@ def getLogFileObject():
     logfileId = request.args.get('logfileId')
     logfileObj = modelsQuery.getLogfile(logfileId)
     return jsonify(bucket=logfileObj.bucket, filename=logfileObj.filename)
+
+@metrics_api.route("/getMetricFileObj", methods=["GET"])
+def getMetricFileObject():
+    metricFileId = request.args.get('metricId')
+    metricFileObj = modelsQuery.getMetricById(metricFileId)
+    return jsonify(bucket=metricFileObj.bucket, filename=metricFileObj.filename)
