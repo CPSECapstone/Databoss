@@ -97,6 +97,7 @@ h1 {
   /* border: 1px solid green; */
   margin-top: 10px;
   text-align: center;
+  font-size: 1.1em;
 }
 
 .nav-item:hover {

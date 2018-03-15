@@ -1,6 +1,5 @@
 .tableWrapper {
    height: 700px;
-   width: 330px;
    overflow : auto;
    position: fixed;
 }
@@ -15,7 +14,6 @@
 
 .wholeTable {
     height: 500px;
-    width: 300px;
     overflow: scroll;
 }
 
