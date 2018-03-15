@@ -2,14 +2,12 @@ import models
 import modelsQuery
 import sqlite3
 from web_app import db
-
 import datetime
 
 # Currently functions only on the main DB, and the main DB have tables created and empty
 
 backupDB = sqlite3.connect(':memory:')
 mainDB = sqlite3.connect('database.db')
-
 def testSetup():
     query = "".join(line for line in mainDB.iterdump())
     backupDB.executescript(query)
@@ -79,6 +77,18 @@ def testGetCapture():
     list = modelsQuery.getCaptureAll().count()
     assert list == 2
 
+def testUpdateCaptureStatus():
+    updatedStatus = "unavailable"
+    modelsQuery.updateCaptureStatus("capName2", updatedStatus)
+    updatedCapture = modelsQuery.getCaptureById(2);
+    assert updatedCapture.status == updatedStatus
+
+def testCaptureUpdateEndTime():
+    updatedEndTime = datetime.datetime(2018, 1, 31, 12, 13, 20)
+    modelsQuery.updateCaptureEndTime("capName2", updatedEndTime)
+    updatedCapture = modelsQuery.getCaptureById(2);
+    assert updatedCapture.endTime == updatedEndTime
+
 def testAddReplay():
     name = 'repName'
     startTime = datetime.datetime(2018, 1, 31, 10, 10, 10)
@@ -114,7 +124,6 @@ def testGetReplay():
     modelsQuery.addReplay(name, startTime, endTime, dbName, metricId, captureId, mode, status)
     list = modelsQuery.getReplayAll().count()
     assert list == 2
-
 
 def testCleanup():
     db.drop_all()
