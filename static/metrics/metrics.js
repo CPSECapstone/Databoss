@@ -100,11 +100,7 @@ app.controller('metrics', function($scope, $location, $http) {
       $('#collapse' + captureId).toggle();
    };
 
-   $scope.routeToS3 = function(capture) {
-       //retrieves the capture bucket name
-       var captureBucket;
-       var logFileName;
-
+   $scope.downloadLogFile = function(capture) {
        $http({
             method: 'GET',
             url: 'metrics/getLogfileObj',
@@ -114,7 +110,6 @@ app.controller('metrics', function($scope, $location, $http) {
             params : {'logfileId' : capture.logfileId}
         }).then(function successCallback(response) {
             logfileObj = response.data;
-            console.log(logfileObj);
             var filenameOneSpace = (logfileObj.filename).replace(" ", "+");
             var filenameNoSpace = filenameOneSpace.replace(" ", "+");
             window.open('https://s3-us-west-1.amazonaws.com/' + logfileObj.bucket + '/' + filenameNoSpace, '_blank');
@@ -124,6 +119,25 @@ app.controller('metrics', function($scope, $location, $http) {
         });
    };
 
+   $scope.downloadMetricFile = function(capture) {
+    $http({
+        method: 'GET',
+        url: 'metrics/getMetricFileObj',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        params : {'metricId' : capture.metricId}
+    }).then(function successCallback(response) {
+        metricFileObj = response.data;
+        console.log(metricFileObj);
+        var filenameOneSpace = (metricFileObj.filename).replace(" ", "+");
+        var filenameNoSpace = filenameOneSpace.replace(" ", "+");
+        window.open('https://s3-us-west-1.amazonaws.com/' + metricFileObj.bucket + '/' + filenameNoSpace, '_blank');
+
+    }, function errorCallback(response) {
+        console.log('Error in retrieving capture bucket from capture name');
+    });
+   };
 });
 
 var addMetricsToChart = function(chart, label, data, time, color) {
