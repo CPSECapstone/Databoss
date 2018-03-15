@@ -48,7 +48,9 @@ def download_file(replayName, bucketName, fileName):
 
 def startReplay(replayName, captureObj, dbName, mode, username, password):
     captureObj = json.loads(captureObj)
+    print(captureObj)
     captureName = captureObj['name']
+    print("name: " + captureName)
     logfile = modelsQuery.getLogFileByCapture(captureName)
     rdsInstance = captureObj['dbName'].split("/")[0]
     endpoint = capture.get_list_of_instances(rdsInstance)['DBInstances'][0]['Endpoint']['Address']
@@ -75,6 +77,8 @@ def startReplay(replayName, captureObj, dbName, mode, username, password):
     t2.start()
 
 def executeReplay(replayName, captureName, dbName, status_of_db, endpoint, metricFile, startTime):
+    print("capture name here: " + captureName)
+    print("db name: "  + dbName)
     metricBucket = modelsQuery.getCaptureMetricBucket(captureName)
     inProgressReplay = getInProgressReplay(replayName)
     username = inProgressReplay.get('username')
@@ -95,7 +99,13 @@ def executeReplay(replayName, captureName, dbName, status_of_db, endpoint, metri
                             logger.error("ERROR: Unexpected error: Could not connect to MySql instance.")
                             sys.exit()
                         with conn.cursor() as cur:
-                            cur.execute(executableQuery)
+                            try:
+                                cur.execute(executableQuery)
+                            except pymysql.err.OperationalError as err:
+                                print(err)
+                            except pymysql.err.InternalError as err:
+                                print(err)
+
 
     if os.path.exists(captureName + " " + "tempLogFile"):
         os.remove(captureName + " " + "tempLogFile")

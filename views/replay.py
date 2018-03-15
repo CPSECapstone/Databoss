@@ -17,5 +17,17 @@ def add(name, startTime, endTime, dbName, logfileId, metricId, captureId):
 @replay_api.route('/startReplay', methods=["POST"])
 def startReplay():
     data = request.json
+    print(data)
     replay.startReplay(data['replayName'], data['capture'], data['dbName'], data['replayMode'], data['username'], data['password'])
     return ""
+
+
+@replay_api.route('/checkName', methods=["GET"])
+def checkReplayName():
+    name = request.args.get('name')
+
+    replay = modelsQuery.getReplayByName(name)
+
+    if replay is None:
+        return "true"
+    return "false"

@@ -5,7 +5,9 @@
       <div class="center-block">
         <div class="form-group">
           <label for="replayName">Replay Name</label>
-          <input type="text" class="form-control" id="replayName">
+          <input type="text" class="form-control" id="replayName" ng-model="replayName"
+               ng-change="checkReplayName(replayName)">
+          <div class="warning" ng-if="uniqueName == 'false'">That replay name is already taken!</div>
         </div>
         <div class="form-group">
           <label for="capture">Capture to Replay</label>
@@ -45,7 +47,8 @@
         </div>
 
         <div class="row">
-          <button type="button" ng-click="startReplay()" class="btn center-block btn-success">Replay</button>
+          <button type="button" ng-click="startReplay()" class="btn center-block btn-success"
+                  ng-disabled="uniqueName =='false'">Replay</button>
         </div>
       </div>
     </div>
