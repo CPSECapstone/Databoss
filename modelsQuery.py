@@ -131,10 +131,6 @@ def getMetricById(metricId):
     m = models.Metric.query.get(metricId)
     return m
 
-def getMetricByFileName(metricFileName):
-    id = models.Metric.query.get(metricFileName)
-    return id
-
 def getMetricIDByNameAndBucket(metricFileName, metricBucket):
     metricObj = models.Metric.query.filter_by(name=metricFileName, bucket=metricBucket).first()
     return metricObj.id
@@ -147,10 +143,6 @@ def getMetricBucketByName(name):
     capture = models.Capture.query.filter_by(name=name).first()
     metricObj = models.Metric.query.filter_by(id=capture.metricId).first()
     return metricObj.bucket
-
-def getMetricFile(metricFileName, metricBucket):
-    metricObj = models.Metric.query.filter_by(name=metricFileName, bucket=metricBucket).first()
-    return metricObj.filename
 
 def updateMetricFile(metricID, filename):
     metricObj = models.Metric.query.filter_by(id=metricID).first()
@@ -171,10 +163,6 @@ def getLogfile(logfileId):
 def getLogfileById(logfileId):
     logObj = models.Logfile.query.filter_by(id=logfileId).first()
     return logObj.filename
-
-def getLogfileByName(logfileName):
-    log = models.Logfile.query.filter_by(name=logfileName).first()
-    return log
 
 def updateLogFile(logfileID, filename):
     log = models.Logfile.query.filter_by(id=logfileID).first()
