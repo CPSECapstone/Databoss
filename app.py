@@ -1,5 +1,5 @@
 import sqlite3
-import rds_config
+#import rds_config
 
 from flask import send_file
 from web_app import app, db
