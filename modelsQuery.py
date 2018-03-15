@@ -160,10 +160,6 @@ def getLogfile(logfileId):
     return logObj
 
 # Return logfile associated with provided capture or replay
-def getLogfileById(logfileId):
-    logObj = models.Logfile.query.filter_by(id=logfileId).first()
-    return logObj.filename
-
 def updateLogFile(logfileID, filename):
     log = models.Logfile.query.filter_by(id=logfileID).first()
     log.filename = filename
@@ -172,10 +168,6 @@ def updateLogFile(logfileID, filename):
 def getLogFileIdByNameAndBucket(logfileName, captureBucket):
     logObj = models.Logfile.query.filter_by(name=logfileName, bucket=captureBucket).first()
     return logObj.id
-
-def getEndpointByCapture(captureName):
-    captureObj = models.Capture.query.filter_by(name=captureName).first()
-    return captureObj.endpoint
 
 def getLogFileByCapture(captureName):
    captureObj = models.Capture.query.filter_by(name=captureName).first()
