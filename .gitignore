@@ -18,4 +18,4 @@ rds_config.py
 
 #pytests
 test/.cache/v/cache/lastfailed
-test/testingBuckets.py
+test/buckets_and_storage.py
