@@ -2,7 +2,6 @@
 var app = angular.module('MyCRT');
 
 app.controller('replay', function($scope, $http, $location) {
-    console.log("in replay");
     const dateContainer = $('#date-container');
     const timeContainer = $('#time-container');
     const storageContainer = $('#storage-container');
@@ -25,18 +24,14 @@ app.controller('replay', function($scope, $http, $location) {
 
     $('input[name=mode]').on('change', function(event) {
       selectedMode = $("input[name=mode]:checked").attr('id');
-      console.log("value " + selectedMode);
       if (selectedMode === "capture-int") {
-        console.log("updating to interactive view");
         hideButtons(dateContainer, timeContainer, storageContainer);
       }
       else if (selectedMode === "capture-time") {
-        console.log("updating to time constrained view");
         showButtons(dateContainer, timeContainer);
         hideButtons(storageContainer);
       }
       else if (selectedMode === "capture-storage") {
-        console.log("updating to storage view");
         hideButtons(dateContainer, timeContainer);
         showButtons(storageContainer);
       }
@@ -71,13 +66,33 @@ app.controller('replay', function($scope, $http, $location) {
     });
 
     $scope.startReplay = function () {
+        $http({
+                method: 'POST',
+                url: 'replay/startReplay',
+                headers: {
+                    'Content-Type' : 'application/json'
+                },
+                data : {
+                    'replayName' : $('#replayName').val(),
+                    'capture' : $('#capture').val(),
+                    'dbName' : $('#dbName').val(),
+                    'username': $scope.username,
+                    'password': $scope.password,
+                    'startDate' : $('#startDate').val(),
+                    'endDate' : $('#endDate').val(),
+                    'startTime' : $('#startTime').val(),
+                    'endTime' : $('#endTime').val(),
+                    'replayMode' : $('input[name=replayMode]:checked').val()
+                }
+            });
       // Add code to turn on DB logging here
-      console.log("starting Replay!")
+      console.log("Starting Replay!")
+      // @TODO Need to fix the reroute to the started replay.
       $location.path('/progress');
+
     }
 
     $scope.setStorageSize = function (id) {
-      console.log(id);
       //clear active
       if (id === "mb-button") {
         document.getElementById(id).classList.add('active');
@@ -88,4 +103,82 @@ app.controller('replay', function($scope, $http, $location) {
         document.getElementById('mb-button').classList.remove('active');
       }
     }
+
+    populateCaptures($http, $scope);
+//    getDBConnections($http, $scope);
+
+    $scope.authenticateInstance = function(instance) {
+        if (instance) {
+            $scope.currentRDSInstance = JSON.parse(instance).DBInstanceIdentifier;
+            $('#authenticationModal').modal('show');
+        }
+    };
+
+    $scope.getRDSInstances = function() {
+        $http({
+            method: 'GET',
+            url: 'capture/listDBinstances',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+        }).then(function successCallback(response) {
+            $scope.RDSInstances = response.data;
+        }, function errorCallback(response) {
+            console.log('error');
+        });
+    };
+
+    $scope.getRDSInstances();
+
+    $scope.getInstanceDbs = function(instance) {
+        if (instance) {
+            var endpoint = JSON.stringify(JSON.parse(instance).Endpoint);
+            $http({
+                method: 'POST',
+                url: 'capture/listInstanceDbs/' + endpoint,
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                data: {
+                    'username': $scope.username,
+                    'password': $scope.password
+                }
+            }).then(function successCallback(response) {
+                console.log(response.data);
+                $scope.instanceDbs = response.data;
+            }, function errorCallback(response) {
+                console.log('error');
+            });
+        }
+    };
+
+    $scope.checkReplayName = function(name) {
+        $http({
+            method: 'GET',
+            url: 'replay/checkName?name=' + name,
+            headers: {
+                'Content-Type' : 'application/json'
+            }
+        }).then(function successCallback(response) {
+            $scope.uniqueName = response.data;
+        }, function errorCallback(response) {
+
+        });
+    };
 });
+
+var populateCaptures = function($http, $scope) {
+    $http({
+        method: 'GET',
+        url: 'capture/getAll',
+        headers: {
+        'Content-Type': 'application/json'
+        },
+    }).then(function successCallback(response) {
+      // Only populating finished captures
+        $scope.captures = response.data.filter(capture =>
+          capture.status === "finished");
+    }, function errorCallback(response) {
+        console.log('error retrieving captures');
+    })
+};

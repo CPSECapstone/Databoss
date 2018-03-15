@@ -1,8 +1,7 @@
 from flask import Blueprint, jsonify, request
 from parseMetrics import ParsedMetrics
 from models import Metric
-from web_app import db
-
+import modelsQuery
 import capture
 
 metrics_api = Blueprint('metrics_api', __name__)
@@ -21,7 +20,7 @@ def getMetrics():
         # TODO add error handling
         raise Exception('Unspecified Type')
 
-    metrics = getS3Metrics(metric.bucket, metric.file)
+    metrics = getS3Metrics(metric.bucket, metric.filename)
 
     return jsonify(cpu=metrics.cpuList, cpuTime=metrics.cpuTimeList,
                    readIO=metrics.readIOList, readIOTime=metrics.readIOTimeList,
@@ -33,8 +32,14 @@ def getS3Metrics(bucket, file):
     obj = capture.s3.Object(bucket, file).get()
     return ParsedMetrics(obj['Body'].read().decode('utf-8'))
 
-#TODO : move this to models.query.py
-def add(name, bucket, file):
-    newMetrics = Metric(name=name, bucket=bucket, file=file)
-    db.session.add(newMetrics)
-    db.session.commit()
+@metrics_api.route("/getLogfileObj", methods=["GET"])
+def getLogFileObject():
+    logfileId = request.args.get('logfileId')
+    logfileObj = modelsQuery.getLogfile(logfileId)
+    return jsonify(bucket=logfileObj.bucket, filename=logfileObj.filename)
+
+@metrics_api.route("/getMetricFileObj", methods=["GET"])
+def getMetricFileObject():
+    metricFileId = request.args.get('metricId')
+    metricFileObj = modelsQuery.getMetricById(metricFileId)
+    return jsonify(bucket=metricFileObj.bucket, filename=metricFileObj.filename)

@@ -33,7 +33,6 @@
     <script src="static/progress/progress.js"></script>
 
     <!-- Angular services -->
-    <script src="static/metrics/MetricsService.js"></script>
 
     <!-- Bootstrap -->
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.6/css/bootstrap.min.css" integrity="sha384-rwoIResjU2yc3z8GV/NPeZWAv56rSmLldC3R/AZzGRnGxQQKnKkoFVhFQhNUwEyJ" crossorigin="anonymous">
@@ -45,8 +44,9 @@
     <link rel="stylesheet" type="text/css" href="static/css/progress.css">
     <link rel="stylesheet" type="text/css" href="static/css/information.css">
     <link rel="stylesheet" type="text/css" href="static/css/capture.css">
-    <!-- Font Awesome -->
-    <!-- <script src="https://use.fontawesome.com/3844597d67.js"></script> -->
+    <link rel="stylesheet" type="text/css" href="static/css/home.css">
+    <link rel="stylesheet" type="text/css" href="static/css/metrics.css">
+    <link rel="stylesheet" type="text/css" href="static/css/replay.css">
 
 </head>
 <body ng-app="MyCRT">
@@ -60,12 +60,12 @@
     <li id="my-crt-logo" class="text-center text-white">
         MYCRT
     </li>
-    <a ng-href="{{'#!/login'}}" class="text-white cus-nav-link" onclick="setActive(this)">
+    <!-- <a ng-href="{{'#!/login'}}" class="text-white cus-nav-link" onclick="setActive(this)">
       <li class="nav-item">
         <div class="icon-container"> <i class="fa fa-key fa-inverse fa-3x nav-icon"> </i></div>
         <div class="text-container">LOGIN</div>
       </li>
-    </a>
+    </a> -->
     <a ng-href="{{'#!/home'}}" class="text-white cus-nav-link" onclick="setActive(this)">
       <li class="nav-item">
         <div class="icon-container"> <i class="fa fa-home fa-inverse fa-3x nav-icon"> </i></div>

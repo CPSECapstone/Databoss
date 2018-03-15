@@ -16,4 +16,9 @@ rds_config.py
 !.elasticbeanstalk/*.cfg.yml
 !.elasticbeanstalk/*.global.yml
 
+#pytests
+test/.cache/v/cache/lastfailed
 
+.coverage
+.pytest_cache/
+htmlcov
