@@ -4,7 +4,6 @@ from datetime import datetime
 import capture
 import modelsQuery
 import logging
-import sys
 import pytz
 
 
