@@ -115,6 +115,37 @@ def testGetReplay():
     list = modelsQuery.getReplayAll().count()
     assert list == 2
 
+def testGetAllCaptures():
+    # make sure there are already two captures in the list
+    list = modelsQuery.getCaptureAll().count()
+
+    assert list == 2
+    # Adding first capture
+    modelsQuery.addCapture(
+        'capture1',
+        datetime.datetime(2018, 1, 1, 10, 10, 10),
+        datetime.datetime(2018, 1, 1, 11, 11, 11),
+        'myrds',
+        1,
+        1,
+        "interactive",
+        "active"
+    )
+    #Adding second capture
+    modelsQuery.addCapture(
+        'capture2',
+        datetime.datetime(2018, 2, 2, 10, 10, 10),
+        datetime.datetime(2018, 2, 2, 11, 11, 11),
+        'myrds',
+        1,
+        1,
+        "interactive",
+        "active"
+    )
+    list = modelsQuery.getCaptureAll().count()
+    assert list == 4
+
+
 
 def testCleanup():
     db.drop_all()

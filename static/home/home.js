@@ -26,7 +26,6 @@ var populateActiveCaptures = function($http, $scope) {
         'Content-Type': 'application/json'
         },
     }).then(function successCallback(response) {
-      console.log("active!!!! ");
         $scope.activeCaptures = response.data;
         calculateProgress($scope.activeCaptures);
         console.log('success');
@@ -43,7 +42,6 @@ var populateFinishedCaptures = function($http, $scope) {
         'Content-Type': 'application/json'
         },
     }).then(function successCallback(response) {
-      console.log("finished!!!! ");
         $scope.finishedCaptures = response.data;
         formatDates($scope.finishedCaptures);
         console.log('success');
