@@ -99,4 +99,5 @@ var calculateProgress = function(captures) {
     captures[i].formattedEnd = endTime.toLocaleDateString('en-US', options);
   }
 
+
 }
