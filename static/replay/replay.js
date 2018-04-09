@@ -6,43 +6,6 @@ app.controller('replay', function($scope, $http, $location) {
     const timeContainer = $('#time-container');
     const storageContainer = $('#storage-container');
 
-<<<<<<< HEAD
-    const hideButtons = function() {
-      console.log(arguments);
-      for (var i = 0; i < arguments.length; i++) {
-        arguments[i].hide();
-      }
-    }
-
-    const showButtons = function() {
-      console.log(arguments);
-      for (var i = 0; i < arguments.length; i++) {
-        arguments[i].show();
-      }
-    }
-
-    hideButtons(dateContainer, timeContainer, storageContainer);
-
-    $('input[name=mode]').on('change', function(event) {
-      selectedMode = $("input[name=mode]:checked").attr('id');
-      if (selectedMode === "capture-int") {
-        hideButtons(dateContainer, timeContainer, storageContainer);
-      }
-      else if (selectedMode === "capture-time") {
-        showButtons(dateContainer, timeContainer);
-        hideButtons(storageContainer);
-      }
-      else if (selectedMode === "capture-storage") {
-        hideButtons(dateContainer, timeContainer);
-        showButtons(storageContainer);
-      }
-      else {
-        console.log("NO MODE SELECTED");
-      }
-    });
-
-=======
->>>>>>> origin
     var today = new Date(new Date().getFullYear(), new Date().getMonth(), new Date().getDate());
     $('#startDate').datepicker({
       iconsLibrary: 'fontawesome',
@@ -181,21 +144,3 @@ var populateCaptures = function($http, $scope) {
         console.log('error retrieving captures');
     })
 };
-<<<<<<< HEAD
-
-//var getRDSInstances = function($http, $scope) {
-//    $http({
-//        method: 'GET',
-//        url: 'capture/listDBinstances',
-//        headers: {
-//            'Content-Type': 'application/json'
-//        },
-//    }).then(function successCallback(response) {
-//        $scope.DBConnections = response.data;
-//        console.log('success');
-//    }, function errorCallback(response) {
-//        console.log('error');
-//    });
-//};
-=======
->>>>>>> origin
