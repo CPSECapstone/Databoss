@@ -16,7 +16,7 @@ app.controller('capture', function ($scope, $location, $http, buttonDisplay) {
     buttonDisplay.hideButtons(dateContainer, timeContainer, storageContainer);
 
     $('input[name=mode]').on('change', function(event) {
-      selectedMode = $("input[name=mode]:checked").val();
+      selectedMode = $("input[name=mode]:checked").val();
       console.log("value " + selectedMode);
       if (selectedMode === "interactive") {
         console.log("updating to interactive view");
@@ -120,22 +120,6 @@ app.controller('capture', function ($scope, $location, $http, buttonDisplay) {
 
     // Defaulted mode is interactive when no mode is chosen
     $scope.startCapture = function () {
-<<<<<<< HEAD
-        console.log("Storage value: " +  $('#storageNum').val());
-
-        if ($('#captureName').val() == '' || $('#crBucket').val() == null ||
-            $('#metricsBucket').val() == null || $('#dbName').val() == null) {
-            return;
-        }
-        if ($('input[name=mode]:checked').val() == 'time' &&
-            ($('#startDate').val() == '' || $('#endDate').val() == '' ||
-             $('#startTime').val() == '' || $('#endTime').val() == '' ||
-             ($('#startDate').val() == $('#endDate').val() && $('#startTime').val() > $('#endTime').val()))) {
-            return;
-        }
-
-=======
->>>>>>> origin/master
         $http({
             method: 'POST',
             url: 'capture/startCapture',
@@ -154,7 +138,6 @@ app.controller('capture', function ($scope, $location, $http, buttonDisplay) {
                 'endDate' : $('#endDate').val(),
                 'startTime' : $('#startTime').val(),
                 'endTime' : $('#endTime').val(),
-                'storageNum' : $('#storageNum').val(),
                 'mode' : $('input[name=mode]:checked').val()
             }
         }).then(function successCallback(response) {
