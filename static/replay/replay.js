@@ -6,6 +6,7 @@ app.controller('replay', function($scope, $http, $location) {
     const timeContainer = $('#time-container');
     const storageContainer = $('#storage-container');
 
+<<<<<<< HEAD
     const hideButtons = function() {
       console.log(arguments);
       for (var i = 0; i < arguments.length; i++) {
@@ -40,9 +41,10 @@ app.controller('replay', function($scope, $http, $location) {
       }
     });
 
+=======
+>>>>>>> origin
     var today = new Date(new Date().getFullYear(), new Date().getMonth(), new Date().getDate());
     $('#startDate').datepicker({
-      uiLibrary: 'bootstrap4',
       iconsLibrary: 'fontawesome',
       minDate: today,
       maxDate: function () {
@@ -50,18 +52,15 @@ app.controller('replay', function($scope, $http, $location) {
       }
     });
     $('#endDate').datepicker({
-      uiLibrary: 'bootstrap4',
       iconsLibrary: 'fontawesome',
       minDate: function () {
         return $('#startDate').val();
       }
     });
     $('#startTime').timepicker({
-      uiLibrary: 'bootstrap4',
       iconsLibrary: 'fontawesome',
     });
     $('#endTime').timepicker({
-      uiLibrary: 'bootstrap4',
       iconsLibrary: 'fontawesome',
     });
 
@@ -88,7 +87,7 @@ app.controller('replay', function($scope, $http, $location) {
       // Add code to turn on DB logging here
       console.log("Starting Replay!")
       // @TODO Need to fix the reroute to the started replay.
-      $location.path('/progress');
+      $location.path('/home');
 
     }
 
@@ -99,7 +98,7 @@ app.controller('replay', function($scope, $http, $location) {
         document.getElementById('gb-button').classList.remove('active');
       }
       else {
-        document.getElementById(id).classList.add('active');
+        document.getElementById('gb-button').classList.add('active');
         document.getElementById('mb-button').classList.remove('active');
       }
     }
@@ -151,6 +150,20 @@ app.controller('replay', function($scope, $http, $location) {
             });
         }
     };
+
+    $scope.checkReplayName = function(name) {
+        $http({
+            method: 'GET',
+            url: 'replay/checkName?name=' + name,
+            headers: {
+                'Content-Type' : 'application/json'
+            }
+        }).then(function successCallback(response) {
+            $scope.uniqueName = response.data;
+        }, function errorCallback(response) {
+
+        });
+    };
 });
 
 var populateCaptures = function($http, $scope) {
@@ -168,6 +181,7 @@ var populateCaptures = function($http, $scope) {
         console.log('error retrieving captures');
     })
 };
+<<<<<<< HEAD
 
 //var getRDSInstances = function($http, $scope) {
 //    $http({
@@ -183,3 +197,5 @@ var populateCaptures = function($http, $scope) {
 //        console.log('error');
 //    });
 //};
+=======
+>>>>>>> origin

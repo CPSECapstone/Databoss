@@ -106,7 +106,9 @@ def getReplayById(replayId):
 
 def getReplayByName(replayName):
     replay = models.Replay.query.filter_by(name=replayName).first()
-    return replay
+    if replay:
+        return replay
+    return None
 
 def updateReplayStatus(replayName, status):
     replay = models.Replay.query.filter_by(name=replayName).first()
@@ -129,10 +131,6 @@ def getMetricById(metricId):
     m = models.Metric.query.get(metricId)
     return m
 
-def getMetricByFileName(metricFileName):
-    id = models.Metric.query.get(metricFileName)
-    return id
-
 def getMetricIDByNameAndBucket(metricFileName, metricBucket):
     metricObj = models.Metric.query.filter_by(name=metricFileName, bucket=metricBucket).first()
     return metricObj.id
@@ -145,10 +143,6 @@ def getMetricBucketByName(name):
     capture = models.Capture.query.filter_by(name=name).first()
     metricObj = models.Metric.query.filter_by(id=capture.metricId).first()
     return metricObj.bucket
-
-def getMetricFile(metricFileName, metricBucket):
-    metricObj = models.Metric.query.filter_by(name=metricFileName, bucket=metricBucket).first()
-    return metricObj.filename
 
 def updateMetricFile(metricID, filename):
     metricObj = models.Metric.query.filter_by(id=metricID).first()
@@ -166,14 +160,6 @@ def getLogfile(logfileId):
     return logObj
 
 # Return logfile associated with provided capture or replay
-def getLogfileById(logfileId):
-    logObj = models.Logfile.query.filter_by(id=logfileId).first()
-    return logObj.filename
-
-def getLogfileByName(logfileName):
-    log = models.Logfile.query.filter_by(name=logfileName).first()
-    return log
-
 def updateLogFile(logfileID, filename):
     log = models.Logfile.query.filter_by(id=logfileID).first()
     log.filename = filename
@@ -182,10 +168,6 @@ def updateLogFile(logfileID, filename):
 def getLogFileIdByNameAndBucket(logfileName, captureBucket):
     logObj = models.Logfile.query.filter_by(name=logfileName, bucket=captureBucket).first()
     return logObj.id
-
-def getEndpointByCapture(captureName):
-    captureObj = models.Capture.query.filter_by(name=captureName).first()
-    return captureObj.endpoint
 
 def getLogFileByCapture(captureName):
    captureObj = models.Capture.query.filter_by(name=captureName).first()

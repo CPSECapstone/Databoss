@@ -199,7 +199,6 @@ def get_log_file(bucket_name, file_name):
 
 
 def startCapture():
-    print("starting capture")
     db_name = rds_config.db_name
     status_of_db = get_list_of_instances(db_name)['DBInstances'][0]['DBInstanceStatus']
 
@@ -208,16 +207,11 @@ def startCapture():
             DBInstanceIdentifier=db_name
         )
 
-def stopCapture(startTime, endTime, captureBucket, metricBucket, captureFileName, metricFileName):
+def stopCapture():
     username = rds_config.db_username
     password = rds_config.db_password
     db_name = rds_config.db_name
     endpoint = get_list_of_instances(db_name)['DBInstances'][0]['Endpoint']['Address']
-
-    print("username: " + username)
-    print("password: " + password)
-    print("db_name: " + db_name)
-    print(get_list_of_instances(db_name)['DBInstances'][0]['Endpoint']['Address'])
 
     try:
         conn = pymysql.connect(host=endpoint, user=username, passwd=password, db=db_name, connect_timeout=5)
@@ -226,7 +220,9 @@ def stopCapture(startTime, endTime, captureBucket, metricBucket, captureFileName
         sys.exit()
 
     with conn.cursor() as cur:
-
+        cur.execute("""SELECT * FROM mysql.general_log""")
+        for row in cur:
+            print(row)
         cur.execute("""SELECT * FROM mysql.general_log""")
 
 
@@ -240,6 +236,13 @@ def stopCapture(startTime, endTime, captureBucket, metricBucket, captureFileName
 
     with open(captureFileName, 'w') as outfile:
         outfile.write(json.dumps(logfile, cls=MyEncoder))
+        #logfile = list(map(parseRow, cur))
+        #print(logfile)
+
+        #conn.close()
+
+    #with open(captureFileName, 'w') as outfile:
+        #outfile.write(json.dumps(logfile, cls=MyEncoder))
 
         '''
     with open(captureFileName, 'w') as outfile:
@@ -247,11 +250,11 @@ def stopCapture(startTime, endTime, captureBucket, metricBucket, captureFileName
             #print(item)
             outfile.write("%s\n" % item)'''
 
-    s3.meta.client.upload_file(outfile.name, captureBucket, outfile.name)
+    #s3.meta.client.upload_file(outfile.name, captureBucket, outfile.name)
     #if os.path.exists(captureFileName):
     #    os.remove(captureFileName)
 
-    sendMetrics(metricBucket, metricFileName)
+    #sendMetrics(metricBucket, metricFileName)
 
 
 def startReplay(replayName, captureName, dbName, startDate, endDate):
@@ -346,6 +349,7 @@ res = get_list_of_instances("new")
 pprint.pprint(res, width=1)
 startCapture()
 stopCapture(startTime, endTime, "capture-replay-info", "metric-info", "cFile", "mFile")
+stopCapture()
 replayName = "replay 5"
 captureName = "capture"
 dbName = rds_config.db_name

@@ -331,9 +331,10 @@ def stopCapture(rdsInstance, dbName, startTime, endTime, captureName,
             sys.exit()
         with conn.cursor() as cur:
             cur.execute("""SELECT event_time, command_type, argument FROM mysql.general_log\
-                                WHERE event_time BETWEEN '%s' AND '%s' AND user_host <> 'rdsadmin[rdsadmin] @ localhost [127.0.0.1]'""" % (startTime, endTime))
+                                                  WHERE event_time BETWEEN '%s' AND '%s'""" % (startTime, endTime))
             logfile = list(map(parseRow, cur))
             conn.close()
+
 
         with open(captureFileName, 'w') as outfile:
             outfile.write(json.dumps(logfile, cls=MyEncoder))
