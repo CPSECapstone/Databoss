@@ -18,11 +18,7 @@ def add(name, startTime, endTime, dbName, logfileId, metricId, captureId):
 def startReplay():
     data = request.json
     print(data)
-<<<<<<< HEAD
     replay.startReplay(data['replayName'], data['captureBucket'], data['dbName'], data['replayMode'], data['username'], data['password'])
-    return ""
-=======
-    replay.startReplay(data['replayName'], data['capture'], data['dbName'], data['replayMode'], data['username'], data['password'])
     return ""
 
 
@@ -35,4 +31,4 @@ def checkReplayName():
     if replay is None:
         return "true"
     return "false"
->>>>>>> origin
+
