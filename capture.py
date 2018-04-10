@@ -262,7 +262,7 @@ def updateDatabase(sTime, eTime, cName, cBucket, mBucket, cFile, mFile, dialect,
 
 
 def startCapture(captureName, captureBucket, metricsBucket, rdsInstance, db_name, username, password,
-                 startDate, endDate, startTime, endTime, storage_limit, mode):
+                 startDate, endDate, startTime, endTime, storageNum, mode):
     status_of_db = get_list_of_instances(rdsInstance)['DBInstances'][0]['DBInstanceStatus']
     storage_max_db = get_list_of_instances(rdsInstance)['DBInstances'][0]['AllocatedStorage']
     port = get_list_of_instances(rdsInstance)['DBInstances'][0]['Endpoint']['Port']
@@ -300,7 +300,7 @@ def startCapture(captureName, captureBucket, metricsBucket, rdsInstance, db_name
                 updateDatabase(sTimeCombined, eTimeCombined, captureName, captureBucket, metricsBucket,
                                captureFileName, metricFileName, dbDialect, rdsInstance, db_name, port, username, mode,
                                "active")
-                scheduler.scheduleStorageCapture(datetime.now(), storage_limit, storage_max_db, captureName)
+                scheduler.scheduleStorageCapture(datetime.now(), storageNum, storage_max_db, captureName)
 
         if mode != "storage":
             updateDatabase(sTimeCombined, eTimeCombined, captureName, captureBucket, metricsBucket,

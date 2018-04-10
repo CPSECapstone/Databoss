@@ -138,7 +138,8 @@ app.controller('capture', function ($scope, $location, $http, buttonDisplay) {
                 'endDate' : $('#endDate').val(),
                 'startTime' : $('#startTime').val(),
                 'endTime' : $('#endTime').val(),
-                'mode' : $('input[name=mode]:checked').val()
+                'mode' : $('input[name=mode]:checked').val(),
+                'storageNum' : $('#storageNum').val()
             }
         }).then(function successCallback(response) {
             if ($('input[name=mode]:checked').val() == 'time') {
