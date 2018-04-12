@@ -46,11 +46,21 @@ app.controller('replay', function($scope, $http, $location) {
                     'endTime' : $('#endTime').val(),
                     'replayMode' : $('input[name=replayMode]:checked').val()
                 }
-            });
+            })
+            .then(function successCallback(response) {
+              if ($('input[name=replayMode]:checked').val() == 'replay-raw') {
+                console.log("RAW REPLAY MODE CHECKED");
+                $location.path('replayProgress').search({name : $('#replayName').val()});
+              }
+              else {
+                console.log("Some here other replay mode checked")
+                $location.path('home')
+              }
+            })
       // Add code to turn on DB logging here
-      console.log("Starting Replay!")
+      // console.log("Starting Replay!")
       // @TODO Need to fix the reroute to the started replay.
-      $location.path('/home');
+      // $location.path('/home');
 
     }
 

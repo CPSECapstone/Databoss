@@ -21,7 +21,7 @@ app.directive('goClick', function ( $location ) {
 });
 
 //This service can be used to hide/show buttons
-//Each of the methods can take any number of elements by id  
+//Each of the methods can take any number of elements by id
 app.service('buttonDisplay', function() {
   this.hideButtons = function() {
     for (var i = 0; i < arguments.length; i++) {
@@ -74,6 +74,11 @@ app.config(['$routeProvider', function($routeProvider) {
       templateUrl: 'static/progress/progress.html',
       controller: 'progress',
       css: 'static/css/progress.css'
+   })
+   .when('/replayProgress', {
+     templateUrl: 'static/replayProgress/replayProgress.html',
+     controller: 'replayProgress',
+     css: 'static/css/progress.css'
    })
    //If none of the "when"s are matched then it defaults to the home page.
    .otherwise({
