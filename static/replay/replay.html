@@ -11,7 +11,7 @@
         </div>
         <div class="form-group">
           <label for="capture">Capture to Replay</label>
-          <select class="form-control" id="capture">
+          <select class="form-control" id="capture" ng-model="capture">
             <option disabled selected value> -- Select Capture --</option>
             <option ng-repeat="capture in captures" value="{{capture}}">{{capture.name}}</option>
           </select>
@@ -27,7 +27,7 @@
         </div>
         <div ng-if="rdsInstance != undefined" class="form-group">
           <label for="dbName">Database:</label>
-          <select class="form-control" id="dbName">
+          <select class="form-control" id="dbName" ng-model="$parent.dbName">
             <option disabled selected value> -- Select Database --</option>
             <option ng-repeat="db in instanceDbs" value="{{db}}">{{db}}</option>
           </select>
@@ -48,7 +48,9 @@
 
         <div class="row">
           <button type="button" ng-click="startReplay()" class="btn center-block btn-success"
-                  ng-disabled="uniqueName =='false'">Replay</button>
+                  ng-disabled="uniqueName =='false' || !replayName || !capture ||
+                  !rdsInstance || !dbName">
+            Replay</button>
         </div>
       </div>
     </div>
