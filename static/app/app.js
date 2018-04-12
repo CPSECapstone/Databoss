@@ -20,6 +20,22 @@ app.directive('goClick', function ( $location ) {
    };
 });
 
+//This service can be used to hide/show buttons
+//Each of the methods can take any number of elements by id  
+app.service('buttonDisplay', function() {
+  this.hideButtons = function() {
+    for (var i = 0; i < arguments.length; i++) {
+        arguments[i].hide();
+    }
+  };
+
+  this.showButtons = function() {
+    for (var i = 0; i < arguments.length; i++) {
+      arguments[i].show();
+    }
+  };
+});
+
 //This is how Angular determines what page to display based on the URL.
 //Note: The controller will be in the same parent folder as the templateUrl but in the js folder
 //"css" value is optional
@@ -27,9 +43,9 @@ app.config(['$routeProvider', function($routeProvider) {
    $routeProvider
    //This is the home page
    .when('/', {
-      templateUrl: 'static/login/login.html',
-      controller: 'login',
-      css: 'static/css/login.css'
+      templateUrl: 'static/home/home.html',
+      controller: 'home',
+      css: 'static/css/home.css'
    })
    .when('/capture', {
       templateUrl: 'static/capture/capture.html',
@@ -42,7 +58,8 @@ app.config(['$routeProvider', function($routeProvider) {
    })
    .when('/home', {
       templateUrl: 'static/home/home.html',
-      controller: 'home'
+      controller: 'home',
+      css: 'static/css/home.css'
    })
    .when('/information', {
       templateUrl: 'static/information/information.html',

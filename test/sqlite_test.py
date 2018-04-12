@@ -19,22 +19,22 @@ def testSetup():
 def testAddGetMetric():
     name = 'metName'
     bucket = 'metBucket'
-    file = 'metFile'
-    modelsQuery.addMetric(name, bucket, file)
-    result = models.Metric.query.filter_by(name=name, bucket=bucket, file=file).count()
+    filename = 'metFile'
+    modelsQuery.addMetric(name, bucket, filename)
+    result = models.Metric.query.filter_by(name=name, bucket=bucket, filename=filename).count()
     assert result == 1
 
     metric = modelsQuery.getMetricById(1)
     assert metric.name == name
     assert metric.bucket == bucket
-    assert metric.file == file
+    assert metric.filename == filename
 
 def testAddGetLogfile():
     id = 1
     name = 'logName'
     bucket = 'logBucket'
-    file = 'logFile'
-    modelsQuery.addLogfile(name, bucket, file)
+    filename = 'logFile'
+    modelsQuery.addLogfile(name, bucket, filename)
     result = models.Logfile.query.filter_by(id=id).count()
     assert result == 1
 
@@ -42,7 +42,7 @@ def testAddGetLogfile():
     assert log.id == id
     assert log.name == name
     assert log.bucket == bucket
-    assert log.file == file
+    assert log.filename == filename
 
 def testAddCapture():
     name = 'capName'
@@ -103,7 +103,7 @@ def testGetReplay():
     list = modelsQuery.getReplayAll().count()
     assert list == 1
 
-    name = 'repName'
+    name = 'repName2'
     startTime = datetime.datetime(2018, 1, 31, 12, 12, 12)
     endTime = datetime.datetime(2018, 1, 31, 12, 13, 13)
     dbName = "rds2"
@@ -114,6 +114,37 @@ def testGetReplay():
     modelsQuery.addReplay(name, startTime, endTime, dbName, metricId, captureId, mode, status)
     list = modelsQuery.getReplayAll().count()
     assert list == 2
+
+def testGetAllCaptures():
+    # make sure there are already two captures in the list
+    list = modelsQuery.getCaptureAll().count()
+
+    assert list == 2
+    # Adding first capture
+    modelsQuery.addCapture(
+        'capture1',
+        datetime.datetime(2018, 1, 1, 10, 10, 10),
+        datetime.datetime(2018, 1, 1, 11, 11, 11),
+        'myrds',
+        1,
+        1,
+        "interactive",
+        "active"
+    )
+    #Adding second capture
+    modelsQuery.addCapture(
+        'capture2',
+        datetime.datetime(2018, 2, 2, 10, 10, 10),
+        datetime.datetime(2018, 2, 2, 11, 11, 11),
+        'myrds',
+        1,
+        1,
+        "interactive",
+        "active"
+    )
+    list = modelsQuery.getCaptureAll().count()
+    assert list == 4
+
 
 
 def testCleanup():

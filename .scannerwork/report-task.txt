@@ -1,7 +1,0 @@
-organization=kstan93-github
-projectKey=databoss
-serverUrl=https://sonarcloud.io
-serverVersion=7.1.0.36111
-dashboardUrl=https://sonarcloud.io/dashboard/index/databoss
-ceTaskId=AWF4g48WygQAAyqqj5Ce
-ceTaskUrl=https://sonarcloud.io/api/ce/task?id=AWF4g48WygQAAyqqj5Ce

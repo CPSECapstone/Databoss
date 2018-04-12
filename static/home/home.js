@@ -5,29 +5,80 @@ app.controller('home', function($scope, $location, $http) {
     $scope.goCapture = function () {
         $location.path('/capture');
     }
-
-    populateCaptures($http, $scope);
+    populateActiveCaptures($http, $scope);
+    populateFinishedCaptures($http, $scope);
+    populateScheduledCaptures($http, $scope);
 
 });
+var options = {
+  year: 'numeric',
+  month: '2-digit',
+  day: '2-digit',
+  hour: '2-digit',
+  minute: '2-digit'
+};
 
-var populateCaptures = function($http, $scope) {
+var populateActiveCaptures = function($http, $scope) {
     $http({
         method: 'GET',
-        url: 'capture/getAll',
+        url: 'capture/active',
         headers: {
         'Content-Type': 'application/json'
         },
     }).then(function successCallback(response) {
-        $scope.captures = response.data;
-        calculateProgress($scope.captures);
+        $scope.activeCaptures = response.data;
+        calculateProgress($scope.activeCaptures);
         console.log('success');
     }, function errorCallback(response) {
         console.log('error retrieving captures');
     })
 };
 
+var populateFinishedCaptures = function($http, $scope) {
+    $http({
+        method: 'GET',
+        url: 'capture/finished',
+        headers: {
+        'Content-Type': 'application/json'
+        },
+    }).then(function successCallback(response) {
+        $scope.finishedCaptures = response.data;
+        formatDates($scope.finishedCaptures);
+        console.log('success');
+    }, function errorCallback(response) {
+        console.log('error retrieving captures');
+    })
+};
+
+var populateScheduledCaptures = function($http, $scope) {
+    $http({
+        method: 'GET',
+        url: 'capture/scheduled',
+        headers: {
+        'Content-Type': 'application/json'
+        },
+    }).then(function successCallback(response) {
+      console.log("scheduled!!!! ");
+        $scope.scheduledCaptures= response.data;
+        formatDates($scope.scheduledCaptures);
+        console.log('success');
+    }, function errorCallback(response) {
+        console.log('error retrieving captures');
+    })
+};
+
+var formatDates = function(captures) {
+  for (var i = 0; i < captures.length; i++) {
+    startTime = new Date(captures[i].startTime);
+    startTime.setHours(startTime.getHours() + 7);
+    endTime = new Date(captures[i].endTime);
+    endTime.setHours(endTime.getHours() + 7);
+    captures[i].formattedStart = startTime.toLocaleDateString('en-US', options);
+    captures[i].formattedEnd = endTime.toLocaleDateString('en-US', options);
+  }
+};
+
 var calculateProgress = function(captures) {
-  console.log("HERE CALCULATING PROGRESS");
   var totalTimeMS = null;
   var startTime = null;
   var endTime = null;
@@ -36,16 +87,17 @@ var calculateProgress = function(captures) {
   var percentage = null;
   for (var i = 0; i < captures.length; i++) {
     startTime = new Date(captures[i].startTime);
-    startTime.setHours(startTime.getHours() + 8);
+    startTime.setHours(startTime.getHours() + 7);
     endTime = new Date(captures[i].endTime);
-    endTime.setHours(endTime.getHours() + 8);
+    endTime.setHours(endTime.getHours() + 7);
     totalTimeMS = endTime - startTime;
-    currentTime = new Date(endTime);
-    currentTime.setHours(currentTime.getHours() - 1);
+    currentTime = Date.now();
     elapsedTimeMS = currentTime - startTime;
     percentage = (elapsedTimeMS/totalTimeMS) * 100;
     captures[i].progress = percentage.toFixed(0) + "%";
-    console.log("progress: "  + captures[i].progress);
+    captures[i].formattedStart = startTime.toLocaleDateString('en-US', options);
+    captures[i].formattedEnd = endTime.toLocaleDateString('en-US', options);
   }
+
 
 }

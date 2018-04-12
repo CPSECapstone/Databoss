@@ -1,0 +1,38 @@
+.tableWrapper {
+   height: 700px;
+   overflow : auto;
+   position: fixed;
+}
+
+.tableWrapper .table {
+  width: 100%;
+}
+
+.table {
+    border: 1px solid white;
+}
+
+.wholeTable {
+    height: 500px;
+    overflow: scroll;
+}
+
+.chartWrapper {
+    max-width: 800px;
+    margin-bottom: 100px;
+    padding-left: 150px;
+    margin-top: 0px;
+    padding-bottom:10px;
+}
+
+i {
+    color: white
+}
+
+h2 {
+  font-weight: 300;
+}
+
+h4 {
+  font-weight: 300;
+}
