@@ -26,6 +26,8 @@ def sqlite_setup():
     conn = sqlite3.connect('database.db')
     conn.close()
 
+    capture.aws_config()
+
     # TODO remove db additions here. for testing purposes only
     #db.drop_all()
     #db.create_all()
@@ -53,4 +55,4 @@ def sqlite_setup():
 '''
 
 if __name__ == "__main__":
-    app.run(debug=True)
+    app.run('0.0.0.0')
