@@ -28,8 +28,8 @@ def sqlite_setup():
     conn.close()
 
     # TODO remove db additions here. for testing purposes only
-    db.drop_all()
-    db.create_all()
+    #db.drop_all()
+    #db.create_all()
 '''
     db.drop_all()
     db.create_all()

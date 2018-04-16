@@ -68,7 +68,13 @@ def startReplay(replayName, captureObj, dbName, mode, username, password):
 
     modelsQuery.addMetric(metricFileName, metricBucket, None)
     metricID = modelsQuery.getMetricIDByNameAndBucket(metricFileName, metricBucket)
-    modelsQuery.addReplay(replayName, captureStartTime, captureEndTime, dbName, metricID, captureID, mode, "active")
+
+    ## how to get the current time of the system.
+    replayStartTime = datetime.now()
+    print("Capture start time: " + captureStartTime.strftime('%m/%d/%Y :%H:%M'))
+    print("Current system time: " + replayStartTime.strftime('%m/%d/%Y% :H:%M'))
+
+    modelsQuery.addReplay(replayName, replayStartTime, None, dbName, metricID, captureID, mode, "active")
     download_file(captureName, captureBucket, filename)
 
     addInProgressReplay(replayName, username, password)
@@ -83,11 +89,15 @@ def executeReplay(replayName, captureName, dbName, status_of_db, endpoint, metri
     inProgressReplay = getInProgressReplay(replayName)
     username = inProgressReplay.get('username')
     password = inProgressReplay.get('password')
+
+    numQueriesExecuted = 0
+
     with open(captureName + " " + "tempLogFile", 'r') as tempFile:
         for line in tempFile:
             entireList = literal_eval(line)
             for i in range(len(entireList)):
                 dict = entireList[i]
+                print("Number of queries: " + str(len(entireList)))
                 if dict['message'].startswith('Query'):
                     executableQuery = dict['message'][7:]
                     print("executable query: " + executableQuery)
@@ -101,6 +111,8 @@ def executeReplay(replayName, captureName, dbName, status_of_db, endpoint, metri
                         with conn.cursor() as cur:
                             try:
                                 cur.execute(executableQuery)
+                                numQueriesExecuted += 1
+
                             except pymysql.err.OperationalError as err:
                                 print(err)
                             except pymysql.err.InternalError as err:
