@@ -222,7 +222,7 @@ def parseRow(row):
         'message': message
     }
 
-def parseJson(jsonString, storage_limit):
+'''def parseJson(jsonString, storage_limit):
     freeSpace = (jsonString['Datapoints'][0]['Average'])/(10 **9)
     if (storage_limit > freeSpace):
         logger.error("ERROR: Not enough space for this.")
@@ -248,7 +248,7 @@ def checkStorageCapacity(storage_limit, storage_max_db):
                                     Period= 300,
                                     Statistics=['Average']
                                         ), storage_limit)
-
+'''
 
 def updateDatabase(sTime, eTime, cName, cBucket, mBucket, cFile, mFile, dialect, rdsInstance, dbName, port, username, mode, status):
     endpoint = get_list_of_instances(rdsInstance)['DBInstances'][0]['Endpoint']['Address']
@@ -263,6 +263,7 @@ def updateDatabase(sTime, eTime, cName, cBucket, mBucket, cFile, mFile, dialect,
 
 def startCapture(captureName, captureBucket, metricsBucket, rdsInstance, db_name, username, password,
                  startDate, endDate, startTime, endTime, storageNum, mode):
+    storage_limit = int(storageNum)
     status_of_db = get_list_of_instances(rdsInstance)['DBInstances'][0]['DBInstanceStatus']
     storage_max_db = get_list_of_instances(rdsInstance)['DBInstances'][0]['AllocatedStorage']
     port = get_list_of_instances(rdsInstance)['DBInstances'][0]['Endpoint']['Port']
@@ -297,10 +298,15 @@ def startCapture(captureName, captureBucket, metricsBucket, rdsInstance, db_name
             )
         else:
             if mode == "storage":
-                updateDatabase(sTimeCombined, eTimeCombined, captureName, captureBucket, metricsBucket,
+                if (storage_limit > storage_max_db):
+                    logger.error("ERROR: Allocated storage is greater than user input.")
+                else:
+                    updateDatabase(sTimeCombined, eTimeCombined, captureName, captureBucket, metricsBucket,
                                captureFileName, metricFileName, dbDialect, rdsInstance, db_name, port, username, mode,
                                "active")
-                scheduler.scheduleStorageCapture(datetime.now(), storageNum, storage_max_db, captureName)
+
+                    scheduler.scheduleStorageCapture(datetime.now(), storageNum, storage_max_db, captureName)
+                #print(storage_max_db)
 
         if mode != "storage":
             updateDatabase(sTimeCombined, eTimeCombined, captureName, captureBucket, metricsBucket,
