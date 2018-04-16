@@ -262,7 +262,12 @@ def updateDatabase(sTime, eTime, cName, cBucket, mBucket, cFile, mFile, dialect,
 
 
 def startCapture(captureName, captureBucket, metricsBucket, rdsInstance, db_name, username, password,
-                 startDate, endDate, startTime, endTime, storageNum, mode):
+                 startDate, endDate, startTime, endTime, storageNum, storageType, mode):
+
+    #convert gb to mb
+    if (storageType == 'gb-button'):
+        storageNum = int(storageNum) * 1000
+
     storage_limit = int(storageNum)
     status_of_db = get_list_of_instances(rdsInstance)['DBInstances'][0]['DBInstanceStatus']
     storage_max_db = get_list_of_instances(rdsInstance)['DBInstances'][0]['AllocatedStorage']
@@ -306,7 +311,6 @@ def startCapture(captureName, captureBucket, metricsBucket, rdsInstance, db_name
                                "active")
 
                     scheduler.scheduleStorageCapture(datetime.now(), storageNum, storage_max_db, captureName)
-                #print(storage_max_db)
 
         if mode != "storage":
             updateDatabase(sTimeCombined, eTimeCombined, captureName, captureBucket, metricsBucket,
