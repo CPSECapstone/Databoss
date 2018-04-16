@@ -15,8 +15,7 @@ MyCRT is our tool for capturing workloads from one RDS instance and replaying it
 
 ## Installation Instructions
 
-Link to Wiki pages
-
+[Instructions to install our tool](https://github.com/CPSECapstone/Databoss/wiki/Setting-Up-With-EC2-and-IAM)
 
 ## Demo Link 
 
