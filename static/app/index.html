@@ -18,7 +18,6 @@
     <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.4/angular.min.js"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.4/angular-route.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/angular-ui-bootstrap/2.5.0/ui-bootstrap-tpls.js"></script>
-    <!--<script src="https://cdnjs.cloudflare.com/ajax/libs/angular-ui-bootstrap/2.5.0/ui-bootstrap-tpls.min.js"></script>-->
 
     <!-- Angular setup -->
     <script src="static/app/app.js"></script>
@@ -31,8 +30,7 @@
     <script src="static/metrics/metrics.js"></script>
     <script src="static/replay/replay.js"></script>
     <script src="static/progress/progress.js"></script>
-
-    <!-- Angular services -->
+    <script src="static/replayProgress/replayProgress.js"></script>
 
     <!-- Bootstrap -->
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.6/css/bootstrap.min.css" integrity="sha384-rwoIResjU2yc3z8GV/NPeZWAv56rSmLldC3R/AZzGRnGxQQKnKkoFVhFQhNUwEyJ" crossorigin="anonymous">
@@ -50,11 +48,6 @@
 
 </head>
 <body ng-app="MyCRT">
-  <!-- <div class="horizontal-nav">
-    <div class="navbar-header">
-       <a class="navbar-brand text-white" href="#!">MyCRT</a>
-    </div>
-  </div> -->
   <nav class="nav nav-pills flex-column container-fluid nav-container">
   <!-- <nav class="nav container"> -->
     <li id="my-crt-logo" class="text-center text-white">
@@ -96,6 +89,13 @@
         <div class="text-container">METRICS</div>
       </li>
     </a>
+    <a ng-href="{{'#!/help'}}" class="text-white cus-nav-link" onclick="setActive(this)">
+      <li class="nav-item">
+        <div class="icon-container"> <i class="fa fa-question fa-inverse fa-3x nav-icon"> </i></div>
+        <div class="text-container">HELP</div>
+      </li>
+    </a>
+
 </nav>
 <script>
   function setActive(el) {

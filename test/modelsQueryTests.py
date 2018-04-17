@@ -2,14 +2,12 @@ import models
 import modelsQuery
 import sqlite3
 from web_app import db
-
 import datetime
 
 # Currently functions only on the main DB, and the main DB have tables created and empty
 
 backupDB = sqlite3.connect(':memory:')
 mainDB = sqlite3.connect('database.db')
-
 def testSetup():
     query = "".join(line for line in mainDB.iterdump())
     backupDB.executescript(query)
@@ -64,6 +62,8 @@ def testAddCapture():
     assert result.mode == mode
     assert result.status == status
 
+
+
 def testGetCapture():
     list = modelsQuery.getCaptureAll().count()
     assert list == 1
@@ -78,6 +78,18 @@ def testGetCapture():
     modelsQuery.addCapture(name, startTime, endTime, dbName, logfileId, metricId, mode, status)
     list = modelsQuery.getCaptureAll().count()
     assert list == 2
+
+def testUpdateCaptureStatus():
+    updatedStatus = "unavailable"
+    modelsQuery.updateCaptureStatus("capName2", updatedStatus)
+    updatedCapture = modelsQuery.getCaptureById(2);
+    assert updatedCapture.status == updatedStatus
+
+def testCaptureUpdateEndTime():
+    updatedEndTime = datetime.datetime(2018, 1, 31, 12, 13, 20)
+    modelsQuery.updateCaptureEndTime("capName2", updatedEndTime)
+    updatedCapture = modelsQuery.getCaptureById(2);
+    assert updatedCapture.endTime == updatedEndTime
 
 def testAddReplay():
     name = 'repName'
@@ -115,12 +127,12 @@ def testGetReplay():
     list = modelsQuery.getReplayAll().count()
     assert list == 2
 
-def testGetAllCaptures():
-    # make sure there are already two captures in the list
-    list = modelsQuery.getCaptureAll().count()
 
+def testGetAllCaptures():
+    #make sure there are already two captures in the list
+    list = modelsQuery.getCaptureAll().count()
     assert list == 2
-    # Adding first capture
+    #Adding first capture
     modelsQuery.addCapture(
         'capture1',
         datetime.datetime(2018, 1, 1, 10, 10, 10),
@@ -144,8 +156,6 @@ def testGetAllCaptures():
     )
     list = modelsQuery.getCaptureAll().count()
     assert list == 4
-
-
 
 def testCleanup():
     db.drop_all()

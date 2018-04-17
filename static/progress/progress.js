@@ -24,7 +24,6 @@ app.controller('progress', function($scope, $location, $http) {
     },
   }).then(function successCallback(response) {
     $scope.capture = response.data;
-    // prettyParseDate($scope.capture);
     if ($scope.capture.status !== "scheduled") {
       calculateProgressCapture($scope.capture, $location);
     }
@@ -52,6 +51,10 @@ app.controller('progress', function($scope, $location, $http) {
     }, function errorCallback(response) {
       console.log('error retrieving replays');
     });
+  };
+
+  $scope.endReplay = function() {
+    $location.path('/home');
   };
 
   var progressInterval = setInterval(frame, 1000);
