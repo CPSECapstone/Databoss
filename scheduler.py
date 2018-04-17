@@ -19,7 +19,7 @@ def scheduleStorageCapture(startTime, storageLimit, allocatedStorage, captureNam
     captureObj = modelsQuery.getCaptureByName(captureName)
 
     if storageResult == False:
-        t = Timer(5, pollStorage, args=[startTime, storageLimit, allocatedStorage, captureName, captureObj])
+        t = Timer(60, pollStorage, args=[startTime, storageLimit, allocatedStorage, captureName, captureObj])
         t.start()
 
 def pollStorage(startTime, userStorageInput, maxUserStorage, captureName, captureObj):

@@ -59,9 +59,7 @@ def removeInProgressCapture(captureName):
         if capture.get('captureName') == captureName:
             inProgressCaptures.remove(capture)
 
-#
-# _username = None
-# _password = None
+
 class MyEncoder(json.JSONEncoder):
     def default(self, obj):
         if isinstance(obj, datetime):
@@ -222,33 +220,6 @@ def parseRow(row):
         'message': message
     }
 
-'''def parseJson(jsonString, storage_limit):
-    freeSpace = (jsonString['Datapoints'][0]['Average'])/(10 **9)
-    if (storage_limit > freeSpace):
-        logger.error("ERROR: Not enough space for this.")
-        sys.exit()
-    else:
-        storageRem = freeSpace - storage_limit
-        for element in jsonString['Datapoints'][1:]:
-            gbVal = (element['Average'])/(10 ** 9)
-            #if (gbVal <= storageRem):   #Storage limit has been met
-                #CALL stopCapture()
-
-
-#storage_limit should be in gb
-def checkStorageCapacity(storage_limit, storage_max_db):
-    if (storage_limit > storage_max_db):
-        #print("ERROR: Storage specified is greater than what", db_name, "has allocated")
-        sys.exit()
-    else:
-        parseJson(cloudwatch.get_metric_statistics(Namespace = 'AWS/RDS',
-                                    MetricName = 'FreeStorageSpace',
-                                    StartTime=datetime.utcnow() - timedelta(minutes=60),
-                                    EndTime=datetime.utcnow(),
-                                    Period= 300,
-                                    Statistics=['Average']
-                                        ), storage_limit)
-'''
 
 def updateDatabase(sTime, eTime, cName, cBucket, mBucket, cFile, mFile, dialect, rdsInstance, dbName, port, username, mode, status):
     endpoint = get_list_of_instances(rdsInstance)['DBInstances'][0]['Endpoint']['Address']
@@ -263,7 +234,9 @@ def updateDatabase(sTime, eTime, cName, cBucket, mBucket, cFile, mFile, dialect,
 
 def startCapture(captureName, captureBucket, metricsBucket, rdsInstance, db_name, username, password,
                  startDate, endDate, startTime, endTime, storageNum, mode):
-    storage_limit = int(storageNum)
+    #need to see if mb or gb value
+    storage_limit = float(storageNum)
+    #variable containing if mb or gb is selected (or check what value is being sent to backend)
     status_of_db = get_list_of_instances(rdsInstance)['DBInstances'][0]['DBInstanceStatus']
     storage_max_db = get_list_of_instances(rdsInstance)['DBInstances'][0]['AllocatedStorage']
     port = get_list_of_instances(rdsInstance)['DBInstances'][0]['Endpoint']['Port']
@@ -298,6 +271,7 @@ def startCapture(captureName, captureBucket, metricsBucket, rdsInstance, db_name
             )
         else:
             if mode == "storage":
+                #this check is assuming value is in gb
                 if (storage_limit > storage_max_db):
                     logger.error("ERROR: Allocated storage is greater than user input.")
                 else:
@@ -305,8 +279,8 @@ def startCapture(captureName, captureBucket, metricsBucket, rdsInstance, db_name
                                captureFileName, metricFileName, dbDialect, rdsInstance, db_name, port, username, mode,
                                "active")
 
-                    scheduler.scheduleStorageCapture(datetime.now(), storageNum, storage_max_db, captureName)
-                #print(storage_max_db)
+                    scheduler.scheduleStorageCapture(datetime.now(), storage_limit, storage_max_db, captureName)
+
 
         if mode != "storage":
             updateDatabase(sTimeCombined, eTimeCombined, captureName, captureBucket, metricsBucket,
