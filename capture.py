@@ -263,12 +263,6 @@ def updateDatabase(sTime, eTime, cName, cBucket, mBucket, cFile, mFile, dialect,
 
 def startCapture(captureName, captureBucket, metricsBucket, rdsInstance, db_name, username, password,
                  startDate, endDate, startTime, endTime, storageNum, storageType, mode):
-
-    #convert gb to mb
-    if (storageType == 'gb-button'):
-        storageNum = int(storageNum) * 1000
-
-    storage_limit = int(storageNum)
     status_of_db = get_list_of_instances(rdsInstance)['DBInstances'][0]['DBInstanceStatus']
     storage_max_db = get_list_of_instances(rdsInstance)['DBInstances'][0]['AllocatedStorage']
     port = get_list_of_instances(rdsInstance)['DBInstances'][0]['Endpoint']['Port']
@@ -303,7 +297,10 @@ def startCapture(captureName, captureBucket, metricsBucket, rdsInstance, db_name
             )
         else:
             if mode == "storage":
-                if (storage_limit > storage_max_db):
+                # convert gb to mb
+                if (storageType == 'gb-button'):
+                    storageNum = int(storageNum) * 1000
+                if (int(storageNum) > storage_max_db):
                     logger.error("ERROR: Allocated storage is greater than user input.")
                 else:
                     updateDatabase(sTimeCombined, eTimeCombined, captureName, captureBucket, metricsBucket,

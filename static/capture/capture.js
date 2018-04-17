@@ -120,7 +120,14 @@ app.controller('capture', function ($scope, $location, $http, buttonDisplay) {
 
     // Defaulted mode is interactive when no mode is chosen
     $scope.startCapture = function () {
-        //how to grab the id of a buttton
+
+        if (!$scope.storageType) {
+            console.log("storage type undefined");
+            $scope.storageType = "";
+        }
+
+        console.log("This is the storage type: " + $scope.storageType)
+
         $http({
             method: 'POST',
             url: 'capture/startCapture',
