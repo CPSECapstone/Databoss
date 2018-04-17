@@ -19,6 +19,7 @@ import os.path
 
 VOWELS = "aeiou"
 CONSONANTS = "".join(set(string.ascii_lowercase) - set(VOWELS))
+MAX_CONVERSION = (10**3)
 
 capture_api = Blueprint('capture_api', __name__)
 
@@ -236,6 +237,7 @@ def startCapture(captureName, captureBucket, metricsBucket, rdsInstance, db_name
                  startDate, endDate, startTime, endTime, storageNum, storageType, mode):
     status_of_db = get_list_of_instances(rdsInstance)['DBInstances'][0]['DBInstanceStatus']
     storage_max_db = get_list_of_instances(rdsInstance)['DBInstances'][0]['AllocatedStorage']
+    storage_max_db = storage_max_db * MAX_CONVERSION
     port = get_list_of_instances(rdsInstance)['DBInstances'][0]['Endpoint']['Port']
 
     captureFileName = captureName + " " + "capture file"
