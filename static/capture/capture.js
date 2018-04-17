@@ -168,7 +168,6 @@ app.controller('capture', function ($scope, $location, $http) {
     }
 
     $scope.setStorageSize = function (id) {
-      console.log(id);
       //clear active
       if (id === "mb-button") {
         document.getElementById(id).classList.add('active');
