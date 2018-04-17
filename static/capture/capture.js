@@ -163,8 +163,11 @@ app.controller('capture', function ($scope, $location, $http, buttonDisplay) {
     }
 
     $scope.setStorageSize = function (id) {
+<<<<<<< HEAD
       console.log(id);
       $scope.storageType = id;
+=======
+>>>>>>> Added modal for storage error
       //clear active
       if (id === "mb-button") {
         document.getElementById(id).classList.add('active');
