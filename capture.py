@@ -15,6 +15,7 @@ import modelsQuery
 import scheduler
 import json
 import pytz
+import os.path
 
 VOWELS = "aeiou"
 CONSONANTS = "".join(set(string.ascii_lowercase) - set(VOWELS))
@@ -97,10 +98,6 @@ def aws_config():
 def list_db_instances():
     db_identifiers = []
     all_instances = rds.describe_db_instances()
-
-    for i in all_instances['DBInstances']:
-        print(i['DBInstanceIdentifier'])
-        db_identifiers.append({'name': i['DBInstanceIdentifier']})
     return jsonify(all_instances['DBInstances'])
 
 
@@ -135,8 +132,6 @@ def list_instance_dbs(endpointString):
 @capture_api.route('/listbuckets')
 def list_buckets():
     bucket_list = [bucket.name for bucket in s3.buckets.all()]
-    for i in bucket_list:
-        print(i)
     return jsonify(bucket_list)
 
 
@@ -232,9 +227,9 @@ def parseJson(jsonString, storage_limit):
 
 #storage_limit should be in gb
 def checkStorageCapacity(storage_limit, storage_max_db):
-    db_name = rds_config.db_name
+    #db_name = rds_config.db_name
     if (storage_limit > storage_max_db):
-        print("ERROR: Storage specified is greater than what", db_name, "has allocated")
+        #print("ERROR: Storage specified is greater than what", db_name, "has allocated")
         sys.exit()
     else:
         parseJson(cloudwatch.get_metric_statistics(Namespace = 'AWS/RDS',
@@ -281,7 +276,6 @@ def startCapture(captureName, captureBucket, metricsBucket, rdsInstance, db_name
     sTimeCombined = datetime.combine(startDate, startTime)
     eTimeCombined = datetime.combine(endDate, endTime)
 
-
     if mode == "time":
         updateDatabase(sTimeCombined, eTimeCombined, captureName, captureBucket, metricsBucket,
                        captureFileName, metricFileName, dbDialect, rdsInstance, db_name, port, username, mode, "scheduled")
@@ -324,7 +318,7 @@ def stopCapture(rdsInstance, dbName, startTime, endTime, captureName,
             sys.exit()
         with conn.cursor() as cur:
             cur.execute("""SELECT event_time, command_type, argument FROM mysql.general_log\
-                          WHERE event_time BETWEEN '%s' AND '%s'""" % (startTime, endTime))
+                                      WHERE event_time BETWEEN '%s' AND '%s'""" % (startTime, endTime))
             logfile = list(map(parseRow, cur))
             conn.close()
 
@@ -338,7 +332,9 @@ def stopCapture(rdsInstance, dbName, startTime, endTime, captureName,
         if os.path.exists(captureFileName):
             os.remove(captureFileName)
 
+        parsedEndTime = datetime.strptime(endTime, '%Y-%m-%d %H:%M:%S')
         modelsQuery.updateCaptureStatus(captureName, "finished")
+        modelsQuery.updateCaptureEndTime(captureName, parsedEndTime)
         sendMetrics(metricBucket, metricFileName, startTime, endTime)
 
         removeInProgressCapture(captureName)
@@ -347,6 +343,9 @@ def stopCapture(rdsInstance, dbName, startTime, endTime, captureName,
 def sendMetrics(metricBucket, metricFileName, startTime, endTime):
     dlist = []
 
+    print("start: ")
+    print(startTime)
+    print(endTime)
     dlist.append(cloudwatch.get_metric_statistics(Namespace="AWS/RDS",
                                                   Statistics=['Average'],
                                                   StartTime=startTime,

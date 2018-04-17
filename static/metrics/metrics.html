@@ -7,30 +7,30 @@
           <thead>
             <tr>
               <th>Name</th>
-              <th>Date</th>
               <th>Display</th>
-              <th></th>
+              <th>Log File</th>
+              <th>Metrics File</th>
             </tr>
           </thead>
           <tbody ng-repeat="capture in captures" on-finish-render="updateSelectionFromQueryParameters">
             <tr>
                 <th>
-                    <i class="fa fa-caret-down" ng-click=toggleReplays(capture.id,$event)></i>
-                    {{capture.name}}
+                    <span> </span><i class="fa fa-caret-down" ng-click=toggleReplays(capture.id,$event)></i>
+                    {{capture.name}} </span>
                 </th>
-                <td>{{capture.date}}</td>
                 <td>
                     <input id="capture-checkbox{{capture.id}}" type="checkbox" ng-model="captureSelection"
                            ng-change="updateSelection('capture', capture.name, capture.id, captureSelection)">
                 </td>
-                <td><i class="fa fa-arrow-circle-o-down" ng-click="routeToS3(capture)"></i></td>
+                <td><i class="fa fa-arrow-circle-o-down" ng-click="downloadLogFile(capture)"></i></td>
+                <td><i class="fa fa-arrow-circle-o-down" ng-click="downloadMetricFile(capture)"></i></td>
             </tr>
             <tr id="{{ 'collapse' + capture.id }}" ng-repeat="replay in replays" ng-if="replay.captureId == capture.id">
                 <td>{{replay.name}}</td>
-                <td>{{replay.date}}</td>
                 <td><input type="checkbox" ng-model="replaySelection"
                            ng-change="updateSelection('replay', replay.name, replay.id, replaySelection)"></td>
-                 <td><i class="fa fa-arrow-circle-o-down" ng-click="routeToS3(capture)"></i></td>
+                 <td><i class="fa fa-arrow-circle-o-down" ng-click="downloadLogFile(capture)"></i></td>
+                 <td><i class="fa fa-arrow-circle-o-down" ng-click="downloadMetricFile(capture)"></i></td>
             </tr>
           </tbody>
           </table>

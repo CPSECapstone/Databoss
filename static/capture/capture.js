@@ -1,7 +1,7 @@
 //Initialize the angular application for this AngularJS controller
 var app = angular.module('MyCRT');
 
-app.controller('capture', function ($scope, $location, $http) {
+app.controller('capture', function ($scope, $location, $http, buttonDisplay) {
     console.log("in capture");
 
     // setting variables
@@ -12,40 +12,25 @@ app.controller('capture', function ($scope, $location, $http) {
     var selectedMode = "";
     $scope.required = true;
 
-    //setting an observer for the captureModeBar to change input view when clicked
-    const hideButtons = function() {
-      console.log(arguments);
-      for (var i = 0; i < arguments.length; i++) {
-        arguments[i].hide();
-      }
-    }
-
-    const showButtons = function() {
-      console.log(arguments);
-      for (var i = 0; i < arguments.length; i++) {
-        arguments[i].show();
-      }
-    }
-
     //setup
-    hideButtons(dateContainer, timeContainer, storageContainer);
+    buttonDisplay.hideButtons(dateContainer, timeContainer, storageContainer);
 
     $('input[name=mode]').on('change', function(event) {
       selectedMode = $("input[name=mode]:checked").val();
       console.log("value " + selectedMode);
       if (selectedMode === "interactive") {
         console.log("updating to interactive view");
-        hideButtons(dateContainer, timeContainer, storageContainer);
+        buttonDisplay.hideButtons(dateContainer, timeContainer, storageContainer);
       }
       else if (selectedMode === "time") {
         console.log("updating to time constrained view");
-        showButtons(dateContainer, timeContainer);
-        hideButtons(storageContainer);
+        buttonDisplay.showButtons(dateContainer, timeContainer);
+        buttonDisplay.hideButtons(storageContainer);
       }
       else if (selectedMode === "storage") {
         console.log("updating to storage view");
-        hideButtons(dateContainer, timeContainer);
-        showButtons(storageContainer);
+        buttonDisplay.hideButtons(dateContainer, timeContainer);
+        buttonDisplay.showButtons(storageContainer);
       }
       else {
         console.log("NO MODE SELECTED");
@@ -118,18 +103,23 @@ app.controller('capture', function ($scope, $location, $http) {
 
     getBuckets();
 
-    $scope.startCapture = function () {
-        if ($('#captureName').val() == '' || $('#crBucket').val() == null ||
-            $('#metricsBucket').val() == null ) {
-            return;
-        }
-        if ($('input[name=mode]:checked').val() == 'time' &&
-            ($('#startDate').val() == '' || $('#endDate').val() == '' ||
-             $('#startTime').val() == '' || $('#endTime').val() == '' ||
-             ($('#startDate').val() == $('#endDate').val() && $('#startTime').val() > $('#endTime').val()))) {
-            return;
-        }
+    var captureNames = function () {
+        $http({
+            method: 'GET',
+            url: 'capture/listbuckets',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+        }).then(function successCallback(response) {
+            $scope.buckets = response.data;
+            console.log('success');
+        }, function errorCallback(response) {
+            console.log('error');
+        });
+    }
 
+    // Defaulted mode is interactive when no mode is chosen
+    $scope.startCapture = function () {
         $http({
             method: 'POST',
             url: 'capture/startCapture',
@@ -174,4 +164,18 @@ app.controller('capture', function ($scope, $location, $http) {
         document.getElementById('mb-button').classList.remove('active');
       }
     }
+
+    $scope.checkCaptureName = function(name) {
+        $http({
+            method: 'GET',
+            url: 'capture/checkName?name=' + name,
+            headers: {
+                'Content-Type' : 'application/json'
+            }
+        }).then(function successCallback(response) {
+            $scope.uniqueName = response.data;
+        }, function errorCallback(response) {
+
+        });
+    };
 });

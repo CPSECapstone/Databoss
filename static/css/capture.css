@@ -4,6 +4,7 @@
 
 #time-container, #storage-container {
   margin-bottom: 20px;
+  margin-top: 10px;
 }
 
 .gj-calendar-bootstrap {
@@ -11,7 +12,7 @@
 }
 
 #capture-mode-bar {
-  margin-bottom: 10px;
+  margin-bottom: 30px;
 }
 
 h5 {
@@ -20,4 +21,9 @@ h5 {
 
 .modal-dialog > * {
     color: black;
+}
+
+.warning {
+    color: #ff493a;
+    padding-top: 5px;
 }

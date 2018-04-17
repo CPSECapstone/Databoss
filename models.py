@@ -8,8 +8,6 @@ class DBConnection(db.Model):
     port = db.Column(db.Integer)
     database = db.Column(db.String(100))
     username = db.Column(db.String(100))
-    #captures = db.relationship('Capture', lazy=True)
-    #replays = db.relationship('Replay', lazy=True)
 
     @property
     def serialize(self):
@@ -35,8 +33,8 @@ class Metric(db.Model):
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     name = db.Column(db.String(100))
     bucket = db.Column(db.String(100))
-    file = db.Column(db.String(100))
-    db.UniqueConstraint(bucket, file)
+    filename = db.Column(db.String(100))
+    db.UniqueConstraint(bucket, filename)
     capture = db.relationship('Capture', backref='metric', lazy=True, uselist=False)
     replay = db.relationship('Replay', backref='metric', lazy=True, uselist=False)
 
@@ -46,21 +44,20 @@ class Metric(db.Model):
             'id': self.id,
             'name': self.name,
             'bucket': self.bucket,
-            'file': self.file
+            'filename': self.filename
         }
 
-    def __init__(self, name, bucket, file):
+    def __init__(self, name, bucket, filename):
         self.name = name
         self.bucket = bucket
-        self.file = file
+        self.filename = filename
 
 class Logfile(db.Model):
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     name = db.Column(db.String(100))
     bucket = db.Column(db.String(100))
-    file = db.Column(db.String(100))
-    db.UniqueConstraint(bucket, file)
-    capture = db.relationship('Capture', backref='logfile', lazy=True, uselist=False)
+    filename = db.Column(db.String(100))
+    db.UniqueConstraint(bucket, filename)
 
     @property
     def serialize(self):
@@ -68,24 +65,24 @@ class Logfile(db.Model):
             'id': self.id,
             'name': self.name,
             'bucket': self.bucket,
-            'file': self.file
+            'filename': self.filename
         }
 
-    def __init__(self, name, bucket, file):
+    def __init__(self, name, bucket, filename):
         self.name = name
         self.bucket = bucket
-        self.file = file
+        self.filename = filename
 
 class Capture(db.Model):
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    name = db.Column(db.String(100))
-    startTime = db.Column(db.DateTime)
-    endTime = db.Column(db.DateTime)
+    name = db.Column(db.String(100), unique=True)
+    startTime = db.Column(db.DateTime, nullable=False)
+    endTime = db.Column(db.DateTime, nullable=False)
     dbName = db.Column(db.String(100), db.ForeignKey('dbconnection.name'), nullable=False)
     logfileId = db.Column(db.Integer, db.ForeignKey('logfile.id'), nullable=False)
     metricId = db.Column(db.Integer, db.ForeignKey('metric.id'), nullable=False)
     mode = db.Column(db.String(100), nullable=False)
-    status = db.Column(db.String(100))
+    status = db.Column(db.String(100), nullable=False) # Indicates if capture is scheduled, active, or finished
 
     @property
     def serialize(self):
@@ -113,14 +110,14 @@ class Capture(db.Model):
 
 class Replay(db.Model):
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    name = db.Column(db.String(100))
-    startTime = db.Column(db.DateTime)
+    name = db.Column(db.String(100), unique=True)
+    startTime = db.Column(db.DateTime, nullable=False)
     endTime = db.Column(db.DateTime)
     dbName = db.Column(db.String(100), db.ForeignKey('dbconnection.name'), nullable=False)
     metricId = db.Column(db.Integer, db.ForeignKey('metric.id'), nullable=False)
     captureId = db.Column(db.Integer, db.ForeignKey('capture.id'), nullable=False)
-    mode = db.Column(db.String(100))
-    status = db.Column(db.String(100))
+    mode = db.Column(db.String(100), nullable=False)
+    status = db.Column(db.String(100), nullable=False) # Indicates if replay is scheduled, active, or finished
 
     @property
     def serialize(self):

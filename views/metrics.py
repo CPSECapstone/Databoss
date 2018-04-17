@@ -20,7 +20,7 @@ def getMetrics():
         # TODO add error handling
         raise Exception('Unspecified Type')
 
-    metrics = getS3Metrics(metric.bucket, metric.file)
+    metrics = getS3Metrics(metric.bucket, metric.filename)
 
     return jsonify(cpu=metrics.cpuList, cpuTime=metrics.cpuTimeList,
                    readIO=metrics.readIOList, readIOTime=metrics.readIOTimeList,
@@ -36,4 +36,10 @@ def getS3Metrics(bucket, file):
 def getLogFileObject():
     logfileId = request.args.get('logfileId')
     logfileObj = modelsQuery.getLogfile(logfileId)
-    return jsonify(bucket=logfileObj.bucket, file=logfileObj.file)
+    return jsonify(bucket=logfileObj.bucket, filename=logfileObj.filename)
+
+@metrics_api.route("/getMetricFileObj", methods=["GET"])
+def getMetricFileObject():
+    metricFileId = request.args.get('metricId')
+    metricFileObj = modelsQuery.getMetricById(metricFileId)
+    return jsonify(bucket=metricFileObj.bucket, filename=metricFileObj.filename)
