@@ -30,10 +30,8 @@ def sqlite_setup():
 
     # TODO remove db additions here. for testing purposes only
     #db.drop_all()
-    #db.create_all()
-'''
-    db.drop_all()
     db.create_all()
+'''
 
     modelsQuery.addCapture("Capture1", datetime(2018, 2, 5, 1, 0, 0), datetime(2018, 2, 5, 5, 0, 0), "myRDS1", 1, 1, "interactive", "finished")
     modelsQuery.addReplay("Replay1", datetime(2018, 2, 5, 1, 1, 1), datetime(2018, 2, 5, 1, 1, 1), "myRDS2", 1, 1, "raw", "finished")
