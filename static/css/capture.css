@@ -7,6 +7,12 @@
   margin-top: 10px;
 }
 
+html, body{
+  overflow-x: hidden;
+  position:relative;
+  height: 1000%;
+}
+
 .gj-calendar-bootstrap {
   color: black !important;
 }
