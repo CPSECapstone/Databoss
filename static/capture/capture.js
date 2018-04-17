@@ -120,6 +120,14 @@ app.controller('capture', function ($scope, $location, $http, buttonDisplay) {
 
     // Defaulted mode is interactive when no mode is chosen
     $scope.startCapture = function () {
+
+        if (!$scope.storageType) {
+            console.log("storage type undefined");
+            $scope.storageType = "";
+        }
+
+        console.log("This is the storage type: " + $scope.storageType)
+
         $http({
             method: 'POST',
             url: 'capture/startCapture',
@@ -138,8 +146,9 @@ app.controller('capture', function ($scope, $location, $http, buttonDisplay) {
                 'endDate' : $('#endDate').val(),
                 'startTime' : $('#startTime').val(),
                 'endTime' : $('#endTime').val(),
-                'mode' : $('input[name=mode]:checked').val(),
-                'storageNum' : $('#storageNum').val()
+                'storageNum' : $('#storageNum').val(),
+                'storageType' : $scope.storageType,
+                'mode' : $('input[name=mode]:checked').val()
             }
         }).then(function successCallback(response) {
             if ($('input[name=mode]:checked').val() == 'time') {
@@ -155,10 +164,12 @@ app.controller('capture', function ($scope, $location, $http, buttonDisplay) {
 
     $scope.setStorageSize = function (id) {
       console.log(id);
+      $scope.storageType = id;
       //clear active
       if (id === "mb-button") {
         document.getElementById(id).classList.add('active');
         document.getElementById('gb-button').classList.remove('active');
+
       }
       else {
         document.getElementById(id).classList.add('active');

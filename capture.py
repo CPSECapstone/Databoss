@@ -233,10 +233,7 @@ def updateDatabase(sTime, eTime, cName, cBucket, mBucket, cFile, mFile, dialect,
 
 
 def startCapture(captureName, captureBucket, metricsBucket, rdsInstance, db_name, username, password,
-                 startDate, endDate, startTime, endTime, storageNum, mode):
-    #need to see if mb or gb value
-    storage_limit = float(storageNum)
-    #variable containing if mb or gb is selected (or check what value is being sent to backend)
+                 startDate, endDate, startTime, endTime, storageNum, storageType, mode):
     status_of_db = get_list_of_instances(rdsInstance)['DBInstances'][0]['DBInstanceStatus']
     storage_max_db = get_list_of_instances(rdsInstance)['DBInstances'][0]['AllocatedStorage']
     port = get_list_of_instances(rdsInstance)['DBInstances'][0]['Endpoint']['Port']
@@ -271,14 +268,16 @@ def startCapture(captureName, captureBucket, metricsBucket, rdsInstance, db_name
             )
         else:
             if mode == "storage":
-                #this check is assuming value is in gb
+                # convert gb to mb
+                storage_limit = float(storageNum)
+                if (storageType == 'gb-button'):
+                    storage_limit = storage_limit * 1000
                 if (storage_limit > storage_max_db):
                     logger.error("ERROR: Allocated storage is greater than user input.")
                 else:
                     updateDatabase(sTimeCombined, eTimeCombined, captureName, captureBucket, metricsBucket,
                                captureFileName, metricFileName, dbDialect, rdsInstance, db_name, port, username, mode,
                                "active")
-
                     scheduler.scheduleStorageCapture(datetime.now(), storage_limit, storage_max_db, captureName)
 
 

@@ -41,7 +41,8 @@ def startCapture():
     print("Data: ")
     print(data)
     capture.startCapture(data['captureName'], data['captureBucket'], data['metricsBucket'], data['rdsInstance'], data['dbName'],
-                 data['username'], data['password'], data['startDate'], data['endDate'], data['startTime'], data['endTime'], data['storageNum'], data['mode'])
+                 data['username'], data['password'], data['startDate'], data['endDate'], data['startTime'], data['endTime'], data['storageNum'],
+                 data['storageType'], data['mode'])
     return ""
 
 
