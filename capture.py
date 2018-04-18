@@ -19,6 +19,8 @@ import os.path
 
 VOWELS = "aeiou"
 CONSONANTS = "".join(set(string.ascii_lowercase) - set(VOWELS))
+MAX_CONVERSION = (10**3)
+STORAGE_CONVERSION = (10**6)
 
 capture_api = Blueprint('capture_api', __name__)
 
@@ -59,9 +61,7 @@ def removeInProgressCapture(captureName):
         if capture.get('captureName') == captureName:
             inProgressCaptures.remove(capture)
 
-#
-# _username = None
-# _password = None
+
 class MyEncoder(json.JSONEncoder):
     def default(self, obj):
         if isinstance(obj, datetime):
@@ -222,34 +222,6 @@ def parseRow(row):
         'message': message
     }
 
-def parseJson(jsonString, storage_limit):
-    freeSpace = (jsonString['Datapoints'][0]['Average'])/(10 **9)
-    if (storage_limit > freeSpace):
-        logger.error("ERROR: Not enough space for this.")
-        sys.exit()
-    else:
-        storageRem = freeSpace - storage_limit
-        for element in jsonString['Datapoints'][1:]:
-            gbVal = (element['Average'])/(10 ** 9)
-            #if (gbVal <= storageRem):   #Storage limit has been met
-                #CALL stopCapture()
-
-
-#storage_limit should be in gb
-def checkStorageCapacity(storage_limit, storage_max_db):
-    #db_name = rds_config.db_name
-    if (storage_limit > storage_max_db):
-        #print("ERROR: Storage specified is greater than what", db_name, "has allocated")
-        sys.exit()
-    else:
-        parseJson(cloudwatch.get_metric_statistics(Namespace = 'AWS/RDS',
-                                    MetricName = 'FreeStorageSpace',
-                                    StartTime=datetime.utcnow() - timedelta(minutes=60),
-                                    EndTime=datetime.utcnow(),
-                                    Period= 300,
-                                    Statistics=['Average']
-                                        ), storage_limit)
-
 
 def updateDatabase(sTime, eTime, cName, cBucket, mBucket, cFile, mFile, dialect, rdsInstance, dbName, port, username, mode, status):
     endpoint = get_list_of_instances(rdsInstance)['DBInstances'][0]['Endpoint']['Address']
@@ -263,9 +235,10 @@ def updateDatabase(sTime, eTime, cName, cBucket, mBucket, cFile, mFile, dialect,
 
 
 def startCapture(captureName, captureBucket, metricsBucket, rdsInstance, db_name, username, password,
-                 startDate, endDate, startTime, endTime, storage_limit, mode):
+                 startDate, endDate, startTime, endTime, storageNum, storageType, mode):
     status_of_db = get_list_of_instances(rdsInstance)['DBInstances'][0]['DBInstanceStatus']
     storage_max_db = get_list_of_instances(rdsInstance)['DBInstances'][0]['AllocatedStorage']
+    storage_max_db = storage_max_db * MAX_CONVERSION
     port = get_list_of_instances(rdsInstance)['DBInstances'][0]['Endpoint']['Port']
 
     captureFileName = captureName + " " + "capture file"
@@ -297,10 +270,35 @@ def startCapture(captureName, captureBucket, metricsBucket, rdsInstance, db_name
                 DBInstanceIdentifier=rdsInstance
             )
         else:
-            if storage_limit != None:
-                checkStorageCapacity(storage_limit, storage_max_db)
+            if mode == "storage":
+                # convert gb to mb
+                storage_limit = float(storageNum)
 
-        updateDatabase(sTimeCombined, eTimeCombined, captureName, captureBucket, metricsBucket,
+                #print("storage max: ", storage_max_db)
+                if (storageType == 'gb-button'):
+                    storage_limit = storage_limit * 1000
+                    print("storage limit: ", storage_limit)
+                if (storage_limit > storage_max_db):
+                    logger.error("ERROR: Allocated storage is greater than user input.")
+                    #needs new routing
+                else:
+                    updateDatabase(sTimeCombined, eTimeCombined, captureName, captureBucket, metricsBucket,
+                               captureFileName, metricFileName, dbDialect, rdsInstance, db_name, port, username, mode,
+                               "active")
+                    storageMetrics = cloudwatch.get_metric_statistics(Namespace='AWS/RDS',
+                                                                              MetricName='FreeStorageSpace',
+                                                                              StartTime=datetime.now() - timedelta(
+                                                                                  minutes=1),
+                                                                              EndTime=datetime.now(),
+                                                                              Period=60,
+                                                                              Statistics=['Average']
+                                                                              )
+                    freeSpace = (storageMetrics['Datapoints'][0]['Average']) / (STORAGE_CONVERSION)
+                    scheduler.scheduleStorageCapture(datetime.now(), storage_limit, freeSpace, captureName)
+
+
+        if mode != "storage":
+            updateDatabase(sTimeCombined, eTimeCombined, captureName, captureBucket, metricsBucket,
                        captureFileName, metricFileName, dbDialect, rdsInstance, db_name, port, username, mode, "active")
 
     addInProgressCapture(captureName, username, password)
@@ -328,9 +326,10 @@ def stopCapture(rdsInstance, dbName, startTime, endTime, captureName,
             sys.exit()
         with conn.cursor() as cur:
             cur.execute("""SELECT event_time, command_type, argument FROM mysql.general_log\
-                                      WHERE event_time BETWEEN '%s' AND '%s'""" % (startTime, endTime))
+                                                  WHERE event_time BETWEEN '%s' AND '%s'""" % (startTime, endTime))
             logfile = list(map(parseRow, cur))
             conn.close()
+
 
         with open(captureFileName, 'w') as outfile:
             outfile.write(json.dumps(logfile, cls=MyEncoder))
@@ -392,6 +391,8 @@ def sendMetrics(metricBucket, metricFileName, startTime, endTime):
     if os.path.exists(metricFileName):
         os.remove(metricFileName)
 
+
+
 import json
 import os.path
 
@@ -400,4 +401,6 @@ if os.path.exists("credentials.json"):
     credentials = json.load(credentialFile)
     access_key = credentials['access']
     secret_key = credentials['secret']
+
     aws_config()
+

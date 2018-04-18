@@ -223,7 +223,19 @@ def stopCapture():
         cur.execute("""SELECT * FROM mysql.general_log""")
         for row in cur:
             print(row)
+        cur.execute("""SELECT * FROM mysql.general_log""")
 
+
+        for row in cur:
+            print(row)
+
+        logfile = list(map(parseRow, cur))
+        print(logfile)
+
+        conn.close()
+
+    with open(captureFileName, 'w') as outfile:
+        outfile.write(json.dumps(logfile, cls=MyEncoder))
         #logfile = list(map(parseRow, cur))
         #print(logfile)
 
@@ -336,6 +348,7 @@ print(endTime)
 res = get_list_of_instances("new")
 pprint.pprint(res, width=1)
 startCapture()
+stopCapture(startTime, endTime, "capture-replay-info", "metric-info", "cFile", "mFile")
 stopCapture()
 replayName = "replay 5"
 captureName = "capture"
