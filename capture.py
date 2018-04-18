@@ -17,9 +17,6 @@ import json
 import pytz
 import os.path
 
-VOWELS = "aeiou"
-CONSONANTS = "".join(set(string.ascii_lowercase) - set(VOWELS))
-
 capture_api = Blueprint('capture_api', __name__)
 
 logger = logging.getLogger()
@@ -59,14 +56,13 @@ def removeInProgressCapture(captureName):
         if capture.get('captureName') == captureName:
             inProgressCaptures.remove(capture)
 
-#
-# _username = None
-# _password = None
+
 class MyEncoder(json.JSONEncoder):
     def default(self, obj):
         if isinstance(obj, datetime):
             return int(mktime(obj.timetuple()))
         return json.JSONEncoder.default(self, obj)
+
 
 # Configure boto3 to use access/secret key for s3 and rds
 def aws_config():
@@ -106,7 +102,6 @@ def aws_config():
 # Function that prints all of a user's database instances
 @capture_api.route('/listDBinstances')
 def list_db_instances():
-    db_identifiers = []
     all_instances = rds.describe_db_instances()
     return jsonify(all_instances['DBInstances'])
 
@@ -175,21 +170,6 @@ def testBucketName(bucketName, string):
     bucketName = createBucketName(name, string)
 
 
-def generate_word(wordLength):
-    word = ""
-    for i in range(wordLength):
-        if i % 2 == 0:
-            word += random.choice(CONSONANTS)
-        else:
-            word += random.choice(VOWELS)
-    return word
-
-
-def generate_number(numLength):
-    for i in range(numLength):
-        return random.randint(numLength)
-
-
 def get_list_of_instances(db_name):
     list_of_instances = rds.describe_db_instances(
         DBInstanceIdentifier=db_name
@@ -237,9 +217,7 @@ def parseJson(jsonString, storage_limit):
 
 #storage_limit should be in gb
 def checkStorageCapacity(storage_limit, storage_max_db):
-    #db_name = rds_config.db_name
     if (storage_limit > storage_max_db):
-        #print("ERROR: Storage specified is greater than what", db_name, "has allocated")
         sys.exit()
     else:
         parseJson(cloudwatch.get_metric_statistics(Namespace = 'AWS/RDS',
@@ -255,7 +233,6 @@ def updateDatabase(sTime, eTime, cName, cBucket, mBucket, cFile, mFile, dialect,
     endpoint = get_list_of_instances(rdsInstance)['DBInstances'][0]['Endpoint']['Address']
     modelsQuery.addLogfile(cFile, cBucket, None)
     modelsQuery.addMetric(mFile, mBucket, None)
-    # TODO check if db connection exists and don't add it if it does; what is a unique db connection name?
     modelsQuery.addDBConnection(dialect, str(rdsInstance + "/" + dbName), endpoint, port, dbName, username)
     metricID = modelsQuery.getMetricIDByNameAndBucket(mFile, mBucket)
     logfileID = modelsQuery.getLogFileIdByNameAndBucket(cFile, cBucket)
@@ -311,8 +288,20 @@ def stopCapture(rdsInstance, dbName, startTime, endTime, captureName,
     captureFileName = captureName + " " + "capture file"
     metricFileName = captureName + " " + "metric file"
 
-    startTime = datetime.strptime(startTime, '%a, %d %b %Y %H:%M:%S %Z' ).replace(tzinfo=pytz.utc).strftime("%Y-%m-%d %H:%M:%S")
+
+    startTime = datetime.strptime(startTime, '%a, %d %b %Y %H:%M:%S %Z').replace(tzinfo=pytz.utc).strftime("%Y-%m-%d %H:%M:%S")
     endTime = datetime.strftime(endTime, '%Y-%m-%d %H:%M:%S')
+
+    print(startTime)
+    print(endTime)
+
+    # Get UTC start and end time for selecting logged queries
+    utcStartTime = datetime.strptime(startTime, '%Y-%m-%d %H:%M:%S')
+    utcStartTime = pytz.timezone('US/Pacific').localize(utcStartTime).astimezone(pytz.timezone('UTC')).strftime("%Y-%m-%d %H:%M:%S")
+
+    utcEndTime = datetime.strptime(endTime, '%Y-%m-%d %H:%M:%S')
+    utcEndTime = pytz.timezone('US/Pacific').localize(utcEndTime).astimezone(pytz.timezone('UTC')).strftime("%Y-%m-%d %H:%M:%S")
+
     endpoint = get_list_of_instances(rdsInstance)['DBInstances'][0]['Endpoint']['Address']
     status_of_db = get_list_of_instances(rdsInstance)['DBInstances'][0]['DBInstanceStatus']
 
@@ -327,8 +316,11 @@ def stopCapture(rdsInstance, dbName, startTime, endTime, captureName,
             logger.error("ERROR: Unexpected error: Could not connect to MySql instance.")
             sys.exit()
         with conn.cursor() as cur:
+            query = """SELECT event_time, command_type, argument FROM mysql.general_log\
+                                      WHERE event_time BETWEEN '%s' AND '%s'""" % (utcStartTime, utcEndTime)
+            print(query)
             cur.execute("""SELECT event_time, command_type, argument FROM mysql.general_log\
-                                      WHERE event_time BETWEEN '%s' AND '%s'""" % (startTime, endTime))
+                                      WHERE event_time BETWEEN '%s' AND '%s'""" % (utcStartTime, utcEndTime))
             logfile = list(map(parseRow, cur))
             conn.close()
 
@@ -343,6 +335,7 @@ def stopCapture(rdsInstance, dbName, startTime, endTime, captureName,
             os.remove(captureFileName)
 
         parsedEndTime = datetime.strptime(endTime, '%Y-%m-%d %H:%M:%S')
+        print(parsedEndTime)
         modelsQuery.updateCaptureStatus(captureName, "finished")
         modelsQuery.updateCaptureEndTime(captureName, parsedEndTime)
         sendMetrics(metricBucket, metricFileName, startTime, endTime)
@@ -353,9 +346,6 @@ def stopCapture(rdsInstance, dbName, startTime, endTime, captureName,
 def sendMetrics(metricBucket, metricFileName, startTime, endTime):
     dlist = []
 
-    print("start: ")
-    print(startTime)
-    print(endTime)
     dlist.append(cloudwatch.get_metric_statistics(Namespace="AWS/RDS",
                                                   Statistics=['Average'],
                                                   StartTime=startTime,
