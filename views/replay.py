@@ -6,6 +6,11 @@ import modelsQuery
 
 replay_api = Blueprint('replay_api', __name__)
 
+@replay_api.route('/<name>')
+def getReplay(name):
+    replay = modelsQuery.getReplayByName(name)
+    return jsonify(replay.serialize)
+
 @replay_api.route('/getAll')
 def getAllReplays():
    replays = Replay.query.all()

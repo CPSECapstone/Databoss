@@ -53,6 +53,10 @@ app.controller('progress', function($scope, $location, $http) {
     });
   };
 
+  $scope.endReplay = function() {
+    $location.path('/home');
+  };
+
   var progressInterval = setInterval(frame, 1000);
   function frame() {
     if (parseInt($scope.capture.progress.split("$")[0]) >= 100) {

@@ -1,5 +1,4 @@
 # Databoss
-<<need some sort of intro here>>
 
 ## About MyCRT
 MyCRT is our tool for capturing workloads from one RDS instance and replaying it on the same or another RDS instance. Our tool generates metrics for each capture and replay executed in terms of CPU, I/O, and Memory. Our tool will allow product managers, database engineers, and other teams within companies to understand the performance of theirdatabase and analyze how their workload would perform on different servers.
@@ -15,7 +14,7 @@ MyCRT is our tool for capturing workloads from one RDS instance and replaying it
 
 ## Installation Instructions
 
-[Instructions to install our tool](https://github.com/CPSECapstone/Databoss/wiki/Setting-Up-With-EC2-and-IAM)
+[Instructions to install our tool](https://github.com/CPSECapstone/Databoss/wiki/Installation-Instructions)
 
 ## Demo Link 
 
