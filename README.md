@@ -23,14 +23,13 @@ This will be a link to someones ec2 instance probably
 
 Link to another wiki page
 
-
 ## EULA
 
 Link to PDF?
 
 ## Privacy Policy
 
-Link to PDF?
+[Databoss' Privacy Policy] (https://docs.google.com/document/d/1tdYpdmSM7VKDa0MsD3BkbuWgkjv4KPak-iO3s_VEcaU/edit?usp=sharing)
 
 ## Open Source Licensing
 
