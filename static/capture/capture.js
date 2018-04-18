@@ -151,7 +151,8 @@ app.controller('capture', function ($scope, $location, $http, buttonDisplay) {
                 'mode' : $('input[name=mode]:checked').val()
             }
         }).then(function successCallback(response) {
-            if ($('input[name=mode]:checked').val() == 'time') {
+          const inputMode = $('input[name=mode]:checked').val();
+            if (inputMode == 'time' || inputMode == 'storage') {
                 $location.path('home');
             }
             else {
@@ -163,14 +164,8 @@ app.controller('capture', function ($scope, $location, $http, buttonDisplay) {
     }
 
     $scope.setStorageSize = function (id) {
-<<<<<<< HEAD
-<<<<<<< HEAD
       console.log(id);
       $scope.storageType = id;
-=======
->>>>>>> Added modal for storage error
-=======
->>>>>>> bd3539463a80b9fcdf6db5a49a4f435cc9da3d0b
       //clear active
       if (id === "mb-button") {
         document.getElementById(id).classList.add('active');
