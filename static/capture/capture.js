@@ -151,7 +151,8 @@ app.controller('capture', function ($scope, $location, $http, buttonDisplay) {
                 'mode' : $('input[name=mode]:checked').val()
             }
         }).then(function successCallback(response) {
-            if ($('input[name=mode]:checked').val() == 'time') {
+          const inputMode = $('input[name=mode]:checked').val();
+            if (inputMode == 'time' || inputMode == 'storage') {
                 $location.path('home');
             }
             else {
