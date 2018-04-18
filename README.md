@@ -29,7 +29,7 @@ Link to PDF?
 
 ## Privacy Policy
 
-[Databoss' Privacy Policy] (https://docs.google.com/document/d/1tdYpdmSM7VKDa0MsD3BkbuWgkjv4KPak-iO3s_VEcaU/edit?usp=sharing)
+[Databoss' Privacy Policy](https://docs.google.com/document/d/1tdYpdmSM7VKDa0MsD3BkbuWgkjv4KPak-iO3s_VEcaU/edit?usp=sharing)
 
 ## Open Source Licensing
 
