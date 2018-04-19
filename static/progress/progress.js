@@ -24,7 +24,11 @@ app.controller('progress', function($scope, $location, $http) {
     },
   }).then(function successCallback(response) {
     $scope.capture = response.data;
-    if ($scope.capture.status !== "scheduled") {
+    if ($scope.capture.mode == "storage") {
+      console.log("Disabling end capture button");
+      $('#endCaptureButton').addClass('disabled');
+    }
+    else if ($scope.capture.status !== "scheduled") {
       calculateProgressCapture($scope.capture, $location);
     }
     else {
@@ -32,6 +36,7 @@ app.controller('progress', function($scope, $location, $http) {
       startTime.setHours(startTime.getHours() + 7);
       $scope.capture.progress = "Scheduled to start at " + startTime.toLocaleDateString('en-US', options);
       console.log($scope.capture.progress);
+      console.log("HERERERRERERRRRRRR");
     }
   }, function errorCallback(response) {
     console.log('error retrieving capture name = ' + captureName);

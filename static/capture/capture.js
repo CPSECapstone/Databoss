@@ -2,14 +2,13 @@
 var app = angular.module('MyCRT');
 
 app.controller('capture', function ($scope, $location, $http, buttonDisplay) {
-    console.log("in capture");
-
     // setting variables
     const captureModeBar = document.getElementById('capture-mode-bar');
     const dateContainer = $('#date-container');
     const timeContainer = $('#time-container');
     const storageContainer = $('#storage-container');
     var selectedMode = "";
+    $scope.error = "";
     $scope.required = true;
 
     //setup
@@ -126,8 +125,6 @@ app.controller('capture', function ($scope, $location, $http, buttonDisplay) {
             $scope.storageType = "";
         }
 
-        console.log("This is the storage type: " + $scope.storageType)
-
         $http({
             method: 'POST',
             url: 'capture/startCapture',
@@ -151,7 +148,8 @@ app.controller('capture', function ($scope, $location, $http, buttonDisplay) {
                 'mode' : $('input[name=mode]:checked').val()
             }
         }).then(function successCallback(response) {
-          const inputMode = $('input[name=mode]:checked').val();
+            console.log(response);
+            const inputMode = $('input[name=mode]:checked').val();
             if (inputMode == 'time' || inputMode == 'storage') {
                 $location.path('home');
             }
@@ -159,7 +157,7 @@ app.controller('capture', function ($scope, $location, $http, buttonDisplay) {
                 $location.path('progress').search({name : $('#captureName').val()});
             }
         }, function errorCallback(response) {
-            console.log('Error POSTing capture object to database.');
+            $scope.error = "There is not enough allocated storage your the RDS instance.";
         });
     }
 
