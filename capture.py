@@ -16,7 +16,11 @@ import scheduler
 import json
 import pytz
 import os.path
+<<<<<<< HEAD
+from flask import Response
+=======
 from flask import Response, abort
+>>>>>>> 6068a78cd5f58dec361fec3da984402b53cdcd93
 
 MAX_CONVERSION = (10**3)
 STORAGE_CONVERSION = (10**6)
@@ -291,7 +295,6 @@ def startCapture(captureName, captureBucket, metricsBucket, rdsInstance, db_name
                     print("STORAGE ERROR")
                     abort(400)
                     return Response("Storage is too large", status=400)
-
                 else:
 
                     updateDatabase(sTimeCombined, eTimeCombined, captureName, captureBucket, metricsBucket,
