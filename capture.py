@@ -16,6 +16,7 @@ import scheduler
 import json
 import pytz
 import os.path
+from flask import Response, abort
 
 MAX_CONVERSION = (10**3)
 STORAGE_CONVERSION = (10**6)
@@ -248,6 +249,7 @@ def startCapture(captureName, captureBucket, metricsBucket, rdsInstance, db_name
     status_of_db = get_list_of_instances(rdsInstance)['DBInstances'][0]['DBInstanceStatus']
     storage_max_db = get_list_of_instances(rdsInstance)['DBInstances'][0]['AllocatedStorage']
     storage_max_db = storage_max_db * MAX_CONVERSION
+    print("Storage max db: " + str(storage_max_db))
     port = get_list_of_instances(rdsInstance)['DBInstances'][0]['Endpoint']['Port']
 
     captureFileName = captureName + " " + "capture file"
@@ -282,15 +284,16 @@ def startCapture(captureName, captureBucket, metricsBucket, rdsInstance, db_name
             if mode == "storage":
                 # convert gb to mb
                 storage_limit = float(storageNum)
-
-                #print("storage max: ", storage_max_db)
                 if (storageType == 'gb-button'):
                     storage_limit = storage_limit * 1000
                     print("storage limit: ", storage_limit)
                 if (storage_limit > storage_max_db):
-                    logger.error("ERROR: Allocated storage is greater than user input.")
-                    #needs new routing
+                    print("STORAGE ERROR")
+                    abort(400)
+                    return Response("Storage is too large", status=400)
+
                 else:
+
                     updateDatabase(sTimeCombined, eTimeCombined, captureName, captureBucket, metricsBucket,
                                captureFileName, metricFileName, dbDialect, rdsInstance, db_name, port, username, mode,
                                "active")
@@ -309,7 +312,7 @@ def startCapture(captureName, captureBucket, metricsBucket, rdsInstance, db_name
         if mode != "storage":
             updateDatabase(sTimeCombined, eTimeCombined, captureName, captureBucket, metricsBucket,
                        captureFileName, metricFileName, dbDialect, rdsInstance, db_name, port, username, mode, "active")
-
+    print("Makes it here")
     addInProgressCapture(captureName, username, password)
 
 
