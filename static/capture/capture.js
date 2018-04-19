@@ -16,7 +16,7 @@ app.controller('capture', function ($scope, $location, $http, buttonDisplay) {
     buttonDisplay.hideButtons(dateContainer, timeContainer, storageContainer);
 
     $('input[name=mode]').on('change', function(event) {
-      selectedMode = $("input[name=mode]:checked").val();
+      selectedMode = $("input[name=mode]:checked").val();
       console.log("value " + selectedMode);
       if (selectedMode === "interactive") {
         console.log("updating to interactive view");
@@ -120,6 +120,14 @@ app.controller('capture', function ($scope, $location, $http, buttonDisplay) {
 
     // Defaulted mode is interactive when no mode is chosen
     $scope.startCapture = function () {
+
+        if (!$scope.storageType) {
+            console.log("storage type undefined");
+            $scope.storageType = "";
+        }
+
+        console.log("This is the storage type: " + $scope.storageType)
+
         $http({
             method: 'POST',
             url: 'capture/startCapture',
@@ -138,10 +146,13 @@ app.controller('capture', function ($scope, $location, $http, buttonDisplay) {
                 'endDate' : $('#endDate').val(),
                 'startTime' : $('#startTime').val(),
                 'endTime' : $('#endTime').val(),
+                'storageNum' : $('#storageNum').val(),
+                'storageType' : $scope.storageType,
                 'mode' : $('input[name=mode]:checked').val()
             }
         }).then(function successCallback(response) {
-            if ($('input[name=mode]:checked').val() == 'time') {
+          const inputMode = $('input[name=mode]:checked').val();
+            if (inputMode == 'time' || inputMode == 'storage') {
                 $location.path('home');
             }
             else {
@@ -153,10 +164,13 @@ app.controller('capture', function ($scope, $location, $http, buttonDisplay) {
     }
 
     $scope.setStorageSize = function (id) {
+      console.log(id);
+      $scope.storageType = id;
       //clear active
       if (id === "mb-button") {
         document.getElementById(id).classList.add('active');
         document.getElementById('gb-button').classList.remove('active');
+
       }
       else {
         document.getElementById(id).classList.add('active');

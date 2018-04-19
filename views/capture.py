@@ -38,8 +38,11 @@ def add(name, startTime, endTime, dbName, logfileId, metricId, mode, status):
 @capture_api.route('/startCapture', methods=["POST"])
 def startCapture():
     data = request.json
+    print("Data: ")
+    print(data)
     capture.startCapture(data['captureName'], data['captureBucket'], data['metricsBucket'], data['rdsInstance'], data['dbName'],
-                 data['username'], data['password'], data['startDate'], data['endDate'], data['startTime'], data['endTime'], None, data['mode'])
+                 data['username'], data['password'], data['startDate'], data['endDate'], data['startTime'], data['endTime'], data['storageNum'],
+                 data['storageType'], data['mode'])
     return ""
 
 
