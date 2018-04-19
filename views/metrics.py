@@ -43,3 +43,11 @@ def getMetricFileObject():
     metricFileId = request.args.get('metricId')
     metricFileObj = modelsQuery.getMetricById(metricFileId)
     return jsonify(bucket=metricFileObj.bucket, filename=metricFileObj.filename)
+
+@metrics_api.route("/downloadLogFile", methods=["POST"])
+def downloadLogFile():
+    logfileId = request.args.get('logfileId')
+    logfileObj = modelsQuery.getLogfile(logfileId)
+    s3 = boto3.resource('s3')
+    s3.Bucket(logfileObj.bucket).download_file(logfileObj.filename, logfileObj.filename)
+    return "success"
