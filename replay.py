@@ -126,4 +126,3 @@ def executeReplay(replayName, captureName, dbName, status_of_db, endpoint, metri
     modelsQuery.updateReplayStatus(replayName, "finished")
     metricID = modelsQuery.getMetricIDByNameAndBucket(replayName + " " + "metric file", metricBucket)
     capture.sendMetrics(metricID, replayName + " " + "metric file", startTime, endTime)
-

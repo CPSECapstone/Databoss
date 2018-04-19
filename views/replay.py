@@ -6,6 +6,11 @@ import modelsQuery
 
 replay_api = Blueprint('replay_api', __name__)
 
+@replay_api.route('/<name>')
+def getReplay(name):
+    replay = modelsQuery.getReplayByName(name)
+    return jsonify(replay.serialize)
+
 @replay_api.route('/getAll')
 def getAllReplays():
    replays = Replay.query.all()
@@ -18,7 +23,7 @@ def add(name, startTime, endTime, dbName, logfileId, metricId, captureId):
 def startReplay():
     data = request.json
     print(data)
-    replay.startReplay(data['replayName'], data['capture'], data['dbName'], data['replayMode'], data['username'], data['password'])
+    replay.startReplay(data['replayName'], data['captureBucket'], data['dbName'], data['replayMode'], data['username'], data['password'])
     return ""
 
 
@@ -31,3 +36,4 @@ def checkReplayName():
     if replay is None:
         return "true"
     return "false"
+
