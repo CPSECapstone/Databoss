@@ -101,36 +101,31 @@ app.controller('metrics', function($scope, $location, $http) {
    };
 
    $scope.downloadLogFile = function(capture) {
-    $http({
-         method: 'POST',
-         url: 'metrics/downloadLogFile',
-         headers: {
-             'Content-Type': 'application/json'
-         },
-         params : {'logfileId' : capture.logfileId}
-     }).then(function successCallback(response) {
-         console.log('success');
+       $http({
+            method: 'GET',
+            url: 'metrics/downloadLogFile',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            params : {'logfileId' : capture.logfileId}
+        }).then(function successCallback(response) {
+            console.log('Success')
 
-     }, function errorCallback(response) {
-         console.log('Error in retrieving capture bucket from capture name');
-     });
-    };
-
+        }, function errorCallback(response) {
+            console.log('Error in retrieving capture bucket from capture name');
+        });
+   };
 
    $scope.downloadMetricFile = function(capture) {
     $http({
         method: 'GET',
-        url: 'metrics/getMetricFileObj',
+        url: 'metrics/downloadMetricFile',
         headers: {
             'Content-Type': 'application/json'
         },
         params : {'metricId' : capture.metricId}
     }).then(function successCallback(response) {
-        metricFileObj = response.data;
-        console.log(metricFileObj);
-        var filenameOneSpace = (metricFileObj.filename).replace(" ", "+");
-        var filenameNoSpace = filenameOneSpace.replace(" ", "+");
-        window.open('https://s3-us-west-1.amazonaws.com/' + metricFileObj.bucket + '/' + filenameNoSpace, '_blank');
+        console.log('Success')
 
     }, function errorCallback(response) {
         console.log('Error in retrieving capture bucket from capture name');
