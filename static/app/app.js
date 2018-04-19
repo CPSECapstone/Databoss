@@ -78,7 +78,7 @@ app.config(['$routeProvider', function($routeProvider) {
    .when('/help', {
       templateUrl: 'static/help/help.html',
       controller: 'help',
-      //css: 'static/css/progress.css'
+      css: 'static/css/help.css'
    })
    //If none of the "when"s are matched then it defaults to the home page.
    .otherwise({
