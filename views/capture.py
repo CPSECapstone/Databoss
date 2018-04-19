@@ -1,9 +1,8 @@
 from capture import capture_api
 from flask import jsonify, request
 import capture
-from models import Capture
 import modelsQuery
-from models import Capture
+from models import Capture, Replay
 from datetime import datetime
 
 @capture_api.route('/<name>')
@@ -15,6 +14,13 @@ def getCapture(name):
 def getAllCaptures():
     captures = Capture.query.all()
     return jsonify([i.serialize for i in captures])
+
+@capture_api.route('/getSortedCapturesAndReplays')
+def getSortedCapturesAndReplays():
+    captures = Capture.query.order_by(Capture.startTime.desc()).all()
+    replays = Replay.query.order_by(Replay.startTime.desc()).all()
+
+    return jsonify(captures=[i.serialize for i in captures], replays=[i.serialize for i in replays])
 
 @capture_api.route('/finished')
 def getFinishedCaptures():
