@@ -388,6 +388,7 @@ def sendMetrics(metricBucket, metricFileName, startTime, endTime):
 
     modelsQuery.updateMetricFile(metricBucket, metricFileOpened.name)
     s3.meta.client.upload_file(metricFileOpened.name, modelsQuery.getMetricBucket(metricBucket), metricFileOpened.name)
+    #metricFileOpened.close()
     if os.path.exists(metricFileName):
         os.remove(metricFileName)
 
