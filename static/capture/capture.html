@@ -1,50 +1,56 @@
 <div>
   <h1>Capture</h1>
   <body ng-app="">
-  <form name="form">
-  <div class="row">
-    <div class="center-block">
-      <div class="form-group">
-        <label for="captureName">Capture Name</label>
-        <input type="text" class="form-control" id="captureName" maxlength="20" ng-model="captureName"
-               ng-change="checkCaptureName(captureName)">
-        <div class="warning" ng-if="uniqueName == 'false'">That capture name is already taken!</div>
-      </div>
-      <div class="form-group">
-        <label for="crBucket">Capture Replay Bucket:</label>
-        <select class="form-control" id="crBucket" ng-model="crBucket">
-          <option disabled selected value> -- Select Bucket -- </option>
-          <option ng-repeat="bucket in buckets" value="{{bucket}}">{{bucket}}</option>
-        </select>
-      </div>
-      <div class="form-group">
-        <label for="metricsBucket">Metrics Bucket:</label>
-        <select class="form-control" id="metricsBucket" ng-model="metricsBucket">
-          <option disabled selected value> -- Select Bucket -- </option>
-          <option ng-repeat="bucket in buckets" value="{{bucket}}">{{bucket}}</option>
-        </select>
-      </div>
-      <div class="form-group">
-        <label for="rdsInstance">RDS Instance:</label>
-      <select class="form-control" id="rdsInstance" ng-model="rdsInstance" ng-change="authenticateInstance(rdsInstance)">
-          <option disabled selected value> -- Select RDS Instance -- </option>
-          <option ng-repeat="db in RDSInstances" value="{{db}}">{{db.DBInstanceIdentifier}}</option>
-        </select>
-      </div>
-      <div ng-if="rdsInstance != undefined" class="form-group">
-        <label for="dbName">Database:</label>
-        <select class="form-control" id="dbName" ng-model="$parent.dbName">
-          <option disabled selected value> -- Select Database -- </option>
-          <option ng-repeat="db in instanceDbs" value="{{db}}">{{db}}</option>
-        </select>
-      </div>
+    <form name="form">
+      <div class="row">
+        <div class="center-block">
+          <div class="form-group">
+            <label for="captureName">Capture Name</label>
+            <input type="text" class="form-control" id="captureName" maxlength="15" ng-model="captureName"
+            ng-change="checkCaptureName(captureName)">
+            <div class="warning" ng-if="uniqueName == 'false'">That capture name is already taken!</div>
+          </div>
+          <div class="form-group">
+            <label for="crBucket">Capture Replay Bucket:</label>
+            <select class="form-control" id="crBucket" ng-model="crBucket">
+              <option disabled selected value> -- Select Bucket -- </option>
+              <option ng-repeat="bucket in buckets" value="{{bucket}}">{{bucket}}</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="metricsBucket">Metrics Bucket:</label>
+            <select class="form-control" id="metricsBucket" ng-model="metricsBucket">
+              <option disabled selected value> -- Select Bucket -- </option>
+              <option ng-repeat="bucket in buckets" value="{{bucket}}">{{bucket}}</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="rdsInstance">RDS Instance:</label>
+            <select class="form-control" id="rdsInstance" ng-model="rdsInstance" ng-change="authenticateInstance(rdsInstance)">
+              <option disabled selected value> -- Select RDS Instance -- </option>
+              <option ng-repeat="db in RDSInstances" value="{{db}}">{{db.DBInstanceIdentifier}}</option>
+            </select>
+          </div>
+          <div ng-if="rdsInstance != undefined" class="form-group">
+            <label for="dbName">Database:</label>
+            <select class="form-control" id="dbName" ng-model="$parent.dbName">
+              <option disabled selected value> -- Select Database -- </option>
+              <option ng-repeat="db in instanceDbs" value="{{db}}">{{db}}</option>
+            </select>
+          </div>
 
     <h5>Capture Mode:</h5>
-    <form>
-        <input type="radio" name="mode" value="interactive" ng-model="selectedMode"> Interactive
-        <input type="radio" name="mode" value="time" ng-model="selectedMode"> Time-Constrained
-        <input type="radio" name="mode" value="storage" ng-model="selectedMode"> Storage-Constrained
-    </form>
+    <div id="capture-mode-bar" class="btn-group" data-toggle="buttons">
+      <label class="btn btn-primary">
+        <input type="radio" name="mode" autocomplete="off" value="interactive"> Interactive
+      </label>
+      <label class="btn btn-primary">
+        <input type="radio" name="mode" autocomplete="off" value="time"> Time-Constrained
+      </label>
+      <label class="btn btn-primary">
+        <input type="radio" name="mode" autocomplete="off" value="storage"> Storage-Constrained
+      </label>
+    </div>
     <div id="date-container" class="row">
       <span>Start Date: <input id="startDate" ng-model="startDate" width="276" /> </span>
       <span>End Date: <input id="endDate" ng-model="endDate" width="276" /> </span>
@@ -54,83 +60,103 @@
       <span>End Time: <input id="endTime" ng-model="endTime" width="276" /> </span>
     </div>
 
-    <!-- storage mode  -->
-    <div id="storage-container" placeholder="size" class="row input-group">
-  <input type="number" class="form-control" ng-model="storageNumber">
-  <div class="input-group-append">
-    <button id="mb-button" class="btn btn-outline-success" type="button" ng-click="setStorageSize('mb-button')">MB</button>
-    <button id="gb-button" class="btn btn-outline-success" type="button" ng-click="setStorageSize('gb-button')">GB</button>
-  </div>
-</div>
-    <script>
-    var today = new Date(new Date().getFullYear(), new Date().getMonth(), new Date().getDate());
-    $('#startDate').datepicker({
-      uiLibrary: 'bootstrap4',
-      iconsLibrary: 'fontawesome',
-      minDate: today,
-      maxDate: function () {
-          return $('#endDate').val();
-      }
-    });
-    $('#endDate').datepicker({
-      uiLibrary: 'bootstrap4',
-      iconsLibrary: 'fontawesome',
-      minDate: function () {
-        return $('#startDate').val();
-      }
-    });
-    $('#startTime').timepicker({
-      uiLibrary: 'bootstrap4',
-      iconsLibrary: 'fontawesome'
-    });
-    $('#endTime').timepicker({
-      uiLibrary: 'bootstrap4',
-      iconsLibrary: 'fontawesome'
-    });
-    </script>
+          <!-- storage mode  -->
+          <div id="storage-container" placeholder="size" class="row input-group">
+            <input id="storageNum" type="number" class="form-control" ng-model="storageNumber">
+            <div class="input-group-append">
+              <button id="mb-button" class="btn btn-outline-success" type="button" ng-click="setStorageSize('mb-button')">MB</button>
+              <button id="gb-button" class="btn btn-outline-success" type="button" ng-click="setStorageSize('gb-button')">GB</button>
+            </div>
+          </div>
+          <script>
+          var today = new Date(new Date().getFullYear(), new Date().getMonth(), new Date().getDate());
+          $('#startDate').datepicker({
+            uiLibrary: 'bootstrap4',
+            iconsLibrary: 'fontawesome',
+            minDate: today,
+            maxDate: function () {
+              return $('#endDate').val();
+            }
+          });
+          $('#endDate').datepicker({
+            uiLibrary: 'bootstrap4',
+            iconsLibrary: 'fontawesome',
+            minDate: function () {
+              return $('#startDate').val();
+            }
+          });
+          $('#startTime').timepicker({
+            uiLibrary: 'bootstrap4',
+            // iconsLibrary: 'fontawesome'
+          });
+          $('#endTime').timepicker({
+            uiLibrary: 'bootstrap4',
+            // iconsLibrary: 'fontawesome'
+          });
+          </script>
 
     <div class="text-center">
       <button type="button" ng-model="button" ng-click="startCapture()" class="btn-capture btn btn-success"
               ng-disabled="!captureName || !crBucket || !metricsBucket || !rdsInstance || !dbName ||
-                           (selectedMode == 'time' && (!startTime || !endTime || !startDate || !endDate ||
-                            (startDate == endDate && startTime > endTime))) ||
-                           (selectedMode == 'storage' && !storageNumber) || uniqueName == 'false'">
-      Capture</button>
+                           uniqueName == 'false'">
+      Capture  </button>
+      <div class="warning">{{error}}</div>
     </div>
     </div>
   </div>
   </form>
   </body>
 
-    <!-- Authentication Modal -->
-    <div class="container">
-        <div class="modal fade" id="authenticationModal">
-            <div class="modal-dialog modal-dialog-centered">
-                <div class="modal-content">
-
-                    <!-- Modal Header -->
-                    <div class="modal-header">
-                        <h4 class="modal-title">Authentication for <b>{{currentRDSInstance}}</b></h4>
-                        <button type="button" class="close" data-dismiss="modal">&times;</button>
-                    </div>
-
-                    <!-- Modal body -->
-                    <div class="modal-body">
-                        <label for="username">Username:</label>
-                        <input type="text" class="form-control" id="username" ng-model="username" autofocus>
-                        <label for="password">Password:</label>
-                        <input type="password" class="form-control" id="password" ng-model="password">
-                    </div>
-
-                    <!-- Modal footer -->
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
-                        <button type="button" class="btn btn-primary" data-dismiss="modal"
-                                ng-click="getInstanceDbs(rdsInstance)" id="authenticate">Authenticate</button>
-                    </div>
-
-                </div>
-            </div>
+  <!-- Storage Error Modal  -->
+  <div class="container">
+    <div class="modal fade" id="storageErrorModal">
+      <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title">Error!</h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <div class="modal-body">
+            <p>
+              The storage input is greater than the allocated storage in your database.
+            </p>
+          </div>
         </div>
+      </div>
     </div>
+  </div>
+
+  <!-- Authentication Modal -->
+  <div class="container">
+    <div class="modal fade" id="authenticationModal">
+      <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+
+          <!-- Modal Header -->
+          <div class="modal-header">
+            <h4 class="modal-title">Authentication for <b>{{currentRDSInstance}}</b></h4>
+            <button type="button" class="close" data-dismiss="modal">&times;</button>
+          </div>
+
+          <!-- Modal body -->
+          <div class="modal-body">
+            <label for="username">Username:</label>
+            <input type="text" class="form-control" id="username" ng-model="username" autofocus>
+            <label for="password">Password:</label>
+            <input type="password" class="form-control" id="password" ng-model="password">
+          </div>
+
+          <!-- Modal footer -->
+          <div class="modal-footer">
+            <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
+            <button type="button" class="btn btn-primary" data-dismiss="modal"
+            ng-click="getInstanceDbs(rdsInstance)" id="authenticate">Authenticate</button>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </div>
 </div>

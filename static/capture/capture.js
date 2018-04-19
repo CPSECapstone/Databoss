@@ -1,51 +1,35 @@
 //Initialize the angular application for this AngularJS controller
 var app = angular.module('MyCRT');
 
-app.controller('capture', function ($scope, $location, $http) {
-    console.log("in capture");
-
+app.controller('capture', function ($scope, $location, $http, buttonDisplay) {
     // setting variables
     const captureModeBar = document.getElementById('capture-mode-bar');
     const dateContainer = $('#date-container');
     const timeContainer = $('#time-container');
     const storageContainer = $('#storage-container');
     var selectedMode = "";
+    $scope.error = "";
     $scope.required = true;
 
-    //setting an observer for the captureModeBar to change input view when clicked
-    const hideButtons = function() {
-      console.log(arguments);
-      for (var i = 0; i < arguments.length; i++) {
-        arguments[i].hide();
-      }
-    }
-
-    const showButtons = function() {
-      console.log(arguments);
-      for (var i = 0; i < arguments.length; i++) {
-        arguments[i].show();
-      }
-    }
-
     //setup
-    hideButtons(dateContainer, timeContainer, storageContainer);
+    buttonDisplay.hideButtons(dateContainer, timeContainer, storageContainer);
 
     $('input[name=mode]').on('change', function(event) {
-      selectedMode = $("input[name=mode]:checked").val();
+      selectedMode = $("input[name=mode]:checked").val();
       console.log("value " + selectedMode);
       if (selectedMode === "interactive") {
         console.log("updating to interactive view");
-        hideButtons(dateContainer, timeContainer, storageContainer);
+        buttonDisplay.hideButtons(dateContainer, timeContainer, storageContainer);
       }
       else if (selectedMode === "time") {
         console.log("updating to time constrained view");
-        showButtons(dateContainer, timeContainer);
-        hideButtons(storageContainer);
+        buttonDisplay.showButtons(dateContainer, timeContainer);
+        buttonDisplay.hideButtons(storageContainer);
       }
       else if (selectedMode === "storage") {
         console.log("updating to storage view");
-        hideButtons(dateContainer, timeContainer);
-        showButtons(storageContainer);
+        buttonDisplay.hideButtons(dateContainer, timeContainer);
+        buttonDisplay.showButtons(storageContainer);
       }
       else {
         console.log("NO MODE SELECTED");
@@ -135,6 +119,12 @@ app.controller('capture', function ($scope, $location, $http) {
 
     // Defaulted mode is interactive when no mode is chosen
     $scope.startCapture = function () {
+
+        if (!$scope.storageType) {
+            console.log("storage type undefined");
+            $scope.storageType = "";
+        }
+
         $http({
             method: 'POST',
             url: 'capture/startCapture',
@@ -153,26 +143,32 @@ app.controller('capture', function ($scope, $location, $http) {
                 'endDate' : $('#endDate').val(),
                 'startTime' : $('#startTime').val(),
                 'endTime' : $('#endTime').val(),
+                'storageNum' : $('#storageNum').val(),
+                'storageType' : $scope.storageType,
                 'mode' : $('input[name=mode]:checked').val()
             }
         }).then(function successCallback(response) {
-            if ($('input[name=mode]:checked').val() == 'time') {
+            console.log(response);
+            const inputMode = $('input[name=mode]:checked').val();
+            if (inputMode == 'time' || inputMode == 'storage') {
                 $location.path('home');
             }
             else {
                 $location.path('progress').search({name : $('#captureName').val()});
             }
         }, function errorCallback(response) {
-            console.log('Error POSTing capture object to database.');
+            $scope.error = "There is not enough allocated storage your the RDS instance.";
         });
     }
 
     $scope.setStorageSize = function (id) {
       console.log(id);
+      $scope.storageType = id;
       //clear active
       if (id === "mb-button") {
         document.getElementById(id).classList.add('active');
         document.getElementById('gb-button').classList.remove('active');
+
       }
       else {
         document.getElementById(id).classList.add('active');

@@ -16,9 +16,10 @@ import scheduler
 import json
 import pytz
 import os.path
+from flask import Response, abort
 
-VOWELS = "aeiou"
-CONSONANTS = "".join(set(string.ascii_lowercase) - set(VOWELS))
+MAX_CONVERSION = (10**3)
+STORAGE_CONVERSION = (10**6)
 
 capture_api = Blueprint('capture_api', __name__)
 
@@ -59,14 +60,13 @@ def removeInProgressCapture(captureName):
         if capture.get('captureName') == captureName:
             inProgressCaptures.remove(capture)
 
-#
-# _username = None
-# _password = None
+
 class MyEncoder(json.JSONEncoder):
     def default(self, obj):
         if isinstance(obj, datetime):
             return int(mktime(obj.timetuple()))
         return json.JSONEncoder.default(self, obj)
+
 
 # Configure boto3 to use access/secret key for s3 and rds
 def aws_config():
@@ -106,7 +106,6 @@ def aws_config():
 # Function that prints all of a user's database instances
 @capture_api.route('/listDBinstances')
 def list_db_instances():
-    db_identifiers = []
     all_instances = rds.describe_db_instances()
     return jsonify(all_instances['DBInstances'])
 
@@ -175,21 +174,6 @@ def testBucketName(bucketName, string):
     bucketName = createBucketName(name, string)
 
 
-def generate_word(wordLength):
-    word = ""
-    for i in range(wordLength):
-        if i % 2 == 0:
-            word += random.choice(CONSONANTS)
-        else:
-            word += random.choice(VOWELS)
-    return word
-
-
-def generate_number(numLength):
-    for i in range(numLength):
-        return random.randint(numLength)
-
-
 def get_list_of_instances(db_name):
     list_of_instances = rds.describe_db_instances(
         DBInstanceIdentifier=db_name
@@ -222,6 +206,7 @@ def parseRow(row):
         'message': message
     }
 
+
 def parseJson(jsonString, storage_limit):
     freeSpace = (jsonString['Datapoints'][0]['Average'])/(10 **9)
     if (storage_limit > freeSpace):
@@ -237,9 +222,7 @@ def parseJson(jsonString, storage_limit):
 
 #storage_limit should be in gb
 def checkStorageCapacity(storage_limit, storage_max_db):
-    #db_name = rds_config.db_name
     if (storage_limit > storage_max_db):
-        #print("ERROR: Storage specified is greater than what", db_name, "has allocated")
         sys.exit()
     else:
         parseJson(cloudwatch.get_metric_statistics(Namespace = 'AWS/RDS',
@@ -255,7 +238,6 @@ def updateDatabase(sTime, eTime, cName, cBucket, mBucket, cFile, mFile, dialect,
     endpoint = get_list_of_instances(rdsInstance)['DBInstances'][0]['Endpoint']['Address']
     modelsQuery.addLogfile(cFile, cBucket, None)
     modelsQuery.addMetric(mFile, mBucket, None)
-    # TODO check if db connection exists and don't add it if it does; what is a unique db connection name?
     modelsQuery.addDBConnection(dialect, str(rdsInstance + "/" + dbName), endpoint, port, dbName, username)
     metricID = modelsQuery.getMetricIDByNameAndBucket(mFile, mBucket)
     logfileID = modelsQuery.getLogFileIdByNameAndBucket(cFile, cBucket)
@@ -263,9 +245,11 @@ def updateDatabase(sTime, eTime, cName, cBucket, mBucket, cFile, mFile, dialect,
 
 
 def startCapture(captureName, captureBucket, metricsBucket, rdsInstance, db_name, username, password,
-                 startDate, endDate, startTime, endTime, storage_limit, mode):
+                 startDate, endDate, startTime, endTime, storageNum, storageType, mode):
     status_of_db = get_list_of_instances(rdsInstance)['DBInstances'][0]['DBInstanceStatus']
     storage_max_db = get_list_of_instances(rdsInstance)['DBInstances'][0]['AllocatedStorage']
+    storage_max_db = storage_max_db * MAX_CONVERSION
+    print("Storage max db: " + str(storage_max_db))
     port = get_list_of_instances(rdsInstance)['DBInstances'][0]['Endpoint']['Port']
 
     captureFileName = captureName + " " + "capture file"
@@ -297,12 +281,38 @@ def startCapture(captureName, captureBucket, metricsBucket, rdsInstance, db_name
                 DBInstanceIdentifier=rdsInstance
             )
         else:
-            if storage_limit != None:
-                checkStorageCapacity(storage_limit, storage_max_db)
+            if mode == "storage":
+                # convert gb to mb
+                storage_limit = float(storageNum)
+                if (storageType == 'gb-button'):
+                    storage_limit = storage_limit * 1000
+                    print("storage limit: ", storage_limit)
+                if (storage_limit > storage_max_db):
+                    print("STORAGE ERROR")
+                    abort(400)
+                    return Response("Storage is too large", status=400)
 
-        updateDatabase(sTimeCombined, eTimeCombined, captureName, captureBucket, metricsBucket,
+                else:
+
+                    updateDatabase(sTimeCombined, eTimeCombined, captureName, captureBucket, metricsBucket,
+                               captureFileName, metricFileName, dbDialect, rdsInstance, db_name, port, username, mode,
+                               "active")
+                    storageMetrics = cloudwatch.get_metric_statistics(Namespace='AWS/RDS',
+                                                                              MetricName='FreeStorageSpace',
+                                                                              StartTime=datetime.now() - timedelta(
+                                                                                  minutes=1),
+                                                                              EndTime=datetime.now(),
+                                                                              Period=60,
+                                                                              Statistics=['Average']
+                                                                              )
+                    freeSpace = (storageMetrics['Datapoints'][0]['Average']) / (STORAGE_CONVERSION)
+                    scheduler.scheduleStorageCapture(datetime.now(), storage_limit, freeSpace, captureName)
+
+
+        if mode != "storage":
+            updateDatabase(sTimeCombined, eTimeCombined, captureName, captureBucket, metricsBucket,
                        captureFileName, metricFileName, dbDialect, rdsInstance, db_name, port, username, mode, "active")
-
+    print("Makes it here")
     addInProgressCapture(captureName, username, password)
 
 
@@ -311,8 +321,16 @@ def stopCapture(rdsInstance, dbName, startTime, endTime, captureName,
     captureFileName = captureName + " " + "capture file"
     metricFileName = captureName + " " + "metric file"
 
-    startTime = datetime.strptime(startTime, '%a, %d %b %Y %H:%M:%S %Z' ).replace(tzinfo=pytz.utc).strftime("%Y-%m-%d %H:%M:%S")
+    startTime = datetime.strptime(startTime, '%a, %d %b %Y %H:%M:%S %Z').replace(tzinfo=pytz.utc).strftime("%Y-%m-%d %H:%M:%S")
     endTime = datetime.strftime(endTime, '%Y-%m-%d %H:%M:%S')
+
+    # Get UTC start and end time for selecting logged queries
+    utcStartTime = datetime.strptime(startTime, '%Y-%m-%d %H:%M:%S')
+    utcStartTime = pytz.timezone('US/Pacific').localize(utcStartTime).astimezone(pytz.timezone('UTC')).strftime("%Y-%m-%d %H:%M:%S")
+
+    utcEndTime = datetime.strptime(endTime, '%Y-%m-%d %H:%M:%S')
+    utcEndTime = pytz.timezone('US/Pacific').localize(utcEndTime).astimezone(pytz.timezone('UTC')).strftime("%Y-%m-%d %H:%M:%S")
+
     endpoint = get_list_of_instances(rdsInstance)['DBInstances'][0]['Endpoint']['Address']
     status_of_db = get_list_of_instances(rdsInstance)['DBInstances'][0]['DBInstanceStatus']
 
@@ -328,9 +346,10 @@ def stopCapture(rdsInstance, dbName, startTime, endTime, captureName,
             sys.exit()
         with conn.cursor() as cur:
             cur.execute("""SELECT event_time, command_type, argument FROM mysql.general_log\
-                                      WHERE event_time BETWEEN '%s' AND '%s' AND user_host <> 'rdsadmin[rdsadmin] @ localhost [127.0.0.1]'""" % (startTime, endTime))
+                                      WHERE event_time BETWEEN '%s' AND '%s'""" % (utcStartTime, utcEndTime))
             logfile = list(map(parseRow, cur))
             conn.close()
+
 
         with open(captureFileName, 'w') as outfile:
             outfile.write(json.dumps(logfile, cls=MyEncoder))
@@ -353,9 +372,6 @@ def stopCapture(rdsInstance, dbName, startTime, endTime, captureName,
 def sendMetrics(metricBucket, metricFileName, startTime, endTime):
     dlist = []
 
-    print("start: ")
-    print(startTime)
-    print(endTime)
     dlist.append(cloudwatch.get_metric_statistics(Namespace="AWS/RDS",
                                                   Statistics=['Average'],
                                                   StartTime=startTime,
@@ -392,6 +408,8 @@ def sendMetrics(metricBucket, metricFileName, startTime, endTime):
     if os.path.exists(metricFileName):
         os.remove(metricFileName)
 
+
+
 import json
 import os.path
 
@@ -400,4 +418,6 @@ if os.path.exists("credentials.json"):
     credentials = json.load(credentialFile)
     access_key = credentials['access']
     secret_key = credentials['secret']
+
     aws_config()
+
