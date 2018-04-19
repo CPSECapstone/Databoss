@@ -29,7 +29,7 @@ Link to another wiki page
 
 ## Privacy Policy
 
-[Databoss' Privacy Policy](https://docs.google.com/document/d/1tdYpdmSM7VKDa0MsD3BkbuWgkjv4KPak-iO3s_VEcaU/edit?usp=sharing)
+[Databoss' Privacy Policy](https://drive.google.com/open?id=1hQA0KzcDO5qrIDQys6iLi2ZpIQAG0kT0)
 
 ## Open Source Licensing
 
