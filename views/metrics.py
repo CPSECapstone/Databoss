@@ -33,7 +33,7 @@ def getS3Metrics(bucket, file):
     obj = capture.s3.Object(bucket, file).get()
     return ParsedMetrics(obj['Body'].read().decode('utf-8'))
 
-@metrics_api.route("/downloadLogFile", methods=["POST"])
+@metrics_api.route("/downloadLogFile", methods=["GET"])
 def downloadLogFile():
     logfileId = request.args.get('logfileId')
     logfileObj = modelsQuery.getLogfile(logfileId)
@@ -41,8 +41,8 @@ def downloadLogFile():
     s3.Bucket(logfileObj.bucket).download_file(logfileObj.filename, '../' + logfileObj.filename + '.csv')
     return "success"
 
-@metrics_api.route("/downloadMetricFile", methods=["POST"])
-def downloadLogFile():
+@metrics_api.route("/downloadMetricFile", methods=["GET"])
+def downloadMetricFile():
     metricId = request.args.get('metricId')
     metricObj = modelsQuery.getMetricById(metricId)
     s3 = boto3.resource('s3')
