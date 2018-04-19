@@ -3,6 +3,7 @@ from parseMetrics import ParsedMetrics
 from models import Metric
 import modelsQuery
 import capture
+import boto3
 
 metrics_api = Blueprint('metrics_api', __name__)
 
