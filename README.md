@@ -25,7 +25,7 @@ Link to another wiki page
 
 ## EULA
 
-[Databoss' End-User-License-Agreement](https://docs.google.com/document/d/1ymx8yze9OCX6NfyP8-EKNapYVVo6OGdYSD64171CyOo/edit?usp=sharing)
+[Databoss' End-User-License-Agreement](https://drive.google.com/open?id=1wffkhYXTZ2OlAK3OtKPaIjUHD0eJ2kjg)
 
 ## Privacy Policy
 
