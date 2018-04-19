@@ -1,5 +1,5 @@
 from capture import capture_api
-from flask import jsonify, request
+from flask import jsonify, request, Response
 import capture
 from models import Capture
 import modelsQuery
@@ -38,8 +38,6 @@ def add(name, startTime, endTime, dbName, logfileId, metricId, mode, status):
 @capture_api.route('/startCapture', methods=["POST"])
 def startCapture():
     data = request.json
-    print("Data: ")
-    print(data)
     capture.startCapture(data['captureName'], data['captureBucket'], data['metricsBucket'], data['rdsInstance'], data['dbName'],
                  data['username'], data['password'], data['startDate'], data['endDate'], data['startTime'], data['endTime'], data['storageNum'],
                  data['storageType'], data['mode'])
@@ -74,4 +72,3 @@ def checkName():
     if captureId is None:
         return "true"
     return "false"
-
