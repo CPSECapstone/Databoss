@@ -16,6 +16,7 @@ import scheduler
 import json
 import pytz
 import os.path
+from flask import Response
 
 VOWELS = "aeiou"
 CONSONANTS = "".join(set(string.ascii_lowercase) - set(VOWELS))
@@ -280,6 +281,7 @@ def startCapture(captureName, captureBucket, metricsBucket, rdsInstance, db_name
                     print("storage limit: ", storage_limit)
                 if (storage_limit > storage_max_db):
                     logger.error("ERROR: Allocated storage is greater than user input.")
+                    return Response(status=400)
                     #needs new routing
                 else:
                     updateDatabase(sTimeCombined, eTimeCombined, captureName, captureBucket, metricsBucket,
