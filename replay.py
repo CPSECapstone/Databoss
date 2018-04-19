@@ -71,10 +71,11 @@ def startReplay(replayName, captureObj, dbName, mode, username, password):
 
     ## how to get the current time of the system.
     replayStartTime = datetime.now()
+    replayEndTime = datetime.now()
     print("Capture start time: " + captureStartTime.strftime('%m/%d/%Y :%H:%M'))
     print("Current system time: " + replayStartTime.strftime('%m/%d/%Y% :H:%M'))
 
-    modelsQuery.addReplay(replayName, replayStartTime, None, dbName, metricID, captureID, mode, "active")
+    modelsQuery.addReplay(replayName, replayStartTime, replayEndTime, dbName, metricID, captureID, mode, "active")
     download_file(captureName, captureBucket, filename)
 
     addInProgressReplay(replayName, username, password)
