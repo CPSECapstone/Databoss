@@ -20,6 +20,7 @@ import os.path
 VOWELS = "aeiou"
 CONSONANTS = "".join(set(string.ascii_lowercase) - set(VOWELS))
 MAX_CONVERSION = (10**3)
+STORAGE_CONVERSION = (10**6)
 
 capture_api = Blueprint('capture_api', __name__)
 
@@ -272,15 +273,28 @@ def startCapture(captureName, captureBucket, metricsBucket, rdsInstance, db_name
             if mode == "storage":
                 # convert gb to mb
                 storage_limit = float(storageNum)
+
+                #print("storage max: ", storage_max_db)
                 if (storageType == 'gb-button'):
                     storage_limit = storage_limit * 1000
+                    print("storage limit: ", storage_limit)
                 if (storage_limit > storage_max_db):
                     logger.error("ERROR: Allocated storage is greater than user input.")
+                    #needs new routing
                 else:
                     updateDatabase(sTimeCombined, eTimeCombined, captureName, captureBucket, metricsBucket,
                                captureFileName, metricFileName, dbDialect, rdsInstance, db_name, port, username, mode,
                                "active")
-                    scheduler.scheduleStorageCapture(datetime.now(), storage_limit, storage_max_db, captureName)
+                    storageMetrics = cloudwatch.get_metric_statistics(Namespace='AWS/RDS',
+                                                                              MetricName='FreeStorageSpace',
+                                                                              StartTime=datetime.now() - timedelta(
+                                                                                  minutes=1),
+                                                                              EndTime=datetime.now(),
+                                                                              Period=60,
+                                                                              Statistics=['Average']
+                                                                              )
+                    freeSpace = (storageMetrics['Datapoints'][0]['Average']) / (STORAGE_CONVERSION)
+                    scheduler.scheduleStorageCapture(datetime.now(), storage_limit, freeSpace, captureName)
 
 
         if mode != "storage":

@@ -15,32 +15,34 @@ STORAGE_CONVERSION = (10**6)
 
 storageResult = False
 
-def scheduleStorageCapture(startTime, storageLimit, allocatedStorage, captureName):
+def scheduleStorageCapture(startTime, storageLimit, freeSpace, captureName):
     captureObj = modelsQuery.getCaptureByName(captureName)
 
-    if storageResult == False:
-        t = Timer(60, pollStorage, args=[startTime, storageLimit, allocatedStorage, captureName, captureObj])
+    if (storageResult == False):
+        t = Timer(5, pollStorage, args=[startTime, storageLimit, freeSpace, captureName, captureObj])
         t.start()
 
-def pollStorage(startTime, userStorageInput, maxUserStorage, captureName, captureObj):
+def pollStorage(startTime, userStorageInput, maxSpace, captureName, captureObj):
     global storageResult
 
     storageMetrics = capture.cloudwatch.get_metric_statistics(Namespace='AWS/RDS',
                                      MetricName='FreeStorageSpace',
-                                     StartTime=datetime.utcnow() - timedelta(minutes=1),
-                                     EndTime=datetime.utcnow(),
+                                     StartTime=datetime.now() - timedelta(minutes=1),
+                                     EndTime=datetime.now(),
                                      Period=60,
                                      Statistics=['Average']
                                      )
     print("storage metrics: ")
     print(storageMetrics)
-    freeSpace = (storageMetrics['Datapoints'][0]['Average']) /(STORAGE_CONVERSION)
     for element in storageMetrics['Datapoints'][0:]:
         mbVal = (element['Average'])/(STORAGE_CONVERSION)
-        if (freeSpace - mbVal) == userStorageInput:
+        print("mbVal: ", mbVal)
+        print(maxSpace - mbVal)
+        if ((maxSpace - mbVal) >= userStorageInput):
             storageResult = True
+
             endCapture(captureObj, startTime, datetime.now())
-    scheduleStorageCapture(startTime, userStorageInput, maxUserStorage, captureName)
+    scheduleStorageCapture(startTime, userStorageInput, maxSpace, captureName)
 
 def scheduleCapture(captureName):
     captureObj = modelsQuery.getCaptureByName(captureName)
