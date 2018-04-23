@@ -27,10 +27,8 @@ def sqlite_setup():
     conn = sqlite3.connect('database.db')
     conn.close()
 
-    db.drop_all()
+    #db.drop_all()
     db.create_all()
-
-
 
 if __name__ == "__main__":
     app.run(debug=True)
