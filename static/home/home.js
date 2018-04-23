@@ -30,6 +30,7 @@ var populateCapturesAndReplays = function($http, $scope) {
       $scope.active = [];
       $scope.finished = [];
       response.data.captures.map((capture) => {
+        capture.type = "capture";
         if (capture.status == "active") {
           $scope.active.push(capture);
         }
@@ -39,6 +40,7 @@ var populateCapturesAndReplays = function($http, $scope) {
       })
 
       response.data.replays.map((replay) => {
+        replay.type = "replay";
         if (replay.status == "active") {
           replay.progress = " ";
           $scope.active.push(replay);
@@ -124,18 +126,21 @@ var calculateProgress = function(captures) {
   var currentTime = null;
   var percentage = null;
   for (var i = 0; i < captures.length; i++) {
-    startTime = new Date(captures[i].startTime);
-    startTime.setHours(startTime.getHours() + 7);
-    endTime = new Date(captures[i].endTime);
-    endTime.setHours(endTime.getHours() + 7);
-    totalTimeMS = endTime - startTime;
-    currentTime = Date.now();
-    elapsedTimeMS = currentTime - startTime;
-    percentage = (elapsedTimeMS/totalTimeMS) * 100;
-    captures[i].progress = percentage.toFixed(0) + "%";
-    captures[i].formattedStart = startTime.toLocaleDateString('en-US', options);
-    captures[i].formattedEnd = endTime.toLocaleDateString('en-US', options);
+    if (captures[i].type == "capture") {
+      startTime = new Date(captures[i].startTime);
+      startTime.setHours(startTime.getHours() + 7);
+      endTime = new Date(captures[i].endTime);
+      endTime.setHours(endTime.getHours() + 7);
+      totalTimeMS = endTime - startTime;
+      currentTime = Date.now();
+      elapsedTimeMS = currentTime - startTime;
+      percentage = (elapsedTimeMS/totalTimeMS) * 100;
+      captures[i].progress = percentage.toFixed(0) + "%";
+      captures[i].formattedStart = startTime.toLocaleDateString('en-US', options);
+      captures[i].formattedEnd = endTime.toLocaleDateString('en-US', options);
+    }
+    else {
+      captures[i].progress =  0 + "%";
+    }
   }
-
-
 }
