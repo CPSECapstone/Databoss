@@ -30,9 +30,9 @@ def sqlite_setup():
     db.drop_all()
     db.create_all()
 
-    modelsQuery.addReplay("Replay1", datetime(2018, 2, 5, 1, 1, 1), datetime(2018, 2, 5, 1, 1, 1), "myRDS2", 1, 1, "raw", "finished")
-    modelsQuery.addReplay("Replay2", datetime(2018, 2, 5, 1, 1, 1), datetime(2018, 2, 5, 1, 1, 1), "myRDS2", 1, 1,
-                          "raw", "active")
+    #modelsQuery.addReplay("Replay1", datetime(2018, 2, 5, 1, 1, 1), datetime(2018, 2, 5, 1, 1, 1), "myRDS2", 1, 1, "raw", "finished")
+    #modelsQuery.addReplay("Replay2", datetime(2018, 2, 5, 1, 1, 1), datetime(2018, 2, 5, 1, 1, 1), "myRDS2", 1, 1,
+    #                      "raw", "active")
 
 
 if __name__ == "__main__":
