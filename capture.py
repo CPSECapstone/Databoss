@@ -16,7 +16,6 @@ import scheduler
 import json
 import pytz
 import os.path
-
 from flask import Response, abort
 
 MAX_CONVERSION = (10**3)

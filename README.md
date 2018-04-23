@@ -17,7 +17,7 @@ MyCRT is our tool for capturing workloads from one RDS instance and replaying it
 
 ## Demo Link 
 
-This will be a link to someones ec2 instance probably
+[DEMO SITE](http://ec2-54-183-41-251.us-west-1.compute.amazonaws.com:5000/#!/home)
 
 ## User Guide
 

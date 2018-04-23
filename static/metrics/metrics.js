@@ -266,7 +266,8 @@ var createChart = function(elementId, yAxesLabel, xAxesLabel) {
                         fontColor: "#D9D9D9"
                     },
                     ticks: {
-                      fontColor: "#D9D9D9"
+                      fontColor: "#D9D9D9",
+                      maxTicksLimit: 30
                     }
                 }]
             }

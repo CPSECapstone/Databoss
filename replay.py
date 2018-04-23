@@ -71,10 +71,11 @@ def startReplay(replayName, captureObj, dbName, mode, username, password):
 
     ## how to get the current time of the system.
     replayStartTime = datetime.now()
+    replayEndTime = datetime.now()
     print("Capture start time: " + captureStartTime.strftime('%m/%d/%Y :%H:%M'))
     print("Current system time: " + replayStartTime.strftime('%m/%d/%Y% :H:%M'))
 
-    modelsQuery.addReplay(replayName, replayStartTime, None, dbName, metricID, captureID, mode, "active")
+    modelsQuery.addReplay(replayName, replayStartTime, replayEndTime, dbName, metricID, captureID, mode, "active")
     download_file(captureName, captureBucket, filename)
 
     addInProgressReplay(replayName, username, password)
@@ -97,10 +98,8 @@ def executeReplay(replayName, captureName, dbName, status_of_db, endpoint, metri
             entireList = literal_eval(line)
             for i in range(len(entireList)):
                 dict = entireList[i]
-                print("Number of queries: " + str(len(entireList)))
                 if dict['message'].startswith('Query'):
                     executableQuery = dict['message'][7:]
-                    print("executable query: " + executableQuery)
                     if str(status_of_db) == "available":
                         try:
                             conn = pymysql.connect(host=endpoint, user=username, passwd=password, db=dbName,

@@ -157,7 +157,7 @@ app.controller('capture', function ($scope, $location, $http, buttonDisplay) {
                 $location.path('progress').search({name : $('#captureName').val()});
             }
         }, function errorCallback(response) {
-            $scope.error = "There is not enough allocated storage your the RDS instance.";
+            $scope.error = "There is not enough allocated storage in your the RDS instance.";
         });
     }
 
