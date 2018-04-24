@@ -109,3 +109,7 @@ h1 {
   /* border: 1px solid green; */
   background-color: #111111;
 }
+
+#feedback-form {
+  margin-left: 70px;
+}
