@@ -342,13 +342,14 @@ def stopCapture(rdsInstance, dbName, startTime, endTime, captureName,
 
         except:
             logger.error("ERROR: Unexpected error: Could not connect to MySql instance.")
+            conn.close()
             sys.exit()
         with conn.cursor() as cur:
             cur.execute("""SELECT event_time, command_type, argument FROM mysql.general_log\
-                                      WHERE event_time BETWEEN '%s' AND '%s'""" % (utcStartTime, utcEndTime))
+                        WHERE user_host not like '%%rds%%' AND\
+                        event_time BETWEEN '%s' AND '%s'""" % (utcStartTime, utcEndTime))
             logfile = list(map(parseRow, cur))
             conn.close()
-
 
         with open(captureFileName, 'w') as outfile:
             outfile.write(json.dumps(logfile, cls=MyEncoder))
