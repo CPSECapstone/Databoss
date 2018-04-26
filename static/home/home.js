@@ -49,6 +49,7 @@ var populateCapturesAndReplays = function($http, $scope) {
       })
       formatDates($scope.finished);
       formatDates($scope.active);
+      calculateProgress($scope.active);
       console.log(response.data.captures);
       console.log(response.data.replays);
     }, function errorCallback(response) {
