@@ -142,6 +142,7 @@
 
           <!-- Modal body -->
           <div class="modal-body">
+            <div class="warning" ng-if="instanceDbs == 'false'">RDS Authentication failed.</div>
             <label for="username">Username:</label>
             <input type="text" class="form-control" id="username" ng-model="username" autofocus>
             <label for="password">Password:</label>
@@ -151,7 +152,7 @@
           <!-- Modal footer -->
           <div class="modal-footer">
             <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
-            <button type="button" class="btn btn-primary" data-dismiss="modal"
+            <button type="button" class="btn btn-primary"
             ng-click="getInstanceDbs(rdsInstance)" id="authenticate">Authenticate</button>
           </div>
 
