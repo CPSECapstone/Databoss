@@ -98,10 +98,8 @@ def executeReplay(replayName, captureName, dbName, status_of_db, endpoint, metri
             entireList = literal_eval(line)
             for i in range(len(entireList)):
                 dict = entireList[i]
-                print("Number of queries: " + str(len(entireList)))
                 if dict['message'].startswith('Query'):
                     executableQuery = dict['message'][7:]
-                    print("executable query: " + executableQuery)
                     if str(status_of_db) == "available":
                         try:
                             conn = pymysql.connect(host=endpoint, user=username, passwd=password, db=dbName,
