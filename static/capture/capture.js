@@ -162,7 +162,6 @@ app.controller('capture', function ($scope, $location, $http, buttonDisplay) {
     }
 
     $scope.setStorageSize = function (id) {
-      console.log(id);
       $scope.storageType = id;
       //clear active
       if (id === "mb-button") {
@@ -188,5 +187,55 @@ app.controller('capture', function ($scope, $location, $http, buttonDisplay) {
         }, function errorCallback(response) {
 
         });
+    };
+
+    //returns true if capture button should be disabled
+    //returns false if capture button should be enabled
+    //only gets called when there is a change to one of the input fields,
+    //not one of the
+    $scope.disableCaptureButton = function() {
+        console.log("IN DISABLE FUNCTION");
+
+        disable = false;
+        captureName = $('#captureName').val();
+        captureBucket = $('#crBucket').val();
+        metricsBucket = $('#metricsBucket').val();
+        rdsInstance = $('#rdsInstance').val();
+        dbName = $('#dbName').val();
+        mode = $('input[name=mode]:checked').val();
+
+
+        console.log("the mode is: " + mode);
+
+        if (!captureName || !captureBucket || !metricsBucket || !rdsInstance) {
+            disabled = true;
+        }
+
+        if (mode == 'time') {
+
+            startDate = $('#startDate').val();
+            endDate = $('#endDate').val();
+            startTime = $('#startTime').val();
+            endTime = $('#endTime').val();
+
+            console.log(startDate);
+            console.log(endDate);
+            console.log(startTime);
+            console.log(endTime);
+
+            if (!startDate || !endDate || !startTime || !endTime) {
+                console.log("should be disabled");
+                disable = true;
+            }
+        }
+        if (mode == 'storage') {
+            storageNum = $('#storageNum').val();
+            if (!storageNum) {
+                disable = true;
+            }
+        }
+
+        return disable;
+
     };
 });
