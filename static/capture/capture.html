@@ -42,13 +42,14 @@
     <h5>Capture Mode:</h5>
     <div id="capture-mode-bar" class="btn-group" data-toggle="buttons">
       <label class="btn btn-primary active">
-        <input type="radio" name="mode" autocomplete="off" value="interactive"> Interactive
+      <label class="btn btn-primary">
+        <input type="radio" name="mode" autocomplete="off" value="interactive" ng-model="mode" ng-change="disableCaptureButton()"> Interactive
       </label>
       <label class="btn btn-primary">
-        <input type="radio" name="mode" autocomplete="off" value="time"> Time-Constrained
+        <input type="radio" name="mode" autocomplete="off" value="time" ng-model="mode" ng-change="disableCaptureButton()"> Time-Constrained
       </label>
       <label class="btn btn-primary">
-        <input type="radio" name="mode" autocomplete="off" value="storage"> Storage-Constrained
+        <input type="radio" name="mode" autocomplete="off" value="storage" ng-model="mode" ng-change="disableCaptureButton()"> Storage-Constrained
       </label>
     </div>
     <div id="date-container" class="row">
@@ -99,7 +100,7 @@
       <button type="button" ng-model="button" ng-click="startCapture()" class="btn-capture btn btn-success"
               ng-disabled="!captureName || !crBucket || !metricsBucket || !rdsInstance || !dbName ||
                            uniqueName == 'false' ||
-              validateTime() || validateStorage()">
+              validateTime() || validateStorage() || disableCatureButton()">
       Capture  </button>
       <div class="warning">{{error}}</div>
     </div>
