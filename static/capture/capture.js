@@ -191,8 +191,8 @@ app.controller('capture', function ($scope, $location, $http, buttonDisplay) {
 
     //returns true if capture button should be disabled
     //returns false if capture button should be enabled
-    //only gets called when there is a change to one of the input fields,
-    //not one of the
+    //for some reason it's like the modes are one behind everytime.
+    //TRY PULLING THE VALUE OF THE MODE IN A DIFFERENT WAY POSSIBLY?
     $scope.disableCaptureButton = function() {
         console.log("IN DISABLE FUNCTION");
 
@@ -208,28 +208,23 @@ app.controller('capture', function ($scope, $location, $http, buttonDisplay) {
         console.log("the mode is: " + mode);
 
         if (!captureName || !captureBucket || !metricsBucket || !rdsInstance) {
+            console.log("should be here everytime");
             disabled = true;
         }
 
         if (mode == 'time') {
-
             startDate = $('#startDate').val();
             endDate = $('#endDate').val();
             startTime = $('#startTime').val();
             endTime = $('#endTime').val();
 
-            console.log(startDate);
-            console.log(endDate);
-            console.log(startTime);
-            console.log(endTime);
-
             if (!startDate || !endDate || !startTime || !endTime) {
-                console.log("should be disabled");
                 disable = true;
             }
         }
         if (mode == 'storage') {
             storageNum = $('#storageNum').val();
+
             if (!storageNum) {
                 disable = true;
             }
