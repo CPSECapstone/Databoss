@@ -78,8 +78,10 @@ app.controller('capture', function ($scope, $location, $http, buttonDisplay) {
             }).then(function successCallback(response) {
                 console.log(response.data);
                 $scope.instanceDbs = response.data;
+                $('#authenticationModal').modal('hide');
                 console.log('success');
             }, function errorCallback(response) {
+                $scope.instanceDbs = 'false';
                 console.log('error');
             });
         }
