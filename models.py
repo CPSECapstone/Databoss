@@ -118,6 +118,9 @@ class Replay(db.Model):
     captureId = db.Column(db.Integer, db.ForeignKey('capture.id'), nullable=False)
     mode = db.Column(db.String(100), nullable=False)
     status = db.Column(db.String(100), nullable=False) # Indicates if replay is scheduled, active, or finished
+    totalQueries = db.Column(db.Integer, default=0)
+    successfulQueries = db.Column(db.Integer, default=0)
+    failedQueries = db.Column(db.Integer, default=0)
 
     @property
     def serialize(self):
@@ -130,7 +133,10 @@ class Replay(db.Model):
             'metricId': self.metricId,
             'captureId': self.captureId,
             'mode': self.mode,
-            'status': self.status
+            'status': self.status,
+            'totalQueries': self.totalQueries,
+            'successfulQueries': self.successfulQueries,
+            'failedQueries': self.failedQueries
         }
 
     def __init__(self, name, startTime, endTime, dbName, metricId, captureId, mode, status):
