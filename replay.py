@@ -85,7 +85,7 @@ def startReplay(replayName, captureObj, dbName, mode, username, password):
 
 def executeReplay(replayName, captureName, dbName, status_of_db, endpoint, metricFile, startTime):
     print("capture name here: " + captureName)
-    print("db name: "  + dbName)
+    print("db name: " + dbName)
     metricBucket = modelsQuery.getCaptureMetricBucket(captureName)
     inProgressReplay = getInProgressReplay(replayName)
     username = inProgressReplay.get('username')
@@ -94,21 +94,23 @@ def executeReplay(replayName, captureName, dbName, status_of_db, endpoint, metri
     numQueriesExecuted = 0
 
     with open(captureName + " " + "tempLogFile", 'r') as tempFile:
+        try:
+            conn = pymysql.connect(host=endpoint, user=username, passwd=password, db=dbName,
+                                   connect_timeout=5)
+        except:
+            logger.error("ERROR: Unexpected error: Could not connect to MySql instance.")
+            if os.path.exists(captureName + " " + "tempLogFile"):
+                os.remove(captureName + " " + "tempLogFile")
+            conn.close()
+            sys.exit()
+
         for line in tempFile:
             entireList = literal_eval(line)
             for i in range(len(entireList)):
                 dict = entireList[i]
-                print("Number of queries: " + str(len(entireList)))
                 if dict['message'].startswith('Query'):
                     executableQuery = dict['message'][7:]
-                    print("executable query: " + executableQuery)
                     if str(status_of_db) == "available":
-                        try:
-                            conn = pymysql.connect(host=endpoint, user=username, passwd=password, db=dbName,
-                                                   connect_timeout=5)
-                        except:
-                            logger.error("ERROR: Unexpected error: Could not connect to MySql instance.")
-                            sys.exit()
                         with conn.cursor() as cur:
                             try:
                                 cur.execute(executableQuery)
@@ -127,3 +129,5 @@ def executeReplay(replayName, captureName, dbName, status_of_db, endpoint, metri
     modelsQuery.updateReplayStatus(replayName, "finished")
     metricID = modelsQuery.getMetricIDByNameAndBucket(replayName + " " + "metric file", metricBucket)
     capture.sendMetrics(metricID, replayName + " " + "metric file", startTime, endTime)
+
+    conn.close()

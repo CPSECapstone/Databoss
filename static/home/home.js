@@ -1,14 +1,18 @@
 //Initialize the angular application for this AngularJS controller
 var app = angular.module('MyCRT');
 
-app.controller('home', function($scope, $location, $http) {
-    $scope.goCapture = function () {
-        $location.path('/capture');
-    }
-    populateCapturesAndReplays($http, $scope);
-    populateActiveCaptures($http, $scope);
-    // populateFinishedCaptures($http, $scope);
-    populateScheduledCaptures($http, $scope);
+app.controller('home', function($scope, $location, $http, activeNavItem) {
+  $scope.setCaptureActive= function(item) {
+    activeNavItem.clearAndMakeItemActive('captureTab');
+  }
+
+  $scope.goCapture = function () {
+      $location.path('/capture');
+  }
+  populateCapturesAndReplays($http, $scope);
+  populateActiveCaptures($http, $scope);
+  // populateFinishedCaptures($http, $scope);
+  populateScheduledCaptures($http, $scope);
 
 });
 var options = {
@@ -18,6 +22,7 @@ var options = {
   hour: '2-digit',
   minute: '2-digit'
 };
+
 
 var populateCapturesAndReplays = function($http, $scope) {
   $http({
@@ -30,6 +35,7 @@ var populateCapturesAndReplays = function($http, $scope) {
       $scope.active = [];
       $scope.finished = [];
       response.data.captures.map((capture) => {
+        capture.type = "capture";
         if (capture.status == "active") {
           $scope.active.push(capture);
         }
@@ -39,6 +45,7 @@ var populateCapturesAndReplays = function($http, $scope) {
       })
 
       response.data.replays.map((replay) => {
+        replay.type = "replay";
         if (replay.status == "active") {
           replay.progress = " ";
           $scope.active.push(replay);
@@ -124,18 +131,21 @@ var calculateProgress = function(captures) {
   var currentTime = null;
   var percentage = null;
   for (var i = 0; i < captures.length; i++) {
-    startTime = new Date(captures[i].startTime);
-    startTime.setHours(startTime.getHours() + 7);
-    endTime = new Date(captures[i].endTime);
-    endTime.setHours(endTime.getHours() + 7);
-    totalTimeMS = endTime - startTime;
-    currentTime = Date.now();
-    elapsedTimeMS = currentTime - startTime;
-    percentage = (elapsedTimeMS/totalTimeMS) * 100;
-    captures[i].progress = percentage.toFixed(0) + "%";
-    captures[i].formattedStart = startTime.toLocaleDateString('en-US', options);
-    captures[i].formattedEnd = endTime.toLocaleDateString('en-US', options);
+    if (captures[i].type == "capture") {
+      startTime = new Date(captures[i].startTime);
+      startTime.setHours(startTime.getHours() + 7);
+      endTime = new Date(captures[i].endTime);
+      endTime.setHours(endTime.getHours() + 7);
+      totalTimeMS = endTime - startTime;
+      currentTime = Date.now();
+      elapsedTimeMS = currentTime - startTime;
+      percentage = (elapsedTimeMS/totalTimeMS) * 100;
+      captures[i].progress = percentage.toFixed(0) + "%";
+      captures[i].formattedStart = startTime.toLocaleDateString('en-US', options);
+      captures[i].formattedEnd = endTime.toLocaleDateString('en-US', options);
+    }
+    else {
+      captures[i].progress =  0 + "%";
+    }
   }
-
-
 }
