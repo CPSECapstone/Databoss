@@ -10,6 +10,7 @@ app.controller('capture', function ($scope, $location, $http, buttonDisplay) {
     var selectedMode = "";
     $scope.error = "";
     $scope.required = true;
+    $scope.disabled = false;
 
     //setup
     buttonDisplay.hideButtons(dateContainer, timeContainer, storageContainer);
@@ -25,6 +26,15 @@ app.controller('capture', function ($scope, $location, $http, buttonDisplay) {
         console.log("updating to time constrained view");
         buttonDisplay.showButtons(dateContainer, timeContainer);
         buttonDisplay.hideButtons(storageContainer);
+
+        if ($('#startDate').val() == '' || $('#endDate').val() == '' ||
+            $('#startTime').val() == '' || $('#endTime').val() == '') {
+            $scope.$apply(function() {
+                $scope.disabled = true;
+            });
+
+        }
+
       }
       else if (selectedMode === "storage") {
         console.log("updating to storage view");
@@ -36,20 +46,28 @@ app.controller('capture', function ($scope, $location, $http, buttonDisplay) {
       }
     });
 
-    $scope.verifyTime = function() {
-        if ($('input[name=mode]:checked').val() != "time") {
-            return true;
+    $scope.validateTime = function() {
+        selectedMode = $("input[name=mode]:checked").val();
+
+        if (selectedMode == "time") {
+            if ($('#startDate').val() == '' || $('#endDate').val() == '' ||
+                $('#startTime').val() == '' || $('#endTime').val() == '') {
+                return true;
+            }
+            if ($('#startDate').val() == $('#endDate').val() &&
+                $('#startTime').val() >= $('#endTime').val()) {
+                return true;
+            }
         }
-        if ($('#startDate').val() == '' || $('#endDate').val() == '' ||
-            $('#startTime').val() == '' || $('#endTime').val() == '') {
-            return false;
-        }
-        if ($('#startDate').val() == $('#endDate').val() &&
-            $('#startTime').val() >= $('#endTime').val()) {
-            return false;
-        }
-        else {
-            return true;
+    }
+
+    $scope.validateStorage = function() {
+        selectedMode = $("input[name=mode]:checked").val();
+
+        if (selectedMode == "storage") {
+            if ($('#storageNum').val() == '') {
+                return true;
+            }
         }
     }
 
@@ -95,8 +113,10 @@ app.controller('capture', function ($scope, $location, $http, buttonDisplay) {
             }).then(function successCallback(response) {
                 console.log(response.data);
                 $scope.instanceDbs = response.data;
+                $('#authenticationModal').modal('hide');
                 console.log('success');
             }, function errorCallback(response) {
+                $scope.instanceDbs = 'false';
                 console.log('error');
             });
         }
