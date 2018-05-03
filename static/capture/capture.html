@@ -98,8 +98,7 @@
     <div class="text-center">
       <button type="button" ng-model="button" ng-click="startCapture()" class="btn-capture btn btn-success"
               ng-disabled="!captureName || !crBucket || !metricsBucket || !rdsInstance || !dbName ||
-                           uniqueName == 'false' ||
-              validateTime() || validateStorage() || disableCatureButton()">
+                           uniqueName == 'false' || disableCaptureButton()">
       Capture  </button>
       <div class="warning">{{error}}</div>
     </div>
