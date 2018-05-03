@@ -136,7 +136,6 @@ app.controller('capture', function ($scope, $location, $http, buttonDisplay) {
 
     // Defaulted mode is interactive when no mode is chosen
     $scope.startCapture = function () {
-
         if (!$scope.storageType) {
             console.log("storage type undefined");
             $scope.storageType = "";
@@ -179,7 +178,6 @@ app.controller('capture', function ($scope, $location, $http, buttonDisplay) {
     }
 
     $scope.setStorageSize = function (id) {
-      console.log(id);
       $scope.storageType = id;
       //clear active
       if (id === "mb-button") {
