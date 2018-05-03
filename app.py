@@ -30,8 +30,6 @@ def sqlite_setup():
 
     # TODO remove db additions here. for testing purposes only
     #db.drop_all()
-
-    #db.drop_all()
     db.create_all()
 '''
 
@@ -43,3 +41,5 @@ def sqlite_setup():
 '''
 if __name__ == "__main__":
     app.run('0.0.0.0')
+
+

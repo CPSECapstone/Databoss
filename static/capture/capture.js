@@ -36,6 +36,23 @@ app.controller('capture', function ($scope, $location, $http, buttonDisplay) {
       }
     });
 
+    $scope.verifyTime = function() {
+        if ($('input[name=mode]:checked').val() != "time") {
+            return true;
+        }
+        if ($('#startDate').val() == '' || $('#endDate').val() == '' ||
+            $('#startTime').val() == '' || $('#endTime').val() == '') {
+            return false;
+        }
+        if ($('#startDate').val() == $('#endDate').val() &&
+            $('#startTime').val() >= $('#endTime').val()) {
+            return false;
+        }
+        else {
+            return true;
+        }
+    }
+
     $scope.getRDSInstances = function() {
         console.log("getting db connections");
 
@@ -78,8 +95,10 @@ app.controller('capture', function ($scope, $location, $http, buttonDisplay) {
             }).then(function successCallback(response) {
                 console.log(response.data);
                 $scope.instanceDbs = response.data;
+                $('#authenticationModal').modal('hide');
                 console.log('success');
             }, function errorCallback(response) {
+                $scope.instanceDbs = 'false';
                 console.log('error');
             });
         }
