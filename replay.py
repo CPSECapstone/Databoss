@@ -46,6 +46,8 @@ def download_file(replayName, bucketName, fileName):
         else:
             raise
 
+#def timePreserving(replayNmae, captureObj, dbName, )
+
 def startReplay(replayName, captureObj, dbName, mode, username, password):
     captureObj = json.loads(captureObj)
     print(captureObj)
@@ -66,8 +68,10 @@ def startReplay(replayName, captureObj, dbName, mode, username, password):
     metricBucket = modelsQuery.getMetricBucketByName(captureName)
     filename = logfile.filename
 
+    #adding replay metrics to the bucket.
     modelsQuery.addMetric(metricFileName, metricBucket, None)
     metricID = modelsQuery.getMetricIDByNameAndBucket(metricFileName, metricBucket)
+
 
     ## how to get the current time of the system.
     replayStartTime = datetime.now()
@@ -75,7 +79,12 @@ def startReplay(replayName, captureObj, dbName, mode, username, password):
     print("Capture start time: " + captureStartTime.strftime('%m/%d/%Y :%H:%M'))
     print("Current system time: " + replayStartTime.strftime('%m/%d/%Y% :H:%M'))
 
-    modelsQuery.addReplay(replayName, replayStartTime, replayEndTime, dbName, metricID, captureID, mode, "active")
+
+    if mode == 'replay-time':
+        #call time preserving function
+        #send capture object, capture name,
+    else:
+        modelsQuery.addReplay(replayName, replayStartTime, replayEndTime, dbName, metricID, captureID, mode, "active")
     download_file(captureName, captureBucket, filename)
 
     addInProgressReplay(replayName, username, password)
@@ -83,6 +92,7 @@ def startReplay(replayName, captureObj, dbName, mode, username, password):
     t2 = Timer(0, executeReplay, [replayName, captureName, dbName, status_of_db, endpoint, metricFile, datetime.now()])
     t2.start()
 
+#does metric file need to be used here.
 def executeReplay(replayName, captureName, dbName, status_of_db, endpoint, metricFile, startTime):
     print("capture name here: " + captureName)
     print("db name: " + dbName)
