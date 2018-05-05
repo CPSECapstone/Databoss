@@ -1,15 +1,15 @@
 <div class="container">
     <div class="row">
-        <div class="col-md-4 col-md-offset-4 text-center">
-            <div class="card card-container" style="position:absolute; width:100%; height:100%">
-                <img id="profile-img" class="profile-img-card" align="middle" src="//ssl.gstatic.com/accounts/ui/avatar_2x.png" />
+        <div style="margin-top: 5%;margin-left:35%" class="col-md-3 offset-md-3 text-center">
+            <div style="position:absolute; width:100%; height:100%">
+                <img id="profile-img" class="profile-img-card" align="middle" src="//qwilr.com/wp-content/themes/qwilr/assets/user-grey.svg" />
 
                 <p id="profile-name" class="profile-name-card"></p>
                 <form class="form-signin">
                     <span id="reauth-email" class="reauth-email"></span>
                     <input type="password" ng-model="accessKey" class="form-control" style="margin-bottom: 10px;" placeholder="User Access Key" required autofocus>
                     <input type="password" ng-model="secretKey" class="form-control" placeholder="User Secret Key" required>
-                    <div id="remember" class="checkbox"></div>
+                    <div style="margin-top: 2%;" id="remember" class="checkbox"></div>
                     <button class="btn btn-lg btn-primary btn-block btn-signin" type="submit" ng-click="login()">Sign in</button>
                 </form><!-- /form -->
                 <a href="#" class="forgot-password">

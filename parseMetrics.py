@@ -1,63 +1,48 @@
 import json
 
-cpuList = []
-cpuTimeList = []
-readIOList = []
-readIOTimeList = []
-writeIOList = []
-writeIOTimeList = []
-memoryList = []
-memoryTimeList = []
+class ParsedMetrics:
+    def __init__(self, jsonString):
+        self.jsonString = jsonString
+        self.cpuList = []
+        self.cpuTimeList = []
+        self.readIOList = []
+        self.readIOTimeList = []
+        self.writeIOList = []
+        self.writeIOTimeList = []
+        self.memoryList = []
+        self.memoryTimeList = []
 
+        jsonMetrics = readMetrics(self.jsonString)
+        createLists(jsonMetrics[0], self.cpuTimeList, self.cpuList)
+        createLists(jsonMetrics[1], self.readIOTimeList, self.readIOList)
+        createLists(jsonMetrics[2], self.writeIOTimeList, self.writeIOList)
+        createLists(jsonMetrics[3], self.memoryTimeList, self.memoryList)
 
-def readMetricsFile(textFile):
-    tempList = []
-    f = open(textFile, "r")
-    tempData = json.loads(f.read())
+# Convert a json string to an array of json objects
+def readMetrics(jsonString):
+    tempData = json.loads(jsonString)
     return tempData
 
+# Populate data and time list given a dict with elements having a timestamp and average key
 def createLists(dictData, timeArray, dataArray):
-    timeArray.clear()
-    dataArray.clear()
     for element in dictData['Datapoints']:
         timeArray.append(element['Timestamp'])
         dataArray.append(element['Average'])
 
-def createCPULists(openFile):
-    cpuData = openFile[0]
-    createLists(cpuData, cpuTimeList, cpuList)
+    _sortLists(dataArray, timeArray)
 
-
-def createReadIOLists(openFile):
-    readIOData = openFile[1]
-    createLists(readIOData, readIOTimeList, readIOList)
-
-
-def createWriteIOLists(openFile):
-    writeIOData = openFile[2]
-    createLists(writeIOData, writeIOTimeList, writeIOList)
-
-
-def createMemLists(openFile):
-    memData = openFile[3]
-    createLists(memData, memoryTimeList, memoryList)
-
-
+# Sort data list and time list together to preserve correct data ordering, in ascending time order
 def _sortLists(dataList, timeList):
-    zipped = zip(timeList, dataList)
-    times, metrics = map(list, zip(*sorted(zipped, key=lambda data: data[0])))
-    dataList.clear()
-    timeList.clear()
+    if len(dataList) > 0:
+        # Combine, sort and separate the two lists
+        zipped = zip(timeList, dataList)
+        times, metrics = map(list, zip(*sorted(zipped, key=lambda data: data[0])))
 
-    for metric in metrics:
-        dataList.append(metric)
+        dataList.clear()
+        timeList.clear()
 
-    for time in times:
-        timeList.append(time)
+        for metric in metrics:
+            dataList.append(metric)
 
-
-# openFile = readMetricsFile("metric_files/metric-file.txt")
-# createCPULists(openFile)
-# createReadIOLists(openFile)
-# createWriteIOLists(openFile)
-#
+        for time in times:
+            timeList.append(time)

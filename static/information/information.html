@@ -1,13 +1,15 @@
 <div>
-    <div style="margin-left: 2.5%;">
-        <label>RDS Databases:</label>
-        <ul class="list-group">
-            <li ng-repeat="db in dbInstances" class="list-group-item">{{db.DBInstanceIdentifier}}</li>
-        </ul>
-
-        <label>S3 Buckets</label>
-        <ul class="list-group">
-            <li ng-repeat="bucket in buckets" class="list-group-item">{{bucket}}</li>
-        </ul>
-    </div>
+  <h1> User Information </h1>
+  <div class="info-section">
+    <label>RDS Databases:</label>
+    <ul class="list-group info-block">
+      <li ng-repeat="db in dbInstances" class="list-group-item">{{db.DBInstanceIdentifier}}</li>
+    </ul>
+  </div>
+  <div class="info-section">
+    <label>S3 Buckets</label>
+    <ul class="info-block list-group">
+      <li ng-repeat="bucket in buckets" class="list-group-item">{{bucket}}</li>
+    </ul>
+  </div>
 </div>

@@ -1,17 +1,24 @@
 import boto3
 import time
 import pymysql
+import random
+import string
 from datetime import timedelta
 from datetime import datetime
 from time import mktime
 import json
-import bson
-import getpass
+import logging
 
 user_key = input("Enter access key id: ")
 user_access = input("Enter secret key: ")
 loc = "us-west-1"
 bucket_name = "Capture " + str(time.strftime("%x"))
+
+logger = logging.getLogger()
+logger.setLevel(logging.INFO)
+
+VOWELS = "aeiou"
+CONSONANTS = "".join(set(string.ascii_lowercase) - set(VOWELS))
 
 s3 = boto3.client(
     service_name='s3',
@@ -60,7 +67,18 @@ def createBucket(bucketName):
     )
     #print("Created " + bucketName + " bucket")
 
+def generate_word(wordLength):
+    word = ""
+    for i in range(wordLength):
+        if i % 2 == 0:
+            word += random.choice(CONSONANTS)
+        else:
+            word += random.choice(VOWELS)
+    return word
 
+def generate_number(numLength):
+    for i in range(numLength):
+        return str(random.randint(0, numLength))
 
     #creating bucket names
 def createBucketName(bucketName, string):
@@ -92,7 +110,7 @@ allotted_time = input("Enter duration of capture (in minutes): ")'''
 
 captureReplayBucket = "capture-replay-info"
 metricBucket = "metric-info"
-db_name = "myinstance"
+db_name = "new"
 
 list_of_instances = rds.describe_db_instances(
     DBInstanceIdentifier= db_name
@@ -101,6 +119,7 @@ list_of_instances = rds.describe_db_instances(
 # Starting the database instance
 status_of_db = list_of_instances['DBInstances'][0]['DBInstanceStatus']
 
+'''
 if status_of_db == "stopped":
     start_response = rds.start_db_instance(
         DBInstanceIdentifier= db_name
@@ -109,7 +128,7 @@ else:
     start_response = "Starting"
 
 print(start_response + "...")
-
+'''
 print("Starting RDS database instance: " + db_name)
 
 '''
@@ -120,25 +139,26 @@ endpoint = str(input("RDS MySQL endpoint: "))'''
 
 username = "sonaraya"
 password = "sonaraya"
-endpoint = "myinstance.cpguxfvypxd2.us-west-1.rds.amazonaws.com"
+endpoint = "new.cpguxfvypxd2.us-west-1.rds.amazonaws.com"
 
 print("Connecting...")
 
-conn = pymysql.connect(host=endpoint, port=3306, user=username, passwd=password, db=db_name)
+conn = pymysql.connect(host=endpoint, user=username, passwd=password, db=db_name)
 
 print("SUCCESS: Connection to RDS MySQL instance succeeded")
 
 print("Adding value to database table 'Student'")
-id = input("Enter student id: ")
-student_name = str(input("Enter student name: "))
+#id = input("Enter student id: ")
+#student_name = str(input("Enter student name: "))
 
 numItems = 0
 
 with conn.cursor() as cur:
     cur.execute("create table IF NOT EXISTS Student ( StudentID  int NOT NULL, Name varchar(255) NOT NULL, PRIMARY KEY (StudentID))")
-    cur.execute('insert into Student (StudentID, Name) values('+id+', "'+student_name+'")')
+    cur.execute('insert into Student (StudentID, Name) values('+generate_number(20)+', "'+generate_word(10)+'")')
     conn.commit()
     cur.execute("select * from Student")
+    #cur.execute('select * from mysql.general_log')
     for row in cur:
         numItems += 1
         print(row)
@@ -163,11 +183,29 @@ print(all_log_files)
 
 '''
 
+
+
 bucket = s3.Bucket(captureReplayBucket)
 print("Printing location...")
 
 for key in bucket.objects.all():
     print(key.key)
+
+client = boto3.client(
+        service_name='logs',
+        aws_access_key_id = user_key,
+        aws_secret_access_key = user_access,
+        region_name = loc
+    )
+
+cloudwatch = boto3.client(
+        service_name='cloudwatch',
+        aws_access_key_id = user_key,
+        aws_secret_access_key = user_access,
+        region_name = loc
+    )
+
+
 
 rds_logfile = rds.download_db_log_file_portion(
   DBInstanceIdentifier=db_name,
@@ -179,12 +217,7 @@ print(rds_logfile)
 logFile = input("Enter file name for log file: ")
 metricFile = input("Enter file name for metric file: ")
 
-cloudwatch = boto3.client(
-    service_name='cloudwatch',
-    aws_access_key_id=user_key,
-    aws_secret_access_key=user_access,
-    region_name=loc
-)
+
 
 dlist = []
 
@@ -209,13 +242,13 @@ dlist.append(cloudwatch.get_metric_statistics(Namespace="AWS/RDS",
                                               EndTime=datetime.utcnow(),
                                               Period=300,
                                               MetricName='WriteIOPS'))
-print("Incoming Bytes: ")
+print("Memory: ")
 dlist.append(cloudwatch.get_metric_statistics(Namespace="AWS/RDS",
                                               Statistics=['Average'],
                                               StartTime=datetime.utcnow()-timedelta(minutes=60),
                                               EndTime=datetime.utcnow(),
                                               Period=300,
-                                              MetricName='IncomingBytes'))
+                                              MetricName='FreeableMemory'))
 
 
 class MyEncoder(json.JSONEncoder):

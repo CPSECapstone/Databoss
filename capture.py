@@ -1,11 +1,24 @@
 import boto3
 import time
 import pymysql
-import getpass
-from web_app import app
+import botocore
+import random
+import sys
+import string
+import logging
 from flask import Blueprint, jsonify
+from datetime import timedelta
+from datetime import datetime
+from time import mktime
+import rds_config
+
+VOWELS = "aeiou"
+CONSONANTS = "".join(set(string.ascii_lowercase) - set(VOWELS))
 
 capture_api = Blueprint('capture_api', __name__)
+
+logger = logging.getLogger()
+logger.setLevel(logging.INFO)
 
 access_key = None
 secret_key = None
@@ -16,6 +29,7 @@ bucket_name = "Capture " + str(time.strftime("%x"))
 s3 = None
 s3_resource = None
 rds = None
+cloudwatch = None
 
 captureReplayBucket = None
 metricBucket = None
@@ -47,12 +61,20 @@ def aws_config():
         region_name=loc
     )
 
+    cloudwatch = boto3.client(
+        service_name='cloudwatch',
+        aws_access_key_id=access_key,
+        aws_secret_access_key=secret_key,
+        region_name=loc
+    )
+
 
 # Function that prints all of a user's database instances
 @capture_api.route('/listDBinstances')
 def list_db_instances():
     db_identifiers = []
     all_instances = rds.describe_db_instances()
+
     for i in all_instances['DBInstances']:
         print(i['DBInstanceIdentifier'])
         db_identifiers.append({'name': i['DBInstanceIdentifier']})
@@ -68,7 +90,7 @@ def list_buckets():
 
 
 # Creating 2 buckets if they don't already exist
-@app.route
+#@app.route()
 def createBucket(bucketName):
     if s3_resource.Bucket(bucketName) in s3_resource.buckets.all():
         print("Found " + bucketName + " bucket")
@@ -97,99 +119,138 @@ def testBucketName(bucketName, string):
     name = input("Enter name for " + string + " bucket: ")
     bucketName = createBucketName(name, string)
 
-#
-# name = input("Enter name for capture and replay: ")
-# captureReplayBucket = createBucketName(name, "capture and replay")
-#
-# name = input("Enter name for metrics bucket: ")
-# metricBucket = createBucketName(name, "metrics")
-#
-#
-# db_name = str(input("Enter RDS database name: "))
-# db_name = "test"
-# allotted_time = input("Enter duration of capture (in minutes): ")
-#
-# list_of_instances = rds.describe_db_instances(
-#     DBInstanceIdentifier= db_name
-# )
-#
-# # Starting the database instance
-# status_of_db = list_of_instances['DBInstances'][0]['DBInstanceStatus']
-#
-# if status_of_db == "stopped":
-#     start_response = rds.start_db_instance(
-#         DBInstanceIdentifier= db_name
-#     )
-# else :
-#     start_response = "Starting"
-#
-# print("Starting RDS database instance: " + db_name)
-#
-# # Testing RDS Database
-# username = str(input("Enter username: "))
-# password = str(getpass.getpass(prompt="Enter password: "))
-# endpoint = str(input("RDS MySQL endpoint: "))
-#
-# print("Connecting...")
-#
-# conn = pymysql.connect(host=endpoint, port=3306, user=username, passwd=password, db=db_name)
-#
-# print("SUCCESS: Connection to RDS MySQL instance succeeded")
-#
-# print("Adding value to database table 'Student'")
-# id = input("Enter student id: ")
-# student_name = str(input("Enter student name: "))
-#
-# numItems = 0
-#
-# with conn.cursor() as cur:
-#     cur.execute("create table IF NOT EXISTS Student ( StudentID  int NOT NULL, Name varchar(255) NOT NULL, PRIMARY KEY (StudentID))")
-#     cur.execute('insert into Student (StudentID, Name) values('+id+', "'+student_name+'")')
-#     conn.commit()
-#     cur.execute("select * from Student")
-#     for row in cur:
-#         numItems += 1
-#         print(row)
-#
-# print(str(numItems) + " items exist in your RDS MySQL table")
-#
-# '''
-# if status_of_db == "available":
-#     stop_response = rds.stop_db_instance(
-#         DBInstanceIdentifier= db_name
-#     )
-# else :
-#     stop_response = "stopped"
-#
-# print("Stopping database: " + db_name)
-# print(stop_response)
-#
-# all_log_files = rds.describe_db_log_files(
-#     DBInstanceIdentifier= db_name
-# )
-# print(all_log_files)
-#
-# '''
-#
-# bucket = s3.Bucket(captureReplayBucket)
-# print("Printing location...")
-#
-# for key in bucket.objects.all():
-#     print(key.key)
-#
-# rds_logfile = rds.download_db_log_file_portion(
-#   DBInstanceIdentifier=db_name,
-#   LogFileName="general/mysql-general.log",
-#   Marker='0'
-# )
-# print(rds_logfile)
-#
-# name_of_file = input("Enter file name: ")
-#
-# s3_resource.Object(captureReplayBucket, name_of_file).put(Body=rds_logfile['LogFileData'], Metadata={'foo':'bar'})
-#
-# rds_logfile = rds.describe_db_log_files(
-#     DBInstanceIdentifier= db_name
-# )
-#
-#
+
+def generate_word(wordLength):
+    word = ""
+    for i in range(wordLength):
+        if i % 2 == 0:
+            word += random.choice(CONSONANTS)
+        else:
+            word += random.choice(VOWELS)
+    return word
+
+
+def generate_number(numLength):
+    for i in range(numLength):
+        return random.randint(numLength)
+
+
+def get_list_of_instances(db_name):
+    list_of_instances = rds.describe_db_instances(
+        DBInstanceIdentifier=db_name
+    )
+    return list_of_instances
+
+def get_log_file(bucket_name, file_name):
+    s3 = boto3.resource('s3')
+
+    try:
+        s3.Bucket(bucket_name).download_file(file_name, 'local-file.txt')
+    except botocore.exceptions.ClientError as e:
+        if e.response['Error']['Code'] == "404":
+            print("Object does not exist in bucket.")
+        else:
+            raise e
+
+def parseRow(row):
+    eventTime = row[0]
+    command = row[1]
+    query = row[2]
+
+    message = command + ": " + query
+
+def startCapture(metricsBucket, captureBucket, database, startTime, endTime, metricFileName):
+    print("starting capture")
+    username = rds_config.db_username
+    password = rds_config.db_password
+    db_name = rds_config.db_name
+    status_of_db = get_list_of_instances(db_name)['DBInstances'][0]['DBInstanceStatus']
+    endpoint = get_list_of_instances(db_name)['DBInstances'][0]['Endpoint']
+    difference = endTime - startTime
+
+    if endTime == None or difference.min < 1440:
+        endTime = startTime + timedelta(minutes=1440)
+
+    time.sleep((endTime - startTime).seconds)
+
+    if status_of_db != "available":
+        rds.start_db_instance(
+            DBInstanceIdentifier=db_name
+        )
+
+    else:
+        try:
+            connection = pymysql.connect(host=endpoint, user=username, passwd=password, db=db_name, connect_timeout=5)
+        except:
+            logger.error("ERROR: Unexpected error: Could not connect to MySql instance.")
+            sys.exit()
+
+        stopCapture(db_name, connection, startTime, endTime, captureBucket, metricsBucket, metricFileName)
+
+def stopCapture(db_name, conn, startTime, endTime, captureBucket, metricBucket, metricFileName):
+    with conn.cursor() as cur:
+        cur.execute('SELECT event_time, command_type, argument FROM mysql.general_log '
+                    'WHERE event_time > %s AND event_time < %s' % (startTime, endTime))
+        logfile = list(map(parseRow, cur))
+
+    s3.meta.client.upload_file(logfile.name, captureBucket, logfile.name)
+
+    sendMetrics(db_name, metricBucket, metricFileName)
+
+
+def sendMetrics(db_name, metricBucket, metricFileName):
+    dlist = []
+
+    logger.log("CPU Utilization: ")
+    dlist.append(cloudwatch.get_metric_statistics(Namespace="AWS/RDS",
+                                                  Statistics=['Average'],
+                                                  StartTime=datetime.utcnow() - timedelta(minutes=60),
+                                                  EndTime=datetime.utcnow(),
+                                                  Period=300,
+                                                  MetricName='CPUUtilization'))
+    logger.log("Read: ")
+    dlist.append(cloudwatch.get_metric_statistics(Namespace="AWS/RDS",
+                                                  Statistics=['Average'],
+                                                  StartTime=datetime.utcnow() - timedelta(minutes=60),
+                                                  EndTime=datetime.utcnow(),
+                                                  Period=300,
+                                                  MetricName='ReadIOPS'))
+    logger.log("Write: ")
+    dlist.append(cloudwatch.get_metric_statistics(Namespace="AWS/RDS",
+                                                  Statistics=['Average'],
+                                                  StartTime=datetime.utcnow() - timedelta(minutes=60),
+                                                  EndTime=datetime.utcnow(),
+                                                  Period=300,
+                                                  MetricName='WriteIOPS'))
+    logger.log("Memory: ")
+    dlist.append(cloudwatch.get_metric_statistics(Namespace="AWS/RDS",
+                                                  Statistics=['Average'],
+                                                  StartTime=datetime.utcnow() - timedelta(minutes=60),
+                                                  EndTime=datetime.utcnow(),
+                                                  Period=300,
+                                                  MetricName='FreeableMemory'))
+
+    class MyEncoder(json.JSONEncoder):
+        def default(self, obj):
+            if isinstance(obj, datetime):
+                return int(mktime(obj.timetuple()))
+            return json.JSONEncoder.default(self, obj)
+
+    with open(metricFileName, 'w') as metricFileOpened:
+        metricFileOpened.write(json.dumps(dlist, cls=MyEncoder))
+
+    s3.meta.client.upload_file(metricFileOpened.name, metricBucket, metricFileOpened.name)
+
+
+# configures aws credentials when app starts so they don't have to be input manually
+# TODO remove when done testing
+import json
+import os.path
+
+if os.path.exists("credentials.json"):
+    credentialFile = open("credentials.json", "r")
+    credentials = json.load(credentialFile)
+    access_key = credentials['access']
+    secret_key = credentials['secret']
+    aws_config()
+

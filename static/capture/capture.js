@@ -3,6 +3,7 @@ var app = angular.module('MyCRT');
 
 //app.controller('capture', ['$scope', '$location', '$modal', function($scope, $location, $modal) {
 app.controller('capture', function ($scope, $location, $uibModal, $http) {
+    console.log("in capture");
     $scope.open = function () {
         console.log('opening pop up');
         var modalInstance = $uibModal.open({
@@ -49,7 +50,7 @@ app.controller('capture', function ($scope, $location, $uibModal, $http) {
 
         $http({
             method: 'GET',
-            url: '/dbc/get',
+            url: 'capture/listDBinstances',
             headers: {
                 'Content-Type': 'application/json'
             },
@@ -79,4 +80,25 @@ app.controller('capture', function ($scope, $location, $uibModal, $http) {
     };
 
     getBuckets();
+
+    $scope.startCapture = function () {
+        $http({
+            method: 'POST',
+
+            url: 'capture/startCapture',
+            headers: {
+                'Content-Type' : 'application/json'
+            },
+            data : {
+                'captureBucket' : $('#crBucket').val(),
+                'metricsBucket' : $('#metricsBucket').val(),
+                'database' : $('#dbSelect').val(),
+                'startTime' : $('#startTime').val(),
+                'endTime' : $('#endTime').val(),
+            }
+        });
+        // code to turn on DB logging goes here
+        console.log("---- STARTING CAPTURE ----")
+        $location.path('/progress');
+    }
 });

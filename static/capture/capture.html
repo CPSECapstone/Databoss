@@ -1,47 +1,89 @@
 <div>
-    <h1 class="text-center">Capture</h1>
-    <div class="row">
-        <div class="col-md-4 col-md-offset-4 text-center">
-            <div class="form-group">
-                <label for="crBucket">Capture Replay Bucket:</label>
-                <select class="form-control" id="crBucket">
-                    <option disabled selected value> -- Select Bucket -- </option>
-                    <option ng-repeat="bucket in buckets" value="{{bucket}}">{{bucket}}</option>
-                </select>
-            </div>
+  <h1>Capture</h1>
+  <div class="row">
+    <div class="center-block">
+      <div class="form-group">
+        <label for="captureName">Capture Name</label>
+        <input type="text" class="form-control" id="capture-name" aria-describedby="captureName">
+      </div>
+      <div class="form-group">
+        <label for="crBucket">Capture Replay Bucket:</label>
+        <select class="form-control" id="crBucket">
+          <option disabled selected value> -- Select Bucket -- </option>
+          <option ng-repeat="bucket in buckets" value="{{bucket}}">{{bucket}}</option>
+        </select>
+      </div>
 
-            <div class="form-group">
-                <label for="metricsBucket">Metrics Bucket:</label>
-                <select class="form-control" id="metricsBucket">
-                    <option disabled selected value> -- Select Bucket -- </option>
-                    <option ng-repeat="bucket in buckets" value="{{bucket}}">{{bucket}}</option>
-                </select>
-            </div>
+      <div class="form-group">
+        <label for="metricsBucket">Metrics Bucket:</label>
+        <select class="form-control" id="metricsBucket">
+          <option disabled selected value> -- Select Bucket -- </option>
+          <option ng-repeat="bucket in buckets" value="{{bucket}}">{{bucket}}</option>
+        </select>
+      </div>
 
-            <div class="form-group">
-                <label for="dbSelect">Database:</label>
-                <select class="form-control" id="dbSelect">
-                    <option disabled selected value> -- Select Database -- </option>
-                    <option ng-repeat="db in DBConnections" value="{{db.id}}">{{db.name}}</option>
-                </select>
-                <button type="button" class="text-center btn btn-primary" ng-click="open()" style="display: inline-block;">Add DB Connection</button>
-            </div>
-
-            <h5>Capture Mode:</h5>
-            <div class="btn-group" name="captureMode" data-toggle="buttons" style="margin-bottom: 10px;">
-                <label class="btn btn-success active">
-                    <input type="radio" name="mode" autocomplete="off" checked > Interactive
-                </label>
-                <label class="btn btn-success">
-                    <input type="radio" name="mode" autocomplete="off"> Time-Constrained
-                </label>
-                <label class="btn btn-success">
-                    <input type="radio" name="mode" autocomplete="off"> Storage-Constrained
-                </label>
-            </div>
-            <div>
-                <button type="button" class="btn btn-primary">Capture</button>
-            </div>
-        </div>
+      <div class="form-group">
+        <label for="dbSelect">Database:</label>
+        <select class="form-control" id="dbSelect">
+          <option disabled selected value> -- Select Database -- </option>
+          <option ng-repeat="db in DBConnections" value="{{db.id}}">{{db.DBInstanceIdentifier}}</option>
+        </select>
+        <!-- <div>
+        <button type="button" class="text-center btn btn-warning" ng-click="open()" style="display: inline-block;">Add DB Connection</button>
+      </div> -->
     </div>
+
+    <h5>Capture Mode:</h5>
+    <div class="btn-group" name="captureMode" data-toggle="buttons" ng-click="checkRadioButtons()" style="margin-bottom: 10px;">
+      <label class="btn btn-primary active">
+        <input type="radio" name="mode" autocomplete="off" checked > Interactive
+      </label>
+      <label class="btn btn-primary">
+        <input type="radio" name="mode" autocomplete="off"> Time-Constrained
+      </label>
+      <label class="btn btn-primary">
+        <input type="radio" name="mode" autocomplete="off"> Storage-Constrained
+      </label>
+    </div>
+    <!-- <div class="date-container "> -->
+    <div id="date-container" class="row">
+      <span>Start Date: <input id="startDate" width="276" /> </span>
+      <span>End Date: <input id="endDate" width="276" /> </span>
+    </div>
+    <div id="time-container" class="row">
+      <span>Start Time: <input id="startTime" width="276" /> </span>
+      <span>End Time: <input id="endTime" width="276" /> </span>
+    </div>
+    <script>
+    var today = new Date(new Date().getFullYear(), new Date().getMonth(), new Date().getDate());
+    $('#startDate').datepicker({
+      uiLibrary: 'bootstrap4',
+      iconsLibrary: 'fontawesome',
+      minDate: today,
+      maxDate: function () {
+        return $('#endDate').val();
+      }
+    });
+    $('#endDate').datepicker({
+      uiLibrary: 'bootstrap4',
+      iconsLibrary: 'fontawesome',
+      minDate: function () {
+        return $('#startDate').val();
+      }
+    });
+    $('#startTime').timepicker({
+      uiLibrary: 'bootstrap4',
+      iconsLibrary: 'fontawesome',
+    });
+    $('#endTime').timepicker({
+      uiLibrary: 'bootstrap4',
+      iconsLibrary: 'fontawesome',
+    });
+    </script>
+
+    <div class="text-center">
+      <button type="button" ng-click="startCapture(metricsBucket.value)" class="btn-capture btn btn-success" >Capture</button>
+    </div>
+  </div>
+</div>
 </div>
