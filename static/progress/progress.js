@@ -1,7 +1,7 @@
 // Initialize the angular application for this AngularJS controller
 var app = angular.module('MyCRT');
 
-app.controller('progress', function($scope, $location, $http) {
+app.controller('progress', function($scope, $location, $http, activeNavItem) {
   $scope.startDate = null;
   $scope.startTime = null;
   $scope.endDate = null;
@@ -43,6 +43,7 @@ app.controller('progress', function($scope, $location, $http) {
   });
 
   $scope.endCapture = function () {
+    $('#endCaptureButton').addClass('disabled');
     $http({
       method: 'POST',
       url: 'capture/endCapture',
@@ -51,7 +52,7 @@ app.controller('progress', function($scope, $location, $http) {
       },
       data: $scope.capture
     }).then(function successCallback(response) {
-      console.log('success');
+      activeNavItem.clearAndMakeItemActive('metricsTab');
       $location.path('/metrics');
     }, function errorCallback(response) {
       console.log('error retrieving replays');
