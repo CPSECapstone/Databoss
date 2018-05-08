@@ -36,6 +36,21 @@ app.service('buttonDisplay', function() {
   };
 });
 
+app.service('activeNavItem', function() {
+  this.clearAndMakeItemActive = function(elementID) {
+    // clearing the active class on all elements
+    var curActive = document.getElementsByClassName('active');
+    for (var i = 0; i < curActive.length; i++) {
+      curActive[i].classList.remove('active');
+    }
+    // adding the active class to specific element
+    var navitem = document.getElementById(elementID);
+    if (navitem) {
+      navitem.classList.add('active');
+    }
+  }
+});
+
 //This is how Angular determines what page to display based on the URL.
 //Note: The controller will be in the same parent folder as the templateUrl but in the js folder
 //"css" value is optional

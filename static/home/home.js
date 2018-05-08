@@ -1,14 +1,18 @@
 //Initialize the angular application for this AngularJS controller
 var app = angular.module('MyCRT');
 
-app.controller('home', function($scope, $location, $http) {
-    $scope.goCapture = function () {
-        $location.path('/capture');
-    }
-    populateCapturesAndReplays($http, $scope);
-    populateActiveCaptures($http, $scope);
-    // populateFinishedCaptures($http, $scope);
-    populateScheduledCaptures($http, $scope);
+app.controller('home', function($scope, $location, $http, activeNavItem) {
+  $scope.setCaptureActive= function(item) {
+    activeNavItem.clearAndMakeItemActive('captureTab');
+  }
+
+  $scope.goCapture = function () {
+      $location.path('/capture');
+  }
+  populateCapturesAndReplays($http, $scope);
+  populateActiveCaptures($http, $scope);
+  // populateFinishedCaptures($http, $scope);
+  populateScheduledCaptures($http, $scope);
 
 });
 var options = {
@@ -18,6 +22,7 @@ var options = {
   hour: '2-digit',
   minute: '2-digit'
 };
+
 
 var populateCapturesAndReplays = function($http, $scope) {
   $http({
