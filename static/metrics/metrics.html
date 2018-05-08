@@ -1,56 +1,60 @@
 <div>
   <h1> Metrics </h1>
-  <div class="tableWrapper">
-      <h4 class="text-center capture-header"> Capture & Replays </h4>
-      <div class="wholeTable">
-          <table class="table center-block">
-          <thead>
-            <tr>
-              <th>Name</th>
-              <th>Display</th>
-              <th>Log File</th>
-              <th>Metrics File</th>
-            </tr>
-          </thead>
-          <tbody ng-repeat="capture in captures" on-finish-render="updateSelectionFromQueryParameters">
-            <tr>
-                <th>
-                    <span> </span><i class="fa fa-caret-down" ng-click=toggleReplays(capture.id,$event)></i>
-                    {{capture.name}} </span>
-                </th>
-                <td>
-                    <input id="capture-checkbox{{capture.id}}" type="checkbox" ng-model="captureSelection"
-                           ng-change="updateSelection('capture', capture.name, capture.id, captureSelection)">
-                </td>
-                <td><i class="fa fa-arrow-circle-o-down" ng-click="downloadLogFile(capture)"></i></td>
-                <td><i class="fa fa-arrow-circle-o-down" ng-click="downloadMetricFile(capture)"></i></td>
-            </tr>
-            <tr id="{{ 'collapse' + capture.id }}" ng-repeat="replay in replays" ng-if="replay.captureId == capture.id">
-                <td>{{replay.name}}</td>
-                <td><input type="checkbox" ng-model="replaySelection"
-                           ng-change="updateSelection('replay', replay.name, replay.id, replaySelection)"></td>
-                 <td><i class="fa fa-arrow-circle-o-down" ng-click="downloadLogFile(capture)"></i></td>
-                 <td><i class="fa fa-arrow-circle-o-down" ng-click="downloadMetricFile(capture)"></i></td>
-            </tr>
-          </tbody>
-          </table>
-      </div>
 
+  <div class="tableWrapper">
+      <table class="table center-block">
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Display</th>
+          <th>Log File</th>
+          <th>Metrics File</th>
+        </tr>
+      </thead>
+      <tbody ng-repeat="capture in captures" on-finish-render="updateSelectionFromQueryParameters">
+        <tr>
+            <th>
+                <span> </span><i class="fa fa-caret-down" ng-click=toggleReplays(capture.id,$event)></i>
+                {{capture.name}} </span>
+            </th>
+            <td>
+                <input id="capture-checkbox{{capture.id}}" type="checkbox" ng-model="captureSelection"
+                       ng-change="updateSelection('capture', capture.name, capture.id, captureSelection)">
+            </td>
+            <td><i class="fa fa-arrow-circle-o-down" ng-click="downloadLogFile(capture)"></i></td>
+            <td><i class="fa fa-arrow-circle-o-down" ng-click="downloadMetricFile(capture)"></i></td>
+        </tr>
+        <tr id="{{ 'collapse' + capture.id }}" ng-repeat="replay in replays" ng-if="replay.captureId == capture.id">
+            <td>{{replay.name}}</td>
+            <td><input type="checkbox" ng-model="replaySelection"
+                       ng-change="updateSelection('replay', replay.name, replay.id, replaySelection)"></td>
+             <td><i class="fa fa-arrow-circle-o-down" ng-click="downloadLogFile(capture)"></i></td>
+             <td><i class="fa fa-arrow-circle-o-down" ng-click="downloadMetricFile(capture)"></i></td>
+        </tr>
+      </tbody>
+      </table>
    </div>
-   <div class="chartWrapper">
-      <h2>CPU</h2>
-      <canvas id="cpuChart" width="1600" height="900"></canvas>
-   </div>
-   <div class="chartWrapper">
-      <h2>Read IO</h2>
-      <canvas id="readIOChart" width="1600" height="900"></canvas>
-   </div>
-   <div class="chartWrapper">
-      <h2>Write IO</h2>
-      <canvas id="writeIOChart" width="1600" height="900"></canvas>
-   </div>
-   <div class="chartWrapper">
-      <h2>Memory</h2>
-      <canvas id="memoryChart" width="1600" height="900"></canvas>
+
+   <div class="chartWrapper container">
+       <div class="row">
+           <div class="col-sm-6">
+               <h2>CPU</h2>
+                <canvas id="cpuChart" width="1600" height="900"></canvas>
+           </div>
+           <div class="col-sm-6">
+               <h2>Read IO</h2>
+               <canvas id="readIOChart" width="1600" height="900"></canvas>
+           </div>
+       </div>
+       <div class="row">
+           <div class="col-sm-6">
+               <h2>Write IO</h2>
+                <canvas id="writeIOChart" width="1600" height="900"></canvas>
+           </div>
+           <div class="col-sm-6">
+               <h2>Memory</h2>
+                <canvas id="memoryChart" width="1600" height="900"></canvas>
+           </div>
+       </div>
    </div>
 </div>
