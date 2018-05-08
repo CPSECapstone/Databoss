@@ -1,7 +1,7 @@
 //Initialize the angular application for this AngularJS controller
 var app = angular.module('MyCRT');
 
-app.controller('capture', function ($scope, $location, $http, buttonDisplay) {
+app.controller('capture', function ($scope, $location, $http, buttonDisplay, activeNavItem) {
     // setting variables
     const captureModeBar = document.getElementById('capture-mode-bar');
     const dateContainer = $('#date-container');
@@ -10,6 +10,8 @@ app.controller('capture', function ($scope, $location, $http, buttonDisplay) {
     var selectedMode = "";
     $scope.error = "";
     $scope.required = true;
+    $scope.disabled = true;
+    $scope.mode = "interactive";
 
     //setup
     buttonDisplay.hideButtons(dateContainer, timeContainer, storageContainer);
@@ -20,37 +22,107 @@ app.controller('capture', function ($scope, $location, $http, buttonDisplay) {
       if (selectedMode === "interactive") {
         console.log("updating to interactive view");
         buttonDisplay.hideButtons(dateContainer, timeContainer, storageContainer);
+
+        //VALIDATION LOGIC
+        if ($('#captureName').val() && $('#crBucket').val()
+            && $('#metricsBucket').val() && $('#dbName').val()) {
+            $scope.$apply(function() {
+                $scope.disabled = false;
+
+            });
+        }
+        else {
+            console.log("DISABLING THE BUTTON");
+            $scope.$apply(function() {
+                $scope.disabled = true;
+            });
+        }
+
       }
       else if (selectedMode === "time") {
         console.log("updating to time constrained view");
         buttonDisplay.showButtons(dateContainer, timeContainer);
         buttonDisplay.hideButtons(storageContainer);
+
+        //VALIDATION LOGIC
+        if ($('#startDate').val() == '' || $('#endDate').val() == '' ||
+            $('#startTime').val() == '' || $('#endTime').val() == '') {
+            $scope.$apply(function() {
+                $scope.disabled = true;
+            });
+
+        }
+        else {
+            $scope.$apply(function() {
+                $scope.disabled = false;
+            });
+        }
+
       }
       else if (selectedMode === "storage") {
         console.log("updating to storage view");
         buttonDisplay.hideButtons(dateContainer, timeContainer);
         buttonDisplay.showButtons(storageContainer);
+
+        //VALIDATION LOGIC
+        if ($('#storageNum').val() == '') {
+            $scope.$apply(function() {
+                $scope.disabled = true;
+            });
+        }
+        else {
+            $scope.$apply(function() {
+                $scope.disabled = false;
+            });
+        }
+
       }
       else {
         console.log("NO MODE SELECTED");
       }
     });
-
-    $scope.verifyTime = function() {
-        if ($('input[name=mode]:checked').val() != "time") {
-            return true;
-        }
+    $scope.validateTime = function() {
         if ($('#startDate').val() == '' || $('#endDate').val() == '' ||
             $('#startTime').val() == '' || $('#endTime').val() == '') {
-            return false;
+            return true;
         }
         if ($('#startDate').val() == $('#endDate').val() &&
             $('#startTime').val() >= $('#endTime').val()) {
-            return false;
-        }
-        else {
             return true;
         }
+
+        else {
+            return false;
+            console.log("returning false in time");
+        }
+    }
+
+    $scope.validateStorage = function() {
+        if ($('#storageNum').val() == '') {
+            return true;
+        }
+
+        else {
+            console.log("returning false in storage");
+            return false;
+        }
+    }
+
+    $scope.disableCaptureButton = function() {
+        selectedMode = $("input[name=mode]:checked").val();
+        if ($('#captureName').val() && $('#crBucket').val()
+            && $('#metricsBucket').val() && $('#dbName').val()) {
+            if (selectedMode === "time") {
+                return validateTime();
+            }
+            else if (selectedMode === "storage") {
+                return validateStorage();
+            }
+        }
+        else {
+            return false;
+        }
+
     }
 
     $scope.getRDSInstances = function() {
@@ -138,7 +210,6 @@ app.controller('capture', function ($scope, $location, $http, buttonDisplay) {
 
     // Defaulted mode is interactive when no mode is chosen
     $scope.startCapture = function () {
-
         if (!$scope.storageType) {
             console.log("storage type undefined");
             $scope.storageType = "";
@@ -170,7 +241,9 @@ app.controller('capture', function ($scope, $location, $http, buttonDisplay) {
             console.log(response);
             const inputMode = $('input[name=mode]:checked').val();
             if (inputMode == 'time' || inputMode == 'storage') {
+                activeNavItem.clearAndMakeItemActive('homeTab');
                 $location.path('home');
+
             }
             else {
                 $location.path('progress').search({name : $('#captureName').val()});
@@ -181,7 +254,6 @@ app.controller('capture', function ($scope, $location, $http, buttonDisplay) {
     }
 
     $scope.setStorageSize = function (id) {
-      console.log(id);
       $scope.storageType = id;
       //clear active
       if (id === "mb-button") {
@@ -207,5 +279,50 @@ app.controller('capture', function ($scope, $location, $http, buttonDisplay) {
         }, function errorCallback(response) {
 
         });
+    };
+
+    //returns true if capture button should be disabled
+    //returns false if capture button should be enabled
+    //for some reason it's like the modes are one behind everytime.
+    //TRY PULLING THE VALUE OF THE MODE IN A DIFFERENT WAY POSSIBLY?
+    $scope.disableCaptureButton = function() {
+        console.log("IN DISABLE FUNCTION");
+
+        disable = false;
+        captureName = $('#captureName').val();
+        captureBucket = $('#crBucket').val();
+        metricsBucket = $('#metricsBucket').val();
+        rdsInstance = $('#rdsInstance').val();
+        dbName = $('#dbName').val();
+        mode = $('input[name=mode]:checked').val();
+
+
+        console.log("the mode is: " + mode);
+
+        if (!captureName || !captureBucket || !metricsBucket || !rdsInstance) {
+            console.log("should be here everytime");
+            disabled = true;
+        }
+
+        if (mode == 'time') {
+            startDate = $('#startDate').val();
+            endDate = $('#endDate').val();
+            startTime = $('#startTime').val();
+            endTime = $('#endTime').val();
+
+            if (!startDate || !endDate || !startTime || !endTime) {
+                disable = true;
+            }
+        }
+        if (mode == 'storage') {
+            storageNum = $('#storageNum').val();
+
+            if (!storageNum) {
+                disable = true;
+            }
+        }
+
+        return disable;
+
     };
 });
