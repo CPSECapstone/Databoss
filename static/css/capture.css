@@ -27,3 +27,8 @@ h5 {
     color: #ff493a;
     padding-top: 5px;
 }
+
+.gj-datepicker-md [role=right-icon], .gj-timepicker-md [role=right-icon] {
+  padding-top: 6px;
+  padding-right: 10px;
+}

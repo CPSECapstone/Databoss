@@ -52,12 +52,12 @@
       </label>
     </div>
     <div id="date-container" class="row">
-      <span>Start Date: <input id="startDate" ng-model="startDate" ng-change="validateTime()" width="276" /> </span>
-      <span>End Date: <input id="endDate" ng-model="endDate" ng-change="validateTime()" width="276" /> </span>
+      <span>Start Date: <input class="form-control" id="startDate" ng-model="startDate" ng-change="validateTime()" width="230" /> </span>
+      <span>End Date: <input class="form-control" id="endDate" ng-model="endDate" ng-change="validateTime()" width="230" /> </span>
     </div>
     <div id="time-container" class="row">
-      <span>Start Time: <input id="startTime" ng-model="startTime" ng-change="validateTime()" width="276" /> </span>
-      <span>End Time: <input id="endTime" ng-model="endTime" ng-change="validateTime()" width="276" /> </span>
+      <span>Start Time: <input class="form-control" id="startTime" ng-model="startTime" ng-change="validateTime()" width="230" /> </span>
+      <span>End Time: <input class="form-control" id="endTime" ng-model="endTime" ng-change="validateTime()" width="230" /> </span>
     </div>
 
           <!-- storage mode  -->
@@ -71,28 +71,18 @@
           <script>
           var today = new Date(new Date().getFullYear(), new Date().getMonth(), new Date().getDate());
           $('#startDate').datepicker({
-            uiLibrary: 'bootstrap4',
-            iconsLibrary: 'fontawesome',
             minDate: today,
-            maxDate: function () {
+            maxDate: function() {
               return $('#endDate').val();
             }
           });
           $('#endDate').datepicker({
-            uiLibrary: 'bootstrap4',
-            iconsLibrary: 'fontawesome',
-            minDate: function () {
+            minDate: function() {
               return $('#startDate').val();
             }
           });
-          $('#startTime').timepicker({
-            uiLibrary: 'bootstrap4',
-            // iconsLibrary: 'fontawesome'
-          });
-          $('#endTime').timepicker({
-            uiLibrary: 'bootstrap4',
-            // iconsLibrary: 'fontawesome'
-          });
+          $('#startTime').timepicker();
+          $('#endTime').timepicker();
           </script>
 
     <div class="text-center">
