@@ -11,6 +11,7 @@ app.controller('capture', function ($scope, $location, $http, buttonDisplay, act
     $scope.error = "";
     $scope.required = true;
     $scope.disabled = true;
+    $scope.mode = "interactive";
 
     //setup
     buttonDisplay.hideButtons(dateContainer, timeContainer, storageContainer);
