@@ -45,7 +45,9 @@ app.service('activeNavItem', function() {
     }
     // adding the active class to specific element
     var navitem = document.getElementById(elementID);
-    navitem.classList.add('active');
+    if (navitem) {
+      navitem.classList.add('active');
+    }
   }
 });
 
