@@ -115,6 +115,24 @@ def updateReplayStatus(replayName, status):
     replay.status = status
     models.db.session.commit()
 
+def updateReplayQueries(replayName, total, successful, failed):
+    replay = models.Replay.query.filter_by(name=replayName).first()
+
+    if replay:
+        replay.totalQueries = total
+        replay.successfulQueries = successful
+        replay.failedQueries = failed
+
+        models.db.session.commit()
+
+def updateReplayEndTime(replayName, time):
+    replay = models.Replay.query.filter_by(name=replayName).first()
+
+    if replay:
+        replay.endTime = time
+
+        models.db.session.commit()
+
 # Return all replays in the replay table
 def getReplayAll():
     rep_list = models.Replay.query.with_entities(models.Replay.id, models.Replay.name, models.Replay.startTime)
