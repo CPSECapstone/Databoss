@@ -6,7 +6,7 @@ class TestHome(object):
 
     def setup(self):
         chromeOptions = Options()
-        chromeOptions.binary_location = "/usr/local/bin/chromedriver"
+        chromeOptions.binary_location = "#!/bin/sh\n/usr/local/bin/chromedriver"
         chromeOptions.add_argument("--headless")
         chromeOptions.add_argument("--disable-gpu")
 
