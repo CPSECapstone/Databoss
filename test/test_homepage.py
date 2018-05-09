@@ -6,8 +6,13 @@ class TestHome(object):
 
     def setup(self):
         chromeOptions = Options()
+        chromeOptions.binary_location = "/usr/local/bin/chromedriver"
         chromeOptions.add_argument("--headless")
         chromeOptions.add_argument("--disable-gpu")
+        chromeOptions.add_argument("--no-sandbox")  # This make Chromium reachable
+        chromeOptions.add_argument("--no-default-browser-check")  # Overrides default choices
+        chromeOptions.add_argument("--no-first-run")
+        chromeOptions.add_argument("--disable-default-apps")
 
         self.driver = webdriver.Chrome(chrome_options=chromeOptions)
 
