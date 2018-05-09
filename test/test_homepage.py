@@ -14,7 +14,7 @@ class TestHome(object):
         chromeOptions.add_argument("--no-first-run")
         chromeOptions.add_argument("--disable-default-apps")
 
-        self.driver = webdriver.Chrome('/home/travis/virtualenv/python2.7.9   /chromedriver', chrome_options=chromeOptions)
+        self.driver = webdriver.Chrome('/home/travis/virtualenv/python2.7.9/chromedriver', chrome_options=chromeOptions)
 
 
     def testHomePage(self):
