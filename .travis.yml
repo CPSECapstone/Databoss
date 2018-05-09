@@ -12,7 +12,7 @@ addons: # get google-chrome-stable
   chrome: stable
   apt:
     sources:
-      - google-chrome
+      - chromedriver
     packages:
       - google-chrome-stable
 install:
