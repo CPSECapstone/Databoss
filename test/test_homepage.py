@@ -1,13 +1,22 @@
 from selenium import webdriver
-
+from selenium.webdriver.common.desired_capabilities import DesiredCapabilities
+from selenium.webdriver.chrome.options import Options
 
 class TestHome(object):
 
     def setup(self):
-        self.driver = webdriver.Safari()
+        chromeOptions = Options()
+        chromeOptions.binary_location = "/usr/local/bin/chromedriver"
+        chromeOptions.add_argument("--headless")
+        chromeOptions.add_argument("--disable-gpu")
+
+        self.driver = webdriver.Chrome(desired_capabilities={'javascriptEnabled': True},
+                                       chrome_options=chromeOptions)
+
 
     def testHomePage(self):
         driver = self.driver
+        #driver.get("http://127.0.0.1:5000/")
         driver.get("http://ec2-54-183-41-251.us-west-1.compute.amazonaws.com:5000")
         assert "MyCRT" in driver.title
         homeLink = driver.find_element_by_link_text('HOME').value_of_css_property('HOME')

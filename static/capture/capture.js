@@ -59,6 +59,8 @@ app.controller('capture', function ($scope, $location, $http, buttonDisplay) {
                 return true;
             }
         }
+
+
     }
 
     $scope.validateStorage = function() {

@@ -8,10 +8,20 @@ matrix:
 #  - python: "3.6"
 #    env: TEST_SUITE=test/suite_3_6.py
 # command to install dependencies
+addons: # get google-chrome-stable
+  chrome: stable
 install:
   - pip install -r requirements.txt
   - pip install Flask-SQLAlchemy
   - pip install selenium
+  - wget -N http://chromedriver.storage.googleapis.com/2.30/chromedriver_mac64.zip -P ~/
+  - unzip ~/chromedriver_mac64.zip -d ~/
+  - rm ~/chromedriver_mac64.zip
+  - sudo mv -f ~/chromedriver /usr/local/share/
+  - sudo chmod +x /usr/local/share/chromedriver
+  - sudo ln -s /usr/local/share/chromedriver /usr/local/bin/chromedriver
 # command to run test
 script:
+  - whereis google-chrome-stable
+  - whereis chromedriver
   - pytest $TEST_SUITE # or py.test for Python versions 3.5 and below
