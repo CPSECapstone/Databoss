@@ -10,8 +10,7 @@ class TestHome(object):
         chromeOptions.add_argument("--headless")
         chromeOptions.add_argument("--disable-gpu")
 
-        self.driver = webdriver.Chrome(desired_capabilities={'javascriptEnabled': True},
-                                       chrome_options=chromeOptions)
+        self.driver = webdriver.Chrome(chrome_options=chromeOptions)
 
 
     def testHomePage(self):
