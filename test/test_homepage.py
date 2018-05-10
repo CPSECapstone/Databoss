@@ -6,15 +6,15 @@ class TestHome(object):
 
     def setup(self):
         chromeOptions = Options()
-        chromeOptions.binary_location = "/usr/bin/chromium-browser"
+        chromeOptions.binary_location = "/usr/local/bin/chromedriver"
         chromeOptions.add_argument("--headless")
         chromeOptions.add_argument("--disable-gpu")
-        chromeOptions.add_argument("--no-sandbox")  # This make Chromium reachable
-        chromeOptions.add_argument("--no-default-browser-check")  # Overrides default choices
-        chromeOptions.add_argument("--no-first-run")
-        chromeOptions.add_argument("--disable-default-apps")
 
-        self.driver = webdriver.Chrome('/home/travis/virtualenv/python2.7.9/chromedriver', chrome_options=chromeOptions)
+        desiredCapabilities = DesiredCapabilities.CHROME
+        desiredCapabilities.update(javascriptEnabled=True)
+
+        self.driver = webdriver.Chrome(chrome_options=chromeOptions,
+                                       desired_capabilities=desiredCapabilities)
 
 
     def testHomePage(self):
