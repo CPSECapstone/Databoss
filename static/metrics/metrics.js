@@ -286,14 +286,16 @@ var createChart = function(elementId, yAxesLabel, xAxesLabel) {
 var getCaptures = function($http, $scope) {
     $http({
         method: 'GET',
-        url: 'capture/getAll',
+        url: 'capture/getCapturesWithBuckets',
         headers: {
         'Content-Type': 'application/json'
         },
     }).then(function successCallback(response) {
-        $scope.captures = response.data.filter(capture =>
-          capture.status === "finished");;
-        console.log('success');
+        console.log(response.data);
+        $scope.captures = response.data;
+//        $scope.captures = response.data.filter(capture =>
+//            capture.status == "finished");
+
     }, function errorCallback(response) {
         console.log('error retrieving captures');
     })
