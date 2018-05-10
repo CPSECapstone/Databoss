@@ -1,12 +1,8 @@
 language: python
 matrix:
   include:
-#  - python: "3.4"
-#    env: TEST_SUITE=test/suite_3_4.py
   - python: "3.5"
-    env: TEST_SUITE=test/*.py
-#  - python: "3.6"
-#    env: TEST_SUITE=test/suite_3_6.py
+    env: TEST_SUITE=test/*_test.py
 # command to install dependencies
 addons: # get google-chrome-stable
   chrome: stable
