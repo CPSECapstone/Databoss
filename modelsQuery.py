@@ -191,3 +191,7 @@ def getLogFileByCapture(captureName):
    captureObj = models.Capture.query.filter_by(name=captureName).first()
    logObj = models.Logfile.query.filter_by(id=captureObj.logfileId).first()
    return logObj
+
+def getCapturesWithBuckets():
+    capturesWithBuckets = models.db.session.query(models.Capture, models.Logfile).filter(models.Capture.logfileId == models.Logfile.id).all();
+    return capturesWithBuckets

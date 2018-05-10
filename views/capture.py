@@ -15,6 +15,14 @@ def getAllCaptures():
     captures = Capture.query.all()
     return jsonify([i.serialize for i in captures])
 
+@capture_api.route('/getCapturesWithBuckets')
+def getCapturesWithBuckets():
+    capturesWithBuckets = modelsQuery.getCapturesWithBuckets()
+    jsonifiedCaptures = []
+    for i in capturesWithBuckets:
+        jsonifiedCaptures.append({"name" : i.Capture.name, "rds" : i.Capture.dbName, "bucket" : i.Logfile.bucket})
+    return jsonifiedCaptures
+
 @capture_api.route('/getSortedCapturesAndReplays')
 def getSortedCapturesAndReplays():
     captures = Capture.query.order_by(Capture.startTime.desc()).all()
