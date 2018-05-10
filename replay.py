@@ -46,7 +46,42 @@ def download_file(replayName, bucketName, fileName):
         else:
             raise
 
-#def timePreserving(replayNmae, captureObj, dbName, )
+def timePreserving(replayName, captureObj, dbName, mode, endpoint, username, password):
+    queryTable = []
+    count = 0;
+    #replayStartTime = datetime.now()
+    captureName = captureObj['name']
+    logfile = modelsQuery.getLogFileByCapture(captureName)
+    with open(captureName + " " + "tempLogFile", "r") as temp:
+        try:
+            conn = pymysql.connect(host=endpoint, user=username, passwd=password, db=dbName,
+                                   connect_timeout=5)
+        except:
+            logger.error("ERROR: Unexpected error: Could not connect to MySql instance.")
+            if os.path.exists(captureName + " " + "tempLogFile"):
+                os.remove(captureName + " " + "tempLogFile")
+            conn.close()
+            sys.exit()
+
+        for line in temp:
+            entireDict = literal_eval(line)
+            dictLength = len(entireDict)
+
+            for indx in range(dictLength):
+                tempDict = dict()
+                val = entireDict[indx]
+                #queryTable[val] = val
+                print(val['timestamp'])
+                print(val['message'])
+                tempDict['timestamp'] = val['timestamp']
+                tempDict['Query'] = val['message'][7:]
+
+                queryTable.append(tempDict)
+
+        print(queryTable)
+
+
+
 
 def startReplay(replayName, captureObj, dbName, mode, username, password):
     captureObj = json.loads(captureObj)
@@ -78,19 +113,16 @@ def startReplay(replayName, captureObj, dbName, mode, username, password):
     print("Capture start time: " + captureStartTime.strftime('%m/%d/%Y :%H:%M'))
     print("Current system time: " + replayStartTime.strftime('%m/%d/%Y% :H:%M'))
 
-    if mode == 'replay-time':
-        #call time preserving function
-        #send capture object, capture name,
-    else:
-        modelsQuery.addReplay(replayName, replayStartTime, replayEndTime, dbName, metricID, captureID, mode, "active")
-    #modelsQuery.addReplay(replayName, replayStartTime, None, dbName, metricID, captureID, mode, "active")
-
     download_file(captureName, captureBucket, filename)
+    if mode == 'replay-time':
+        timePreserving(replayName, captureObj, dbName, mode, endpoint, username, password)
+    else:
+        modelsQuery.addReplay(replayName, replayStartTime, None, dbName, metricID, captureID, mode, "active")
 
     addInProgressReplay(replayName, username, password)
 
-    t2 = Timer(0, executeReplay, [replayName, captureName, dbName, status_of_db, endpoint, datetime.now()])
-    t2.start()
+    #t2 = Timer(0, executeReplay, [replayName, captureName, dbName, status_of_db, endpoint, datetime.now()])
+    #t2.start()
 
 def executeReplay(replayName, captureName, dbName, status_of_db, endpoint, startTime):
     print("capture name here: " + captureName)
