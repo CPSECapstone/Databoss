@@ -27,7 +27,7 @@ def sqlite_setup():
     conn = sqlite3.connect('database.db')
     conn.close()
 
-    #db.drop_all()
+    db.drop_all()
     db.create_all()
 
 
