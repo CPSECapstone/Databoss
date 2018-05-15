@@ -59,11 +59,13 @@ def removeCapture(capture):
     models.db.session.commit()
 
 @models_api.route('/deleteReplay', methods=['POST'])
-def removeReplay(replayName):
-    metricId = getReplayMetric(replayName)
-    removeMetric(metricId)
+def removeReplay(replay):
 
-    models.db.session.execute("DELETE FROM Replay WHERE name=?", (replayName,))
+    if replay.status == 'finished':
+        metricId = getReplayMetric(replay.name)
+        removeMetric(metricId)
+
+    models.db.session.execute("DELETE FROM Replay WHERE id=?", (replay.id,))
     models.db.session.commit()
 
 def removeLogfile(logfileId):
