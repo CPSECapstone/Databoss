@@ -1,5 +1,7 @@
 .tableWrapper {
    overflow : scroll;
+   max-height: 300px;
+   margin-bottom: 100px;
 }
 
 .table {
