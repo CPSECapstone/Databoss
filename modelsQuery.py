@@ -149,6 +149,10 @@ def getCaptureMetricBucket(captureName):
     metricObj = models.Metric.query.filter_by(id=capture.metricId).first()
     return metricObj.bucket
 
+def getCapturesWithBuckets():
+    capturesWithBuckets = models.db.session.query(models.Capture, models.Logfile).filter(models.Capture.logfileId == models.Logfile.id).all();
+    return capturesWithBuckets
+
 ########################
 # Update Capture queries
 ########################
@@ -185,6 +189,10 @@ def getReplayAll():
 def getReplayMetric(replayName):
     replay = models.Replay.query.filter_by(name=replayName).first()
     return replay.metricId
+
+def getReplaysWithBuckets():
+    replaysWithBuckets = models.db.session.query(models.Replay, models.Metric).filter(models.Replay.metricId == models.Metric.id).all();
+    return replaysWithBuckets
 
 ########################
 # Update Replay queries
