@@ -13,7 +13,7 @@ app.controller('home', function($scope, $location, $http, activeNavItem) {
   $scope.deleteCapture = function(capture) {
     $http({
         method: 'POST',
-        url: 'modelsQuery/removecapture',
+        url: 'modelsQuery/removeCapture',
         headers: {
             'Content-Type': 'application/json'
         },
@@ -22,7 +22,30 @@ app.controller('home', function($scope, $location, $http, activeNavItem) {
         }
     }).then(function successCallback(response) {
         //$('#confirmModal').modal('hide')
-        //$('#messageModal').modal('show')
+        if (capture.status == 'finished') {
+            //$('#messageModal').modal('show')
+        }
+        console.log('success');
+    }, function errorCallback(response) {
+        console.log('error');
+    });
+  }
+
+  $scope.deleteReplay = function(replay) {
+    $http({
+        method: 'POST',
+        url: 'modelsQuery/removeReplay',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        data: {
+            'replay': replay
+        }
+    }).then(function successCallback(response) {
+        //$('#confirmModal').modal('hide')
+        if (replay.status == 'finished') {
+            //$('#messageModal').modal('show')
+        }
         console.log('success');
     }, function errorCallback(response) {
         console.log('error');
