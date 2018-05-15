@@ -69,25 +69,17 @@ class TestLocal(object):
             assert driver.find_element_by_tag_name("h1").text == "REPLAY"
             actions.reset_actions()
 
-            actions.click(driver.find_element_by_link_text('INFO'))
-            actions.pause(2)
-            actions.perform()
-            assert driver.find_element_by_tag_name("h1").text == "USER INFORMATION"
-            actions.reset_actions()
-
             actions.click(driver.find_element_by_link_text('METRICS'))
             actions.pause(2)
             actions.perform()
             assert driver.find_element_by_tag_name("h1").text == "METRICS"
             actions.reset_actions()
 
-            '''
             actions.click(driver.find_element_by_link_text('CONTACT'))
             actions.pause(2)
             actions.perform()
             assert driver.find_element_by_tag_name("h1") == "CONTACT US"
             actions.reset_actions()
-            '''
 
             actions.click(driver.find_element_by_link_text('HOME'))
             actions.pause(2)
