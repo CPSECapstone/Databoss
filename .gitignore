@@ -9,6 +9,7 @@ database.db
 .cache/
 
 credentials.json
+selenium.json
 rds_config.py
 
 # Elastic Beanstalk Files

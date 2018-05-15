@@ -1,5 +1,7 @@
 import models
-from flask import jsonify
+from flask import Blueprint
+
+models_api = Blueprint('models_api', __name__)
 
 # Sets up the tables in the database and their connections. Should be called only once.
 def createTable():
@@ -25,6 +27,19 @@ def getDBConnectionAll():
 def addCapture(name, startTime, endTime, dbName, logfileID, metricID, mode, status):
     new_cap = models.Capture(name, startTime, endTime, dbName, logfileID, metricID, mode, status)
     models.db.session.add(new_cap)
+    models.db.session.commit()
+
+@models_api.route('/deleteCapture', methods=['POST'])
+def removeCapture(capture):
+    metricId = getCaptureMetric(capture.name)
+    removeMetric(metricId)
+
+    logfileId = getLogFileByCapture(capture.name)
+    removeLogfile(logfileId)
+
+    models.db.session.execute("DELETE FROM Replay WHERE captureId=?", (capture.id,))
+
+    models.db.session.execute("DELETE FROM Capture WHERE name=?", (capture.name,))
     models.db.session.commit()
 
 def getCaptureById(captureId):
@@ -100,6 +115,13 @@ def addReplay(name, startTime, endTime, dbName, metricId, captureId, mode, statu
     models.db.session.add(new_rep)
     models.db.session.commit()
 
+def removeReplay(replayName):
+    metricId = getReplayMetric(replayName)
+    removeMetric(metricId)
+
+    models.db.session.execute("DELETE FROM Replay WHERE name=?", (replayName,))
+    models.db.session.commit()
+
 def getReplayById(replayId):
     replay = models.Replay.query.get(replayId)
     return replay
@@ -109,6 +131,10 @@ def getReplayByName(replayName):
     if replay:
         return replay
     return None
+
+def getReplayMetric(replayName):
+    replay = models.Replay.query.filter_by(name=replayName).first()
+    return replay.metricId
 
 def updateReplayStatus(replayName, status):
     replay = models.Replay.query.filter_by(name=replayName).first()
@@ -144,6 +170,10 @@ def addMetric(name, bucket, file):
     models.db.session.add(new_metric)
     models.db.session.commit()
 
+def removeMetric(metricId):
+    models.db.session.execute("DELETE FROM Metric WHERE id=?", (metricId,))
+    models.db.session.commit()
+
 # Return metric associated with provided capture or replay
 def getMetricById(metricId):
     m = models.Metric.query.get(metricId)
@@ -171,6 +201,10 @@ def updateMetricFile(metricID, filename):
 def addLogfile(name, bucket, file):
     new_logfile = models.Logfile(name, bucket, file)
     models.db.session.add(new_logfile)
+    models.db.session.commit()
+
+def removeLogfile(logfileId):
+    models.db.session.execute("DELETE FROM Logfile WHERE id=?", (logfileId,))
     models.db.session.commit()
 
 def getLogfile(logfileId):

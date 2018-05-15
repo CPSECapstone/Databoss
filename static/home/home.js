@@ -9,6 +9,26 @@ app.controller('home', function($scope, $location, $http, activeNavItem) {
   $scope.goCapture = function () {
       $location.path('/capture');
   }
+
+  $scope.deleteCapture = function(capture) {
+    $http({
+        method: 'POST',
+        url: 'modelsQuery/removecapture',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        data: {
+            'capture': capture
+        }
+    }).then(function successCallback(response) {
+        //$('#confirmModal').modal('hide')
+        //$('#messageModal').modal('show')
+        console.log('success');
+    }, function errorCallback(response) {
+        console.log('error');
+    });
+  }
+
   populateCapturesAndReplays($http, $scope);
   populateActiveCaptures($http, $scope);
   // populateFinishedCaptures($http, $scope);
