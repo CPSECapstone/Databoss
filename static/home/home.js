@@ -10,7 +10,7 @@ app.controller('home', function($scope, $location, $http, activeNavItem) {
       $location.path('/capture');
   }
 
-  $scope.deleteCapture = function(capture) {
+  $scope.deleteCapture = function(captureId) {
     $http({
         method: 'POST',
         url: 'modelsQuery/removeCapture',
@@ -18,7 +18,7 @@ app.controller('home', function($scope, $location, $http, activeNavItem) {
             'Content-Type': 'application/json'
         },
         data: {
-            'capture': capture
+            'captureId': captureId
         }
     }).then(function successCallback(response) {
         //$('#confirmModal').modal('hide')
@@ -31,7 +31,7 @@ app.controller('home', function($scope, $location, $http, activeNavItem) {
     });
   }
 
-  $scope.deleteReplay = function(replay) {
+  $scope.deleteReplay = function(replayId) {
     $http({
         method: 'POST',
         url: 'modelsQuery/removeReplay',
@@ -39,7 +39,7 @@ app.controller('home', function($scope, $location, $http, activeNavItem) {
             'Content-Type': 'application/json'
         },
         data: {
-            'replay': replay
+            'replayId': replayId
         }
     }).then(function successCallback(response) {
         //$('#confirmModal').modal('hide')

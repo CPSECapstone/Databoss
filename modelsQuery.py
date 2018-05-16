@@ -44,28 +44,26 @@ def addMetric(name, bucket, file):
 ########################
 
 @models_api.route('/deleteCapture', methods=['POST'])
-def removeCapture(capture):
+def removeFinishedCapture(captureId):
 
-    if capture.status == 'finished':
-        metricId = getCaptureMetric(capture.name)
-        removeMetric(metricId)
+    metricId = getCaptureMetric(capture.name)
+    removeMetric(metricId)
 
-        logfileId = getLogFileByCapture(capture.name)
-        removeLogfile(logfileId)
+    logfileId = getLogFileByCapture(capture.name)
+    removeLogfile(logfileId)
 
-        models.db.session.execute("DELETE FROM Replay WHERE captureId=?", (capture.id, ))
+    models.db.session.execute("DELETE FROM Replay WHERE captureId=?", (captureId, ))
 
-    models.db.session.execute("DELETE FROM Capture WHERE name=?", (capture.name,))
+    models.db.session.execute("DELETE FROM Capture WHERE id=?", (captureId,))
     models.db.session.commit()
 
 @models_api.route('/deleteReplay', methods=['POST'])
-def removeReplay(replay):
+def removeFinishedReplay(replayId):
 
-    if replay.status == 'finished':
-        metricId = getReplayMetric(replay.name)
-        removeMetric(metricId)
+    metricId = getReplayMetric(replay.name)
+    removeMetric(metricId)
 
-    models.db.session.execute("DELETE FROM Replay WHERE id=?", (replay.id,))
+    models.db.session.execute("DELETE FROM Replay WHERE id=?", (replayId,))
     models.db.session.commit()
 
 def removeLogfile(logfileId):
