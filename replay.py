@@ -48,9 +48,9 @@ def download_file(replayName, bucketName, fileName):
         else:
             raise
 
-def executeTimePreserving(queryTable, replayName, captureName, dbName, status_of_db, endpoint, username, password, start_time):
+def executeTimePreserving(queryTable, replayName, captureName, dbName, status_of_db, totalQueries, endpoint, username, password, start_time):
     metricBucket = modelsQuery.getCaptureMetricBucket(captureName)
-    totalQueries = 0
+    #totalQueries = 0
     numQueriesExecuted = 0
     numQueriesFailed = 0
 
@@ -105,11 +105,11 @@ def timePreserving(replayName, captureObj, dbName, mode, endpoint, status_of_db,
                 os.remove(captureName + " " + "tempLogFile")
             conn.close()
             sys.exit()
-
         for line in temp:
 
             entireDict = literal_eval(line)
             dictLength = len(entireDict)
+            totalQueries = len(entireDict)
             print(dictLength)
             if dictLength == 0:
                 flag = True
@@ -137,7 +137,7 @@ def timePreserving(replayName, captureObj, dbName, mode, endpoint, status_of_db,
                 queryTable[queryTableIndx].update(timeDictionary)
 
             #print(queryTable)
-            t3 = Timer(0, executeTimePreserving, [queryTable, replayName, captureName, dbName, status_of_db, endpoint, username, password, datetime.now()])
+            t3 = Timer(0, executeTimePreserving, [queryTable, replayName, captureName, dbName, status_of_db, totalQueries, endpoint, username, password, datetime.now()])
             t3.start()
         else:
             endTime = datetime.now()
@@ -178,7 +178,6 @@ def startReplay(replayName, captureObj, dbName, mode, username, password):
 
     download_file(captureName, captureBucket, filename)
     if mode == 'time-preserving':
-        print("---- TIME PRESETIONG")
         modelsQuery.addReplay(replayName, replayStartTime, None, dbName, metricID, captureID, mode, "active")
         addInProgressReplay(replayName, username, password)
         timePreserving(replayName, captureObj, dbName, mode, endpoint, status_of_db, username, password)
