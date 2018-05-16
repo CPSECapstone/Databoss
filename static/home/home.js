@@ -40,7 +40,11 @@ var populateCapturesAndReplays = function($http, $scope) {
           $scope.active.push(capture);
         }
         else if (capture.status == "finished") {
-          $scope.finished.push(capture)
+          capture.passFail = "passed";
+          $scope.finished.push(capture);
+        } else if (capture.status == "failed") {
+          capture.passFail = "failed";
+          $scope.finished.push(capture);
         }
       })
 
@@ -51,6 +55,7 @@ var populateCapturesAndReplays = function($http, $scope) {
           $scope.active.push(replay);
         }
         else if (replay.status == "finished") {
+          replay.passFail = "passed";
           $scope.finished.push(replay);
         }
       })

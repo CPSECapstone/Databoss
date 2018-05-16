@@ -1,11 +1,11 @@
 import sqlite3
 import modelsQuery
 from datetime import datetime
-
-
+import atexit
 
 from flask import send_file
 from web_app import app, db
+import models
 
 import capture
 from views import dbConnection, login, metrics, replay, capture as cap
@@ -29,6 +29,18 @@ def sqlite_setup():
 
     db.drop_all()
     db.create_all()
+
+
+def exit_handler():
+    inProgressCaptures = models.Capture.query.filter((models.Capture.status == "active") | (models.Capture.status == "scheduled")).all()
+
+    for failedCap in inProgressCaptures:
+        failedCap.status = "failed"
+
+    models.db.session.commit()
+
+
+atexit.register(exit_handler)
 
 
 if __name__ == "__main__":
