@@ -59,6 +59,7 @@ var populateCapturesAndReplays = function($http, $scope) {
           $scope.finished.push(replay);
         }
       })
+      debugger;
       formatDates($scope.finished);
       formatDates($scope.active);
       calculateProgress($scope.active);

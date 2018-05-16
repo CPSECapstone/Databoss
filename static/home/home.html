@@ -49,16 +49,18 @@
         </div>
         <div ng-if='item.type == "replay"'>
           <div class="box">
-            <div class="capture-name text-center">
-              {{item.name}}
-            </div>
-            <div class="date-container text-center">
-              <span class="time-label">Start: </span>
-              {{item.formattedStart}}
-            </div>
-            <div class="box-temp">
+            <a href="#!/replayProgress?name={{item.name}}">
+              <div class="capture-name text-center">
+                {{item.name}}
+              </div>
+              <div class="date-container text-center">
+                <span class="time-label">Start: </span>
+                {{item.formattedStart}}
+              </div>
+              <div class="box-temp">
 
-            </div>
+              </div>
+            </a>
           </div>
         </div>
       </div>

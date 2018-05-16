@@ -163,7 +163,8 @@ def startReplay(replayName, captureObj, dbName, mode, username, password):
     print("Current system time: " + replayStartTime.strftime('%m/%d/%Y% :H:%M'))
 
     download_file(captureName, captureBucket, filename)
-    if mode == 'replay-time':
+    if mode == 'time-preserving':
+        print("---- TIME PRESETIONG")
         modelsQuery.addReplay(replayName, replayStartTime, None, dbName, metricID, captureID, mode, "active")
         addInProgressReplay(replayName, username, password)
         timePreserving(replayName, captureObj, dbName, mode, endpoint, status_of_db, username, password)
