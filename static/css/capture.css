@@ -1,10 +1,14 @@
 #date-container {
-  margin-bottom: 20px;
+  margin: auto;
+  padding-bottom: 20px;
+  padding-left: 15px;
 }
 
 #time-container, #storage-container {
-  margin-bottom: 20px;
-  margin-top: 10px;
+  margin: auto;
+  padding-bottom: 20px;
+  padding-top: 10px;
+  padding-left: 15px;
 }
 
 .gj-calendar-bootstrap {

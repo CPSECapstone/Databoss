@@ -57,7 +57,7 @@
               {{item.formattedStart}}
             </div>
             <div class="box-temp">
-              
+
             </div>
           </div>
         </div>
@@ -71,7 +71,7 @@
       <div class="col-xs-3" ng-repeat="item in finished">
         <div ng-if='item.type == "capture"'>
           <a href="#!/metrics?captureId={{item.id}}">
-            <div class="box">
+            <div class="box" ng-class='{passBox: (item.status == "finished"), failBox: (item.status == "failed")}'>
               <div class="capture-name text-center">
                 {{item.name}}
               </div>
@@ -83,6 +83,9 @@
                 <span class="time-label">End: </span>
                 {{item.formattedEnd}}
               </div>
+              <div class="passFail text-center" ng-class='{passText: (item.passFail == "passed"), failText: (item.passFail == "failed")}'>
+                {{item.passFail}}
+              </div>
 
             </div>
           </a>
@@ -90,7 +93,7 @@
         </div>
         <div ng-if='item.type == "replay"'>
           <a href="#!/metrics?captureId={{item.id}}">
-            <div class="box">
+            <div class="box" ng-class='{passBox: (item.status == "finished"), failBox: (item.status == "failed")}'>
               <div class="capture-name text-center">
                 {{item.name}}
               </div>
@@ -102,7 +105,10 @@
                 <span class="time-label">Successful: </span>
                 {{item.successfulQueries}}
               </div>
+              <div class="passFail text-center" ng-class='{passText: (item.passFail == "passed")}'>
+                {{item.passFail}}
 
+              </div>
             </div>
           </a>
         </div>
