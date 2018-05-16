@@ -46,10 +46,10 @@ def addMetric(name, bucket, file):
 @models_api.route('/deleteCapture', methods=['POST'])
 def removeFinishedCapture(captureId):
 
-    metricId = getCaptureMetric(capture.name)
+    metricId = getMetricByCaptureId(captureId)
     removeMetric(metricId)
 
-    logfileId = getLogFileByCapture(capture.name)
+    logfileId = getLogfileByCaptureId(captureId)
     removeLogfile(logfileId)
 
     models.db.session.execute("DELETE FROM Replay WHERE captureId=?", (captureId, ))
@@ -60,7 +60,7 @@ def removeFinishedCapture(captureId):
 @models_api.route('/deleteReplay', methods=['POST'])
 def removeFinishedReplay(replayId):
 
-    metricId = getReplayMetric(replay.name)
+    metricId = getMetricByReplayId(replayId)
     removeMetric(metricId)
 
     models.db.session.execute("DELETE FROM Replay WHERE id=?", (replayId,))
@@ -241,6 +241,14 @@ def getMetricBucketByName(name):
     metricObj = models.Metric.query.filter_by(id=capture.metricId).first()
     return metricObj.bucket
 
+def getMetricByCaptureId(captureId):
+    capture = models.Capture.query.filter_by(id=captureId).first()
+    return capture.metricId
+
+def getMetricByReplayId(replayId):
+    replay = models.Replay.query.filter_by(id=replayId).first()
+    return replay.metricId
+
 ########################
 # Update Metric queries
 ########################
@@ -266,6 +274,10 @@ def getLogFileByCapture(captureName):
    captureObj = models.Capture.query.filter_by(name=captureName).first()
    logObj = models.Logfile.query.filter_by(id=captureObj.logfileId).first()
    return logObj
+
+def getLogfileByCaptureId(captureId):
+    capture = models.Capture.query.filter_by(id=captureId).first()
+    return capture.logfileId
 
 ########################
 # Update Metric queries

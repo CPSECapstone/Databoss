@@ -72,6 +72,9 @@
     <div class="row" >
       <div class="col-xs-3" ng-repeat="item in finished">
         <div ng-if='item.type == "capture"'>
+            <div class="delete-button">
+              <i ng-click="deleteCapture(item.id)" class="fa fa-times-circle nav-icon"> </i>
+            </div>
           <a href="#!/metrics?captureId={{item.id}}">
             <div class="box" ng-class='{passBox: (item.status == "finished"), failBox: (item.status == "failed")}'>
               <div class="capture-name text-center">
@@ -88,14 +91,15 @@
               <div class="passFail text-center" ng-class='{passText: (item.passFail == "passed"), failText: (item.passFail == "failed")}'>
                 {{item.passFail}}
               </div>
-
             </div>
           </a>
-
         </div>
         <div ng-if='item.type == "replay"'>
-          <a href="#!/metrics?captureId={{item.id}}">
+            <div class="delete-button">
+              <i ngClick="deleteReplay(item.id)"class="fa fa-times-circle nav-icon"> </i>
+            </div>
             <div class="box" ng-class='{passBox: (item.status == "finished"), failBox: (item.status == "failed")}'>
+          <!-- <a href="#!/metrics?captureId={{item.id}}"> -->
               <div class="capture-name text-center">
                 {{item.name}}
               </div>
@@ -111,8 +115,8 @@
                 {{item.passFail}}
 
               </div>
+          <!-- </a> -->
             </div>
-          </a>
         </div>
       </div>
     </div>

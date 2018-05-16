@@ -10,6 +10,7 @@ app.controller('home', function($scope, $location, $http, activeNavItem) {
       $location.path('/capture');
   }
 
+
   $scope.deleteCapture = function(captureId) {
     $http({
         method: 'POST',
@@ -51,6 +52,11 @@ app.controller('home', function($scope, $location, $http, activeNavItem) {
         console.log('error');
     });
   }
+
+  $scope.delete = function(id) {
+    console.log("DELETE BUTTON PRESSED for " + id);
+  }
+
 
   populateCapturesAndReplays($http, $scope);
   populateActiveCaptures($http, $scope);
@@ -102,7 +108,6 @@ var populateCapturesAndReplays = function($http, $scope) {
           $scope.finished.push(replay);
         }
       })
-      debugger;
       formatDates($scope.finished);
       formatDates($scope.active);
       calculateProgress($scope.active);
