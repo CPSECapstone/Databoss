@@ -22,7 +22,6 @@ app.controller('replayProgress', function($scope, $location, $http) {
     },
   }).then(function successCallback(response) {
     $scope.replay = response.data;
-    debugger;
     console.log("REPLAY HERE: " + $scope.replay);
   }, function errorCallback(response) {
     console.log('error retrieving replay name = ' + replayName);
