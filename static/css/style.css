@@ -6,8 +6,10 @@
 
 body {
   background-color: #333333;
+  height: 100%;
   color: white;
 }
+
 .tableWrapper {
     padding-left: 10px;
 }
@@ -21,7 +23,7 @@ body {
   margin-right: auto;
 }
 #my-crt-logo {
-  font-size: 1.5em;
+  font-size: 1.1em;
   padding-top: 15px;
   padding-bottom:15px;
   text-align: center;
@@ -34,12 +36,9 @@ body {
   font-size: 1.7em;
 } */
 .nav-container {
-  /* border: 1px solid blue; */
   position: fixed;
-  width: 132px;
-  float: left;
-  height: 1000px;
-  /* background-color: #2A2A2A; */
+  width: 100px;
+  height:100%;
   background-color: #222222;
 }
 /* Took out the horizontal nav for now  */
@@ -66,20 +65,20 @@ h1 {
 .myview {
   /* border: 2px solid green; */
   margin-left: 132px;
-  height: 100vh;
 }
 
 .nav-item {
   /* border: 2px solid green; */
   /* border: 1px solid red; */
-  width: 132px;
-  padding: 25px;
+  padding-top:20px;
+  padding-bottom:20px;
+  width: 100px;
+  /* padding: 25px; */
   font-style: white;
 }
 
 .cus-nav-link {
   /* border: 1px solid green; */
-  /* margin-left: 10px; */
   font-size: 12px;
 }
 
@@ -94,18 +93,26 @@ h1 {
 }
 
 .text-container {
-  /* border: 1px solid green; */
   margin-top: 10px;
   text-align: center;
-  font-size: 1.1em;
+  font-size: 1em;
 }
 
 .nav-item:hover {
-  /* border: 1px solid green; */
   background-color: #111111;
 }
 
 .nav-item.active {
   /* border: 1px solid green; */
   background-color: #111111;
+}
+
+#feedback-form {
+  margin-left: 70px;
+  margin-top: 30px;
+}
+
+#email-note {
+  padding-top: 40px;
+  margin-left: 70px;
 }

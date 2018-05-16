@@ -41,70 +41,95 @@
 
     <h5>Capture Mode:</h5>
     <div id="capture-mode-bar" class="btn-group" data-toggle="buttons">
-      <label class="btn btn-primary">
-        <input type="radio" name="mode" autocomplete="off" value="interactive"> Interactive
+      <label class="btn btn-primary active">
+        <input type="radio" name="mode" autocomplete="off" value="interactive" ng-model="mode" ng-change="disableCaptureButton()"> Interactive
       </label>
       <label class="btn btn-primary">
-        <input type="radio" name="mode" autocomplete="off" value="time"> Time-Constrained
+        <input type="radio" name="mode" autocomplete="off" value="time" ng-model="mode" ng-change="disableCaptureButton()"> Time-Constrained
       </label>
       <label class="btn btn-primary">
-        <input type="radio" name="mode" autocomplete="off" value="storage"> Storage-Constrained
+        <input type="radio" name="mode" autocomplete="off" value="storage" ng-model="mode" ng-change="disableCaptureButton()"> Storage-Constrained
       </label>
     </div>
     <div id="date-container" class="row">
-      <span>Start Date: <input id="startDate" ng-model="startDate" width="276" /> </span>
-      <span>End Date: <input id="endDate" ng-model="endDate" width="276" /> </span>
+      <span class="time-date-element">Start Date: <input class="form-control" id="startDate" ng-model="startDate" ng-change="validateTime()" /> </span>
+      <span>End Date: <input class="form-control" id="endDate" ng-model="endDate" ng-change="validateTime()" /> </span>
     </div>
     <div id="time-container" class="row">
-      <span>Start Time: <input id="startTime" ng-model="startTime" width="276" /> </span>
-      <span>End Time: <input id="endTime" ng-model="endTime" width="276" /> </span>
+      <span class="time-date-element">Start Time: <input class="form-control" id="startTime" ng-model="startTime" ng-change="validateTime()"/> </span> <span>End Time: <input class="form-control" id="endTime" ng-model="endTime" ng-change="validateTime()"/> </span>
     </div>
 
           <!-- storage mode  -->
           <div id="storage-container" placeholder="size" class="row input-group">
-            <input id="storageNum" type="number" class="form-control" ng-model="storageNumber">
+            <input id="storageNum" type="number" class="form-control" ng-model="storageNumber" ng-change="validateStorage()">
             <div class="input-group-append">
-              <button id="mb-button" class="btn btn-outline-success" type="button" ng-click="setStorageSize('mb-button')">MB</button>
+              <button id="mb-button" class="btn btn-outline-success active" type="button" ng-click="setStorageSize('mb-button')">MB</button>
               <button id="gb-button" class="btn btn-outline-success" type="button" ng-click="setStorageSize('gb-button')">GB</button>
             </div>
           </div>
           <script>
           var today = new Date(new Date().getFullYear(), new Date().getMonth(), new Date().getDate());
           $('#startDate').datepicker({
-            uiLibrary: 'bootstrap4',
-            iconsLibrary: 'fontawesome',
+            icons: {
+              rightIcon: '<i class="fa fa-calendar-o text-muted"> </i>'
+            },
             minDate: today,
-            maxDate: function () {
+            maxDate: function() {
               return $('#endDate').val();
             }
           });
           $('#endDate').datepicker({
-            uiLibrary: 'bootstrap4',
-            iconsLibrary: 'fontawesome',
-            minDate: function () {
+            icons: {
+              rightIcon: '<i class="fa fa-calendar-o text-muted"> </i>'
+            },
+            minDate: function() {
               return $('#startDate').val();
             }
           });
           $('#startTime').timepicker({
-            uiLibrary: 'bootstrap4',
-            // iconsLibrary: 'fontawesome'
+            icons: {
+              rightIcon: '<i class="fa fa-clock-o text-muted"> </i>'
+            },
           });
           $('#endTime').timepicker({
-            uiLibrary: 'bootstrap4',
-            // iconsLibrary: 'fontawesome'
+            icons: {
+              rightIcon: '<i class="fa fa-clock-o text-muted"> </i>'
+            },
           });
           </script>
 
     <div class="text-center">
       <button type="button" ng-model="button" ng-click="startCapture()" class="btn-capture btn btn-success"
               ng-disabled="!captureName || !crBucket || !metricsBucket || !rdsInstance || !dbName ||
-                           uniqueName == 'false'">
-      Capture</button>
+                           uniqueName == 'false' || disableCaptureButton()">
+      Capture  </button>
+      <div class="warning">{{error}}</div>
     </div>
     </div>
   </div>
   </form>
   </body>
+
+  <!-- Storage Error Modal  -->
+  <div class="container">
+    <div class="modal fade" id="storageErrorModal">
+      <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title">Error!</h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <div class="modal-body">
+            <p>
+              The storage input is greater than the allocated storage in your database.
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
 
   <!-- Authentication Modal -->
   <div class="container">
@@ -120,6 +145,7 @@
 
           <!-- Modal body -->
           <div class="modal-body">
+            <div class="warning" ng-if="instanceDbs == 'false'">RDS Authentication failed.</div>
             <label for="username">Username:</label>
             <input type="text" class="form-control" id="username" ng-model="username" autofocus>
             <label for="password">Password:</label>
@@ -129,7 +155,7 @@
           <!-- Modal footer -->
           <div class="modal-footer">
             <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
-            <button type="button" class="btn btn-primary" data-dismiss="modal"
+            <button type="button" class="btn btn-primary"
             ng-click="getInstanceDbs(rdsInstance)" id="authenticate">Authenticate</button>
           </div>
 

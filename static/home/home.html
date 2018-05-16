@@ -18,7 +18,6 @@
               <span class="time-label">End: </span>
               {{capture.formattedEnd}}
             </div>
-
           </div>
         </a>
       </div>
@@ -28,27 +27,40 @@
   <h3>Active</h3>
   <div class="container2">
     <div class="row" >
-      <div class="col-xs-3" ng-repeat="capture in activeCaptures">
-
-        <a href="#!/progress?name={{capture.name}}">
+      <div class="col-xs-3" ng-repeat="item in active">
+        <div ng-if='item.type == "capture"'>
+          <div class="box">
+            <a href="#!/progress?name={{item.name}}">
+              <div class="capture-name text-center">
+                {{item.name}}
+              </div>
+              <div class="date-container text-center">
+                <span class="time-label">Start: </span>
+                {{item.formattedStart}}
+              </div>
+              <div class="home-progress text-center">
+                <span class="progress-num">{{item.progress}}</span>
+                <div class="home-completed text-center">
+                  % COMPLETED
+                </div>
+              </div>
+            </a>
+          </div>
+        </div>
+        <div ng-if='item.type == "replay"'>
           <div class="box">
             <div class="capture-name text-center">
-              {{capture.name}}
+              {{item.name}}
             </div>
             <div class="date-container text-center">
               <span class="time-label">Start: </span>
-              {{capture.formattedStart}}
+              {{item.formattedStart}}
             </div>
-            <div class="home-progress text-center">
-              <span class="progress-num">{{capture.progress}}</span>
-              <!-- <span class="progress-percent">%</span> -->
-            </div>
+            <div class="box-temp">
 
-            <div class="home-completed text-center">
-              % COMPLETED
             </div>
           </div>
-        </a>
+        </div>
       </div>
     </div>
   </div>
@@ -56,24 +68,50 @@
   <h3>Finished</h3>
   <div class="container2">
     <div class="row" >
-      <div class="col-xs-3" ng-repeat="capture in finishedCaptures">
+      <div class="col-xs-3" ng-repeat="item in finished">
+        <div ng-if='item.type == "capture"'>
+          <a href="#!/metrics?captureId={{item.id}}">
+            <div class="box" ng-class='{passBox: (item.status == "finished"), failBox: (item.status == "failed")}'>
+              <div class="capture-name text-center">
+                {{item.name}}
+              </div>
+              <div class="date-container text-center">
+                <span class="time-label">Start: </span>
+                {{item.formattedStart}}
+              </div>
+              <div class="date-container text-center">
+                <span class="time-label">End: </span>
+                {{item.formattedEnd}}
+              </div>
+              <div class="passFail text-center" ng-class='{passText: (item.passFail == "passed"), failText: (item.passFail == "failed")}'>
+                {{item.passFail}}
+              </div>
 
-        <a href="#!/metrics?captureId={{capture.id}}">
-          <div class="box">
-            <div class="capture-name text-center">
-              {{capture.name}}
             </div>
-            <div class="date-container text-center">
-              <span class="time-label">Start: </span>
-              {{capture.formattedStart}}
-            </div>
-            <div class="date-container text-center">
-              <span class="time-label">End: </span>
-              {{capture.formattedEnd}}
-            </div>
+          </a>
 
-          </div>
-        </a>
+        </div>
+        <div ng-if='item.type == "replay"'>
+          <a href="#!/metrics?captureId={{item.id}}">
+            <div class="box" ng-class='{passBox: (item.status == "finished"), failBox: (item.status == "failed")}'>
+              <div class="capture-name text-center">
+                {{item.name}}
+              </div>
+              <div class="date-container text-center">
+                <span class="time-label">Total Queries: </span>
+                {{item.totalQueries}}
+              </div>
+              <div class="date-container text-center">
+                <span class="time-label">Successful: </span>
+                {{item.successfulQueries}}
+              </div>
+              <div class="passFail text-center" ng-class='{passText: (item.passFail == "passed")}'>
+                {{item.passFail}}
+
+              </div>
+            </div>
+          </a>
+        </div>
       </div>
     </div>
   </div>

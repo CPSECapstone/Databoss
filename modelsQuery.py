@@ -115,6 +115,24 @@ def updateReplayStatus(replayName, status):
     replay.status = status
     models.db.session.commit()
 
+def updateReplayQueries(replayName, total, successful, failed):
+    replay = models.Replay.query.filter_by(name=replayName).first()
+
+    if replay:
+        replay.totalQueries = total
+        replay.successfulQueries = successful
+        replay.failedQueries = failed
+
+        models.db.session.commit()
+
+def updateReplayEndTime(replayName, time):
+    replay = models.Replay.query.filter_by(name=replayName).first()
+
+    if replay:
+        replay.endTime = time
+
+        models.db.session.commit()
+
 # Return all replays in the replay table
 def getReplayAll():
     rep_list = models.Replay.query.with_entities(models.Replay.id, models.Replay.name, models.Replay.startTime)
@@ -173,3 +191,11 @@ def getLogFileByCapture(captureName):
    captureObj = models.Capture.query.filter_by(name=captureName).first()
    logObj = models.Logfile.query.filter_by(id=captureObj.logfileId).first()
    return logObj
+
+def getCapturesWithBuckets():
+    capturesWithBuckets = models.db.session.query(models.Capture, models.Logfile).filter(models.Capture.logfileId == models.Logfile.id).all();
+    return capturesWithBuckets
+
+def getReplaysWithBuckets():
+    replaysWithBuckets = models.db.session.query(models.Replay, models.Metric).filter(models.Replay.metricId == models.Metric.id).all();
+    return replaysWithBuckets

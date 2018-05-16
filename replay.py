@@ -79,43 +79,50 @@ def startReplay(replayName, captureObj, dbName, mode, username, password):
 
     addInProgressReplay(replayName, username, password)
 
-    t2 = Timer(0, executeReplay, [replayName, captureName, dbName, status_of_db, endpoint, metricFile, datetime.now()])
+    t2 = Timer(0, executeReplay, [replayName, captureName, dbName, status_of_db, endpoint, datetime.now()])
     t2.start()
 
-def executeReplay(replayName, captureName, dbName, status_of_db, endpoint, metricFile, startTime):
+def executeReplay(replayName, captureName, dbName, status_of_db, endpoint, startTime):
     print("capture name here: " + captureName)
-    print("db name: "  + dbName)
+    print("db name: " + dbName)
     metricBucket = modelsQuery.getCaptureMetricBucket(captureName)
     inProgressReplay = getInProgressReplay(replayName)
     username = inProgressReplay.get('username')
     password = inProgressReplay.get('password')
 
+    totalQueries = 0
     numQueriesExecuted = 0
+    numQueriesFailed = 0
 
     with open(captureName + " " + "tempLogFile", 'r') as tempFile:
+        try:
+            conn = pymysql.connect(host=endpoint, user=username, passwd=password, db=dbName,
+                                   connect_timeout=5)
+        except:
+            logger.error("ERROR: Unexpected error: Could not connect to MySql instance.")
+            if os.path.exists(captureName + " " + "tempLogFile"):
+                os.remove(captureName + " " + "tempLogFile")
+            conn.close()
+            sys.exit()
+
         for line in tempFile:
             entireList = literal_eval(line)
-            for i in range(len(entireList)):
+            totalQueries = len(entireList)
+            for i in range(totalQueries):
                 dict = entireList[i]
-                print("Number of queries: " + str(len(entireList)))
                 if dict['message'].startswith('Query'):
                     executableQuery = dict['message'][7:]
-                    print("executable query: " + executableQuery)
                     if str(status_of_db) == "available":
-                        try:
-                            conn = pymysql.connect(host=endpoint, user=username, passwd=password, db=dbName,
-                                                   connect_timeout=5)
-                        except:
-                            logger.error("ERROR: Unexpected error: Could not connect to MySql instance.")
-                            sys.exit()
                         with conn.cursor() as cur:
                             try:
                                 cur.execute(executableQuery)
                                 numQueriesExecuted += 1
 
                             except pymysql.err.OperationalError as err:
+                                numQueriesFailed += 1
                                 print(err)
                             except pymysql.err.InternalError as err:
+                                numQueriesFailed += 1
                                 print(err)
 
 
@@ -124,5 +131,9 @@ def executeReplay(replayName, captureName, dbName, status_of_db, endpoint, metri
 
     endTime = datetime.now()
     modelsQuery.updateReplayStatus(replayName, "finished")
+    modelsQuery.updateReplayQueries(replayName, totalQueries, numQueriesExecuted, numQueriesFailed)
+    modelsQuery.updateReplayEndTime(replayName, endTime)
     metricID = modelsQuery.getMetricIDByNameAndBucket(replayName + " " + "metric file", metricBucket)
     capture.sendMetrics(metricID, replayName + " " + "metric file", startTime, endTime)
+
+    conn.close()

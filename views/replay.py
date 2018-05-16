@@ -16,6 +16,15 @@ def getAllReplays():
    replays = Replay.query.all()
    return jsonify([i.serialize for i in replays])
 
+
+@replay_api.route('/getReplaysWithBuckets')
+def getReplaysWithBuckets():
+    replaysWithBuckets = modelsQuery.getReplaysWithBuckets()
+    jsonifiedReplays = []
+    for i in replaysWithBuckets:
+        jsonifiedReplays.append({"id" : i.Replay.id, "name" : i.Replay.name, "rds" : i.Replay.dbName, "bucket" : i.Metric.bucket, "captureId" : i.Replay.captureId})
+    return jsonify(jsonifiedReplays)
+
 def add(name, startTime, endTime, dbName, logfileId, metricId, captureId):
    modelsQuery.addReplay(name, startTime, endTime, dbName, logfileId, metricId, captureId)
 
@@ -23,7 +32,7 @@ def add(name, startTime, endTime, dbName, logfileId, metricId, captureId):
 def startReplay():
     data = request.json
     print(data)
-    replay.startReplay(data['replayName'], data['captureBucket'], data['dbName'], data['replayMode'], data['username'], data['password'])
+    replay.startReplay(data['replayName'], data['capture'], data['dbName'], data['replayMode'], data['username'], data['password'])
     return ""
 
 

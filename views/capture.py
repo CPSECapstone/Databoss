@@ -1,9 +1,8 @@
 from capture import capture_api
-from flask import jsonify, request
+from flask import jsonify, request, Response
 import capture
-from models import Capture
 import modelsQuery
-from models import Capture
+from models import Capture, Replay
 from datetime import datetime
 
 @capture_api.route('/<name>')
@@ -15,6 +14,21 @@ def getCapture(name):
 def getAllCaptures():
     captures = Capture.query.all()
     return jsonify([i.serialize for i in captures])
+
+@capture_api.route('/getCapturesWithBuckets')
+def getCapturesWithBuckets():
+    capturesWithBuckets = modelsQuery.getCapturesWithBuckets()
+    jsonifiedCaptures = []
+    for i in capturesWithBuckets:
+        jsonifiedCaptures.append({"id" : i.Capture.id, "name" : i.Capture.name, "rds" : i.Capture.dbName, "bucket" : i.Logfile.bucket})
+    return jsonify(jsonifiedCaptures)
+
+@capture_api.route('/getSortedCapturesAndReplays')
+def getSortedCapturesAndReplays():
+    captures = Capture.query.order_by(Capture.startTime.desc()).all()
+    replays = Replay.query.order_by(Replay.startTime.desc()).all()
+
+    return jsonify(captures=[i.serialize for i in captures], replays=[i.serialize for i in replays])
 
 @capture_api.route('/finished')
 def getFinishedCaptures():
@@ -38,8 +52,6 @@ def add(name, startTime, endTime, dbName, logfileId, metricId, mode, status):
 @capture_api.route('/startCapture', methods=["POST"])
 def startCapture():
     data = request.json
-    print("Data: ")
-    print(data)
     capture.startCapture(data['captureName'], data['captureBucket'], data['metricsBucket'], data['rdsInstance'], data['dbName'],
                  data['username'], data['password'], data['startDate'], data['endDate'], data['startTime'], data['endTime'], data['storageNum'],
                  data['storageType'], data['mode'])
@@ -74,4 +86,3 @@ def checkName():
     if captureId is None:
         return "true"
     return "false"
-

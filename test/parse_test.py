@@ -68,14 +68,15 @@ def test_createLists(jsonString):
 
     # Check that time lists and number of elements for data lists are consistent
     assert cpuTime == readTime == writeTime # == memTime
-    assert len(cpu) == len(read) == len(write) # == len(mem)
+    assert len(cpu) == len(read) == len(write) #== len(mem)
 
     # Check that instantiating ParsedMetrics produces same lists
     pm = parseMetrics.ParsedMetrics(jsonString)
-    assert cpu == pm.cpuList #and cpuTime == pm.cpuTimeList
+    assert cpu == pm.cpuList
+    assert cpuTime == pm.cpuTimeList
     assert read == pm.readIOList
     assert write == pm.writeIOList
-    # assert mem == pm.memoryList
+    assert mem == pm.memoryList
 
     # Check that time list is sorted
     assert all(cpuTime[i] <= cpuTime[i + 1] for i in range(len(cpuTime) - 1)) == True
@@ -87,4 +88,4 @@ def test__sortLists():
     parseMetrics._sortLists(data, time)
 
     assert time == [1, 2, 3, 4, 5, 6]
-    assert data == [6 ,5, 4, 3, 2, 1]
+    assert data == [6, 5, 4, 3, 2, 1]
