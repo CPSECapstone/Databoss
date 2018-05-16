@@ -46,21 +46,17 @@ def disconnect_request():
 @socketio.on('join', namespace='')
 def join(message):
     join_room(message['room'])
-    print("joined room", message['room'])
 
 
 @socketio.on('leave', namespace='')
 def leave(message):
     leave_room(message['room'])
-    print("left room", message['room'])
 
 
 @socketio.on('close_room', namespace='')
 def close(message):
     close_room(message['room'])
-    print("closed room", message['room'])
 
 
 if __name__ == "__main__":
-    #app.run(debug=True)
     socketio.run(app, debug=True, port=5000)
