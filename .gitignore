@@ -24,3 +24,5 @@ testStartCapture.py
 .coverage
 .pytest_cache/
 htmlcov
+
+venv/

@@ -22,7 +22,6 @@ app.controller('replayProgress', function($scope, $location, $http) {
     },
   }).then(function successCallback(response) {
     $scope.replay = response.data;
-    debugger;
     console.log("REPLAY HERE: " + $scope.replay);
   }, function errorCallback(response) {
     console.log('error retrieving replay name = ' + replayName);
@@ -31,6 +30,16 @@ app.controller('replayProgress', function($scope, $location, $http) {
   $scope.endReplay = function() {
     $location.path('/home');
   };
+
+  $(document).ready(function() {
+    socket.emit('join', {room: 'replayQuery'});
+
+    $scope.$on('$locationChangeStart', function (event) {
+      socket.emit('leave', {room: 'replayQuery'});
+      socket.emit('close_room', {room: 'replayQuery'});
+    });
+  });
+
 
   // var progressInterval = setInterval(frame, 1000);
   // function frame() {

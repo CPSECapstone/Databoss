@@ -105,3 +105,26 @@ app.config(['$routeProvider', function($routeProvider) {
       redirectTo: '/'
    });
 }]);
+
+var namespace;
+var socket;
+
+$(document).ready(function() {
+    namespace = '';
+    socket = io.connect(location.protocol + '//' + document.domain + ':' + location.port + namespace);
+
+    socket.on('replayQuery', function(msg) {
+        if (msg.query && !msg.error) {
+            $('#queryLog tr:last')
+                .after($('<tr/>')
+                .html('<td>' + msg.count + '</td><td class="' + msg.status + '">' + msg.status + '</td><td>'
+                    + msg.query + '</td>'));
+        }
+        else if (msg.query && msg.error) {
+            $('#queryLog tr:last')
+                .after($('<tr/>')
+                .html('<td>' + msg.count + '</td><td class="' + msg.status + '">' + msg.status + '</td><td>'
+                    + msg.query + '<br><span class="Fail">Error: ' + msg.error + '</span></td>'));
+        }
+    });
+});
