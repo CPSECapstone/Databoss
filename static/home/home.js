@@ -2,6 +2,9 @@
 var app = angular.module('MyCRT');
 
 app.controller('home', function($scope, $location, $http, activeNavItem) {
+  $scope.showAll = true;
+  $scope.showCaptures = false;
+  $scope.showReplays = false;
   $scope.setCaptureActive= function(item) {
     activeNavItem.clearAndMakeItemActive('captureTab');
   }
@@ -63,7 +66,7 @@ app.controller('home', function($scope, $location, $http, activeNavItem) {
         console.log('error');
     });
   }
-  
+
   $scope.viewMetrics = function() {
     activeNavItem.clearAndMakeItemActive('metricsTab');
   }
@@ -80,6 +83,27 @@ app.controller('home', function($scope, $location, $http, activeNavItem) {
     this.isHovering = false;
   }
 
+  $scope.filterAll = function() {
+    $scope.showAll = true;
+    $scope.showCaptures = false;
+    $scope.showReplays = false;
+  }
+
+  $scope.filterCaptures = function() {
+    $scope.showAll = false;
+    $scope.showCaptures = true;
+    $scope.showReplays = false;
+  }
+
+  $scope.filterReplays = function() {
+    $scope.showAll = false;
+    $scope.showCaptures = false;
+    $scope.showReplays = true;
+  }
+
+  $scope.typeSearch = function() {
+    console.log("something typed in search");
+  }
 
   populateCapturesAndReplays($http, $scope);
   populateActiveCaptures($http, $scope);

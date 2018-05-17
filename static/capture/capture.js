@@ -8,7 +8,6 @@ app.controller('capture', function ($scope, $location, $http, buttonDisplay, act
     const timeContainer = $('#time-container');
     const storageContainer = $('#storage-container');
     var selectedMode = "";
-    $scope.error = "";
     $scope.required = true;
     $scope.disabled = true;
     $scope.mode = "interactive";
@@ -18,69 +17,45 @@ app.controller('capture', function ($scope, $location, $http, buttonDisplay, act
 
     $('input[name=mode]').on('change', function(event) {
       selectedMode = $("input[name=mode]:checked").val();
-      console.log("value " + selectedMode);
+
       if (selectedMode === "interactive") {
-        console.log("updating to interactive view");
         buttonDisplay.hideButtons(dateContainer, timeContainer, storageContainer);
 
-        //VALIDATION LOGIC
-        if ($('#captureName').val() && $('#crBucket').val()
-            && $('#metricsBucket').val() && $('#dbName').val()) {
-            $scope.$apply(function() {
-                $scope.disabled = false;
-
-            });
-        }
-        else {
-            console.log("DISABLING THE BUTTON");
-            $scope.$apply(function() {
-                $scope.disabled = true;
-            });
-        }
-
+        //Disable or enable capture button
+        $scope.$apply(function() {
+            $scope.disabled = $scope.validateInteractive();
+        });
       }
       else if (selectedMode === "time") {
-        console.log("updating to time constrained view");
         buttonDisplay.showButtons(dateContainer, timeContainer);
         buttonDisplay.hideButtons(storageContainer);
 
-        //VALIDATION LOGIC
-        if ($('#startDate').val() == '' || $('#endDate').val() == '' ||
-            $('#startTime').val() == '' || $('#endTime').val() == '') {
-            $scope.$apply(function() {
-                $scope.disabled = true;
-            });
-
-        }
-        else {
-            $scope.$apply(function() {
-                $scope.disabled = false;
-            });
-        }
-
+        //Disable or enable capture button
+        $scope.$apply(function() {
+            $scope.disabled = $scope.validateTime();
+        })
       }
       else if (selectedMode === "storage") {
-        console.log("updating to storage view");
         buttonDisplay.hideButtons(dateContainer, timeContainer);
         buttonDisplay.showButtons(storageContainer);
 
-        //VALIDATION LOGIC
-        if ($('#storageNum').val() == '') {
-            $scope.$apply(function() {
-                $scope.disabled = true;
-            });
-        }
-        else {
-            $scope.$apply(function() {
-                $scope.disabled = false;
-            });
-        }
-
-      }
-      else {
-        console.log("NO MODE SELECTED");
+        //Disable or enable capture button
+        $scope.$apply(function() {
+            $scope.disabled = $scope.validateStorage();
+        })
       }
     });
+
+    $scope.validateInteractive = function() {
+        if ($('#captureName').val() && $('#crBucket').val()
+            && $('#metricsBucket').val() && $('#dbName').val()) {
+            return false;
+        }
+        else {
+            return true;
+        }
+    }
+
     $scope.validateTime = function() {
         if ($('#startDate').val() == '' || $('#endDate').val() == '' ||
             $('#startTime').val() == '' || $('#endTime').val() == '') {
@@ -93,7 +68,6 @@ app.controller('capture', function ($scope, $location, $http, buttonDisplay, act
 
         else {
             return false;
-            console.log("returning false in time");
         }
     }
 
@@ -103,28 +77,27 @@ app.controller('capture', function ($scope, $location, $http, buttonDisplay, act
         }
 
         else {
-            console.log("returning false in storage");
             return false;
         }
     }
 
     $scope.disableCaptureButton = function() {
         selectedMode = $("input[name=mode]:checked").val();
-        if ($('#captureName').val() && $('#crBucket').val()
-            && $('#metricsBucket').val() && $('#dbName').val()) {
+        if ($scope.validateInteractive()) {
             if (selectedMode === "time") {
-                return validateTime();
+                return $scope.validateTime();
             }
             else if (selectedMode === "storage") {
-                return validateStorage();
+                return $scope.validateStorage();
             }
         }
         else {
             return false;
         }
-
     }
 
+// ($('#captureName').val() && $('#crBucket').val()
+//            && $('#metricsBucket').val() && $('#dbName').val())
     $scope.getRDSInstances = function() {
         console.log("getting db connections");
 
