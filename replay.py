@@ -53,7 +53,6 @@ def executeTimePreserving(queryTable, replayName, captureName, dbName, status_of
     #totalQueries = 0
     numQueriesExecuted = 0
     numQueriesFailed = 0
-
     try:
         conn = pymysql.connect(host=endpoint, user=username, passwd=password, db=dbName,
                                connect_timeout=5)
@@ -81,7 +80,6 @@ def executeTimePreserving(queryTable, replayName, captureName, dbName, status_of
                     numQueriesFailed += 1
                     print("num queries failed: ", numQueriesFailed)
                     print(err)
-        #print("execute")
     endTime = datetime.now()
     modelsQuery.updateReplayStatus(replayName, "finished")
     modelsQuery.updateReplayQueries(replayName, totalQueries, numQueriesExecuted, numQueriesFailed)
@@ -90,11 +88,46 @@ def executeTimePreserving(queryTable, replayName, captureName, dbName, status_of
     capture.sendMetrics(metricID, replayName + " " + "metric file", start_time, endTime)
 
 
+
+def calculateTimeDiff(queryTable):
+    timeDictionary = {'timeDiff': 0}
+    queryTable[0].update(timeDictionary)
+    queryTableLen = len(queryTable)
+    print(queryTableLen)
+
+    for queryTableIndx in range(1, queryTableLen):
+        timeDictionary = {
+            'timeDiff': queryTable[queryTableIndx]['timestamp'] - queryTable[queryTableIndx - 1]['timestamp']}
+        queryTable[queryTableIndx].update(timeDictionary)
+
+
+def setupQueryTable(temp, queryTable):
+        flag = False
+        for line in temp:
+            entireDict = literal_eval(line)
+            dictLength = len(entireDict)
+            totalQueries = len(entireDict)
+            print(dictLength)
+            for indx in range(dictLength):
+                tempDict = dict()
+                val = entireDict[indx]
+                print(val)
+
+                if val['message'].startswith('Query'):
+                    tempDict['timestamp'] = val['timestamp']
+                    tempDict['Query'] = val['message'][7:]
+                    queryTable.append(tempDict)
+            if len(queryTable) == 0:
+                flag = True
+                print("comes in this if")
+                break
+        return flag
+
 def timePreserving(replayName, captureObj, dbName, mode, endpoint, status_of_db, username, password):
     flag = False
     queryTable = []
     captureName = captureObj['name']
-    #logfile = modelsQuery.getLogFileByCapture(captureName)
+
     with open(captureName + " " + "tempLogFile", "r") as temp:
         try:
             conn = pymysql.connect(host=endpoint, user=username, passwd=password, db=dbName,
@@ -105,38 +138,11 @@ def timePreserving(replayName, captureObj, dbName, mode, endpoint, status_of_db,
                 os.remove(captureName + " " + "tempLogFile")
             conn.close()
             sys.exit()
-        for line in temp:
 
-            entireDict = literal_eval(line)
-            dictLength = len(entireDict)
-            totalQueries = len(entireDict)
-            print(dictLength)
-            if dictLength == 0:
-                flag = True
-                print("comes in here")
-                break
-            else:
-                for indx in range(dictLength):
-                    tempDict = dict()
-                    val = entireDict[indx]
-                    print(val)
-
-                    if val['message'].startswith('Query'):
-                        tempDict['timestamp'] = val['timestamp']
-                        tempDict['Query'] = val['message'][7:]
-                        queryTable.append(tempDict)
+        flag = setupQueryTable(temp, queryTable)
 
         if (flag == False):
-            timeDictionary = {'timeDiff': 0}
-            queryTable[0].update(timeDictionary)
-            queryTableLen = len(queryTable)
-            print(queryTableLen)
-
-            for queryTableIndx in range(1, queryTableLen):
-                timeDictionary = {'timeDiff': queryTable[queryTableIndx]['timestamp'] - queryTable[queryTableIndx-1]['timestamp']}
-                queryTable[queryTableIndx].update(timeDictionary)
-
-            #print(queryTable)
+            calculateTimeDiff(queryTable)
             t3 = Timer(0, executeTimePreserving, [queryTable, replayName, captureName, dbName, status_of_db, totalQueries, endpoint, username, password, datetime.now()])
             t3.start()
         else:
