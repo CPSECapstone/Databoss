@@ -290,7 +290,12 @@ def startCapture(captureName, captureBucket, metricsBucket, rdsInstance, db_name
                 if (storage_limit > storage_max_db):
                     print("STORAGE ERROR")
                     abort(400)
-                    return Response("Storage is too large", status=400)
+                    #return Response("Storage is too large", status=400)
+                if (storage_limit <= 0):
+                    print("Storage cannot be negative")
+
+                    abort(406)
+                    #return Response("Storage cannot be negative", status=406)
                 else:
 
                     updateDatabase(sTimeCombined, eTimeCombined, captureName, captureBucket, metricsBucket,
@@ -405,6 +410,7 @@ def sendMetrics(metricBucket, metricFileName, startTime, endTime):
 
     modelsQuery.updateMetricFile(metricBucket, metricFileOpened.name)
     s3.meta.client.upload_file(metricFileOpened.name, modelsQuery.getMetricBucket(metricBucket), metricFileOpened.name)
+    #metricFileOpened.close()
     if os.path.exists(metricFileName):
         os.remove(metricFileName)
 

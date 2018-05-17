@@ -16,6 +16,21 @@ def getAllReplays():
    replays = Replay.query.all()
    return jsonify([i.serialize for i in replays])
 
+
+@replay_api.route('/deleteReplay/<id>', methods=["DELETE"])
+def deleteReplay(id):
+    result = modelsQuery.removeFinishedReplay(id)
+    print("id is " + id)
+    return " "
+
+@replay_api.route('/getReplaysWithBuckets')
+def getReplaysWithBuckets():
+    replaysWithBuckets = modelsQuery.getReplaysWithBuckets()
+    jsonifiedReplays = []
+    for i in replaysWithBuckets:
+        jsonifiedReplays.append({"id" : i.Replay.id, "name" : i.Replay.name, "rds" : i.Replay.dbName, "bucket" : i.Metric.bucket, "captureId" : i.Replay.captureId})
+    return jsonify(jsonifiedReplays)
+
 def add(name, startTime, endTime, dbName, logfileId, metricId, captureId):
    modelsQuery.addReplay(name, startTime, endTime, dbName, logfileId, metricId, captureId)
 
@@ -36,4 +51,3 @@ def checkReplayName():
     if replay is None:
         return "true"
     return "false"
-
