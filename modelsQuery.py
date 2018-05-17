@@ -43,7 +43,6 @@ def addMetric(name, bucket, file):
 ########################
 
 def removeFinishedCapture(captureId):
-    print("captureId " + captureId)
 
     # metricId = getMetricByCaptureId(captureId)
     # print("metricID" + str(metricId))

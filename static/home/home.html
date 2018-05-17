@@ -96,7 +96,7 @@
         </div>
         <div ng-if='item.type == "replay"'>
             <div class="delete-button">
-              <i ngClick="deleteReplay(item.id)"class="fa fa-times-circle nav-icon"> </i>
+              <i ng-click="deleteReplay(item.id)"class="fa fa-times-circle nav-icon"> </i>
             </div>
             <div class="box" ng-class='{passBox: (item.status == "finished"), failBox: (item.status == "failed")}'>
           <!-- <a href="#!/metrics?captureId={{item.id}}"> -->

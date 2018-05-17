@@ -33,7 +33,7 @@ app.controller('home', function($scope, $location, $http, activeNavItem) {
   $scope.deleteReplay = function(replayId) {
     $http({
         method: 'DELETE',
-        url: 'modelsQuery/deleteReplay/' + replayId,
+        url: 'replay/deleteReplay/' + replayId,
         headers: {
             'Content-Type': 'application/json'
         },
@@ -41,6 +41,7 @@ app.controller('home', function($scope, $location, $http, activeNavItem) {
             'replayId': replayId
         }
     }).then(function successCallback(response) {
+        populateCapturesAndReplays($http, $scope);
         //$('#confirmModal').modal('hide')
         if (replay.status == 'finished') {
             //$('#messageModal').modal('show')
