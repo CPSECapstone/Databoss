@@ -76,10 +76,10 @@
   <h3>Finished</h3>
   <div class="container2">
     <div class="row" >
-      <div class="col-xs-3" ng-repeat="item in finished">
+      <div class="col-xs-3" ng-repeat="item in finished" ng-mouseover="hoverOn()" ng-mouseleave="hoverOff()">
         <div ng-if='item.type == "capture"'>
-            <div class="delete-button">
-              <i ng-click="deleteCapture(item.id)" class="fa fa-times-circle nav-icon"> </i>
+            <div class="delete-button" ng-show="isHovering">
+              <i ng-click="delete(item.id)" class="fa fa-times-circle nav-icon"> </i>
             </div>
           <a href="#!/metrics?captureId={{item.id}}">
             <div ng-click="viewMetrics()" class="box" ng-class='{passBox: (item.status == "finished"), failBox: (item.status == "failed")}'>
@@ -104,8 +104,8 @@
           </a>
         </div>
         <div ng-if='item.type == "replay"'>
-            <div class="delete-button">
-              <i ng-click="deleteReplay(item.id)"class="fa fa-times-circle nav-icon"> </i>
+            <div class="delete-button" ng-show="isHovering">
+              <i ngClick="delete(item.id)"class="fa fa-times-circle nav-icon"> </i>
             </div>
             <div class="box" ng-class='{passBox: (item.status == "finished"), failBox: (item.status == "failed")}'>
           <!-- <a href="#!/metrics?captureId={{item.id}}"> -->
