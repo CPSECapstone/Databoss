@@ -29,7 +29,7 @@
     <div class="row" >
       <div class="col-xs-3" ng-repeat="item in active">
         <div ng-if='item.type == "capture"'>
-          <div class="box">
+          <div ng-click="viewCaptureProgress()" class="box">
             <a href="#!/progress?name={{item.name}}">
               <div class="capture-name text-center">
                 {{item.name}}

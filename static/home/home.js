@@ -17,6 +17,10 @@ app.controller('home', function($scope, $location, $http, activeNavItem) {
   $scope.viewMetrics = function() {
     activeNavItem.clearAndMakeItemActive('metricsTab');
   }
+
+  $scope.viewCaptureProgress = function() {
+    activeNavItem.clearAndMakeItemActive('captureTab');
+  }
   populateCapturesAndReplays($http, $scope);
   populateActiveCaptures($http, $scope);
   // populateFinishedCaptures($http, $scope);
