@@ -119,7 +119,7 @@ def setupQueryTable(temp, queryTable):
         for line in temp:
             entireDict = literal_eval(line)
             dictLength = len(entireDict)
-            totalQueries = len(entireDict)
+            #totalQueries = len(entireDict)
             print(dictLength)
             for indx in range(dictLength):
                 tempDict = dict()
@@ -153,6 +153,7 @@ def timePreserving(replayName, captureObj, dbName, mode, endpoint, status_of_db,
             sys.exit()
 
         flag = setupQueryTable(temp, queryTable)
+        totalQueries = len(queryTable)
 
         if (flag == False):
             calculateTimeDiff(queryTable)
