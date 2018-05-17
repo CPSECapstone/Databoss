@@ -12,6 +12,8 @@ import time
 import json
 import os.path
 import sys
+from web_app import socketio
+import flask_socketio
 
 
 logger = logging.getLogger()
@@ -61,25 +63,36 @@ def executeTimePreserving(queryTable, replayName, captureName, dbName, status_of
         conn.close()
         sys.exit()
 
+    count = 0
+    print("~~~~~~~ starting time preserving replay ~~~~~~")
+
     for i in queryTable:
         time.sleep(i['timeDiff'])
         executableQuery = i['Query']
         print(executableQuery)
         if str(status_of_db) == "available":
             with conn.cursor() as cur:
+                status = 'Success'
+                error = ''
                 try:
                     cur.execute(executableQuery)
                     numQueriesExecuted += 1
                     print("num execute: ", numQueriesExecuted)
 
-                except pymysql.err.OperationalError as err:
+                except pymysql.err.Error as err:
+                    error = err
+
+                if error:
+                    status = 'Fail'
                     numQueriesFailed += 1
-                    print("num queries failed: ", numQueriesFailed)
-                    print(err)
-                except pymysql.err.InternalError as err:
-                    numQueriesFailed += 1
-                    print("num queries failed: ", numQueriesFailed)
-                    print(err)
+                    error = str(error).replace('(', '').replace(')', '').strip()
+
+                count += 1
+                socketio.emit('replayQuery',
+                              {'query': executableQuery.lower(), 'status': status, 'error': error, 'count': count},
+                              namespace='', room='replayQuery')
+
+    print("~~~~~~ finished time preserving replay ~~~~~~")
     endTime = datetime.now()
     modelsQuery.updateReplayStatus(replayName, "finished")
     modelsQuery.updateReplayQueries(replayName, totalQueries, numQueriesExecuted, numQueriesFailed)
@@ -216,6 +229,8 @@ def executeReplay(replayName, captureName, dbName, status_of_db, endpoint, start
             conn.close()
             sys.exit()
 
+        count = 0
+        print("~~~~~~~ starting raw replay ~~~~~~")
         for line in tempFile:
             entireList = literal_eval(line)
             totalQueries = len(entireList)
@@ -225,17 +240,28 @@ def executeReplay(replayName, captureName, dbName, status_of_db, endpoint, start
                     executableQuery = dict['message'][7:]
                     if str(status_of_db) == "available":
                         with conn.cursor() as cur:
+                            # socketio.sleep(0.5)
+                            status = 'Success'
+                            error = ''
                             try:
+                                print(executableQuery)
                                 cur.execute(executableQuery)
                                 numQueriesExecuted += 1
 
-                            except pymysql.err.OperationalError as err:
-                                numQueriesFailed += 1
-                                print(err)
-                            except pymysql.err.InternalError as err:
-                                numQueriesFailed += 1
-                                print(err)
+                            except pymysql.err.Error as err:
+                                error = err
 
+                            if error:
+                                status = 'Fail'
+                                numQueriesFailed += 1
+                                error = str(error).replace('(', '').replace(')', '').strip()
+
+                            count += 1
+                            socketio.emit('replayQuery',
+                                          {'query': executableQuery.lower(), 'status': status, 'error': error, 'count': count},
+                                          namespace='', room='replayQuery')
+
+    print("~~~~~~ finished replay ~~~~~~")
 
     if os.path.exists(captureName + " " + "tempLogFile"):
         os.remove(captureName + " " + "tempLogFile")

@@ -31,6 +31,16 @@ app.controller('replayProgress', function($scope, $location, $http) {
     $location.path('/home');
   };
 
+  $(document).ready(function() {
+    socket.emit('join', {room: 'replayQuery'});
+
+    $scope.$on('$locationChangeStart', function (event) {
+      socket.emit('leave', {room: 'replayQuery'});
+      socket.emit('close_room', {room: 'replayQuery'});
+    });
+  });
+
+
   // var progressInterval = setInterval(frame, 1000);
   // function frame() {
   //   if (parseInt($scope.replay.progress.split("$")[0]) >= 100) {

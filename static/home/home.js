@@ -2,6 +2,9 @@
 var app = angular.module('MyCRT');
 
 app.controller('home', function($scope, $location, $http, activeNavItem) {
+  $scope.showAll = true;
+  $scope.showCaptures = false;
+  $scope.showReplays = false;
   $scope.setCaptureActive= function(item) {
     activeNavItem.clearAndMakeItemActive('captureTab');
   }
@@ -10,9 +13,90 @@ app.controller('home', function($scope, $location, $http, activeNavItem) {
       $location.path('/capture');
   }
 
+
+  $scope.deleteCapture = function(captureId) {
+    $http({
+        method: 'DELETE',
+        url: 'capture/deleteCapture/' + captureId,
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        data: {
+            'captureId': captureId
+        }
+    }).then(function successCallback(response) {
+        populateCapturesAndReplays($http, $scope);
+        //$('#confirmModal').modal('hide')
+        console.log('success');
+    }, function errorCallback(response) {
+        console.log('error');
+    });
+  }
+
+  $scope.deleteReplay = function(replayId) {
+    $http({
+        method: 'DELETE',
+        url: 'replay/deleteReplay/' + replayId,
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        data: {
+            'replayId': replayId
+        }
+    }).then(function successCallback(response) {
+        populateCapturesAndReplays($http, $scope);
+        //$('#confirmModal').modal('hide')
+//        if (replay.status == 'finished') {
+//            //$('#messageModal').modal('show')
+//        }
+        console.log('success');
+    }, function errorCallback(response) {
+        console.log('error');
+    });
+  }
+
   $scope.delete = function(id) {
     console.log("DELETE BUTTON PRESSED for " + id);
   }
+
+  $scope.viewMetrics = function() {
+    activeNavItem.clearAndMakeItemActive('metricsTab');
+  }
+
+  $scope.viewCaptureProgress = function() {
+    activeNavItem.clearAndMakeItemActive('captureTab');
+  }
+
+  $scope.hoverOn = function() {
+    this.isHovering = true;
+  }
+
+  $scope.hoverOff = function() {
+    this.isHovering = false;
+  }
+
+  $scope.filterAll = function() {
+    $scope.showAll = true;
+    $scope.showCaptures = false;
+    $scope.showReplays = false;
+  }
+
+  $scope.filterCaptures = function() {
+    $scope.showAll = false;
+    $scope.showCaptures = true;
+    $scope.showReplays = false;
+  }
+
+  $scope.filterReplays = function() {
+    $scope.showAll = false;
+    $scope.showCaptures = false;
+    $scope.showReplays = true;
+  }
+
+  $scope.typeSearch = function() {
+    console.log("something typed in search");
+  }
+
   populateCapturesAndReplays($http, $scope);
   populateActiveCaptures($http, $scope);
   // populateFinishedCaptures($http, $scope);
