@@ -50,9 +50,9 @@ def download_file(replayName, bucketName, fileName):
         else:
             raise
 
-def executeTimePreserving(queryTable, replayName, captureName, dbName, status_of_db, endpoint, username, password, start_time):
+def executeTimePreserving(queryTable, replayName, captureName, dbName, status_of_db, totalQueries, endpoint, username, password, start_time):
     metricBucket = modelsQuery.getCaptureMetricBucket(captureName)
-    totalQueries = 0
+    #totalQueries = 0
     numQueriesExecuted = 0
     numQueriesFailed = 0
 
@@ -64,38 +64,50 @@ def executeTimePreserving(queryTable, replayName, captureName, dbName, status_of
         conn.close()
         sys.exit()
 
+    count = 0
+    print("~~~~~~~ starting time preserving replay ~~~~~~")
+
     for i in queryTable:
         time.sleep(i['timeDiff'])
         executableQuery = i['Query']
         print(executableQuery)
         if str(status_of_db) == "available":
             with conn.cursor() as cur:
+                status = 'Success'
+                error = ''
                 try:
                     cur.execute(executableQuery)
                     numQueriesExecuted += 1
                     print("num execute: ", numQueriesExecuted)
 
-                except pymysql.err.OperationalError as err:
+                except pymysql.err.Error as err:
+                    error = err
+
+                if error:
+                    status = 'Fail'
                     numQueriesFailed += 1
-                    print("num queries failed: ", numQueriesFailed)
-                    print(err)
-                except pymysql.err.InternalError as err:
-                    numQueriesFailed += 1
-                    print("num queries failed: ", numQueriesFailed)
-                    print(err)
-        #print("execute")
-        endTime = datetime.now()
-        modelsQuery.updateReplayStatus(replayName, "finished")
-        modelsQuery.updateReplayQueries(replayName, totalQueries, numQueriesExecuted, numQueriesFailed)
-        modelsQuery.updateReplayEndTime(replayName, endTime)
-        metricID = modelsQuery.getMetricIDByNameAndBucket(replayName + " " + "metric file", metricBucket)
-        capture.sendMetrics(metricID, replayName + " " + "metric file", start_time, endTime)
+                    error = str(error).replace('(', '').replace(')', '').strip()
+
+                count += 1
+                socketio.emit('replayQuery',
+                              {'query': executableQuery.lower(), 'status': status, 'error': error, 'count': count},
+                              namespace='', room='replayQuery')
+
+    print("~~~~~~ finished time preserving replay ~~~~~~")
+
+    endTime = datetime.now()
+    modelsQuery.updateReplayStatus(replayName, "finished")
+    modelsQuery.updateReplayQueries(replayName, totalQueries, numQueriesExecuted, numQueriesFailed)
+    modelsQuery.updateReplayEndTime(replayName, endTime)
+    metricID = modelsQuery.getMetricIDByNameAndBucket(replayName + " " + "metric file", metricBucket)
+    capture.sendMetrics(metricID, replayName + " " + "metric file", start_time, endTime)
 
 
 def timePreserving(replayName, captureObj, dbName, mode, endpoint, status_of_db, username, password):
+    flag = False
     queryTable = []
     captureName = captureObj['name']
-    logfile = modelsQuery.getLogFileByCapture(captureName)
+    #logfile = modelsQuery.getLogFileByCapture(captureName)
     with open(captureName + " " + "tempLogFile", "r") as temp:
         try:
             conn = pymysql.connect(host=endpoint, user=username, passwd=password, db=dbName,
@@ -106,32 +118,45 @@ def timePreserving(replayName, captureObj, dbName, mode, endpoint, status_of_db,
                 os.remove(captureName + " " + "tempLogFile")
             conn.close()
             sys.exit()
-
         for line in temp:
+
             entireDict = literal_eval(line)
             dictLength = len(entireDict)
+            totalQueries = len(entireDict)
+            print(dictLength)
+            if dictLength == 0:
+                flag = True
+                print("comes in here")
+                break
+            else:
+                for indx in range(dictLength):
+                    tempDict = dict()
+                    val = entireDict[indx]
+                    print(val)
 
-            for indx in range(dictLength):
-                tempDict = dict()
-                val = entireDict[indx]
-                print(val)
+                    if val['message'].startswith('Query'):
+                        tempDict['timestamp'] = val['timestamp']
+                        tempDict['Query'] = val['message'][7:]
+                        queryTable.append(tempDict)
 
-                if val['message'].startswith('Query'):
-                    tempDict['timestamp'] = val['timestamp']
-                    tempDict['Query'] = val['message'][7:]
-                    queryTable.append(tempDict)
+        if (flag == False):
+            timeDictionary = {'timeDiff': 0}
+            queryTable[0].update(timeDictionary)
+            queryTableLen = len(queryTable)
+            print(queryTableLen)
 
-        timeDictionary = {'timeDiff': 0}
-        queryTable[0].update(timeDictionary)
-        queryTableLen = len(queryTable)
+            for queryTableIndx in range(1, queryTableLen):
+                timeDictionary = {'timeDiff': queryTable[queryTableIndx]['timestamp'] - queryTable[queryTableIndx-1]['timestamp']}
+                queryTable[queryTableIndx].update(timeDictionary)
 
-        for queryTableIndx in range(1, queryTableLen):
-            timeDictionary = {'timeDiff': queryTable[queryTableIndx]['timestamp'] - queryTable[queryTableIndx-1]['timestamp']}
-            queryTable[queryTableIndx].update(timeDictionary)
-
-        print(queryTable)
-        t3 = Timer(0, executeTimePreserving, [queryTable, replayName, captureName, dbName, status_of_db, endpoint, username, password, datetime.now()])
-        t3.start()
+            #print(queryTable)
+            t3 = Timer(0, executeTimePreserving, [queryTable, replayName, captureName, dbName, status_of_db, totalQueries, endpoint, username, password, datetime.now()])
+            t3.start()
+        else:
+            endTime = datetime.now()
+            modelsQuery.updateReplayStatus(replayName, "finished")
+            modelsQuery.updateReplayQueries(replayName, 0, 0, 0)
+            modelsQuery.updateReplayEndTime(replayName, endTime)
 
 
 def startReplay(replayName, captureObj, dbName, mode, username, password):
@@ -165,7 +190,7 @@ def startReplay(replayName, captureObj, dbName, mode, username, password):
     print("Current system time: " + replayStartTime.strftime('%m/%d/%Y% :H:%M'))
 
     download_file(captureName, captureBucket, filename)
-    if mode == 'replay-time':
+    if mode == 'time-preserving':
         modelsQuery.addReplay(replayName, replayStartTime, None, dbName, metricID, captureID, mode, "active")
         addInProgressReplay(replayName, username, password)
         timePreserving(replayName, captureObj, dbName, mode, endpoint, status_of_db, username, password)
@@ -220,7 +245,7 @@ def executeReplay(replayName, captureName, dbName, status_of_db, endpoint, start
                             except pymysql.err.Error as err:
                                 error = err
 
-                            if (error):
+                            if error:
                                 status = 'Fail'
                                 numQueriesFailed += 1
                                 error = str(error).replace('(', '').replace(')', '').strip()

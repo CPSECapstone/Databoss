@@ -74,3 +74,31 @@ a, a:hover, a:visited {
 .home-completed {
   font-size: .8em;
 }
+
+.passBox {
+  border: 2px solid #63FB92;
+}
+
+.failBox {
+  border: 2px solid #fc2a2a;
+}
+
+.passText {
+  color: #63FB92;
+}
+
+.failText {
+  color: #fc2a2a;
+}
+
+.passFail {
+  font-size: .7em;
+  text-transform: uppercase;
+  padding-top: 5px;
+}
+
+.delete-button {
+  float:right;
+  margin-right: 40px;
+  margin-top: 6px;
+}

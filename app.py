@@ -5,6 +5,8 @@ from datetime import datetime
 from flask import send_file
 from web_app import app, db, socketio, thread_lock
 from flask_socketio import emit, disconnect, join_room, leave_room, close_room
+import atexit
+import models
 
 import capture
 from views import dbConnection, login, metrics, replay, capture as cap
@@ -56,6 +58,18 @@ def leave(message):
 @socketio.on('close_room', namespace='')
 def close(message):
     close_room(message['room'])
+
+
+def exit_handler():
+    inProgressCaptures = models.Capture.query.filter((models.Capture.status == "active") | (models.Capture.status == "scheduled")).all()
+
+    for failedCap in inProgressCaptures:
+        failedCap.status = "failed"
+
+    models.db.session.commit()
+
+
+atexit.register(exit_handler)
 
 
 if __name__ == "__main__":

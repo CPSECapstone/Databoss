@@ -9,6 +9,10 @@ app.controller('home', function($scope, $location, $http, activeNavItem) {
   $scope.goCapture = function () {
       $location.path('/capture');
   }
+
+  $scope.delete = function(id) {
+    console.log("DELETE BUTTON PRESSED for " + id);
+  }
   populateCapturesAndReplays($http, $scope);
   populateActiveCaptures($http, $scope);
   // populateFinishedCaptures($http, $scope);
@@ -40,7 +44,11 @@ var populateCapturesAndReplays = function($http, $scope) {
           $scope.active.push(capture);
         }
         else if (capture.status == "finished") {
-          $scope.finished.push(capture)
+          capture.passFail = "passed";
+          $scope.finished.push(capture);
+        } else if (capture.status == "failed") {
+          capture.passFail = "failed";
+          $scope.finished.push(capture);
         }
       })
 
@@ -51,6 +59,7 @@ var populateCapturesAndReplays = function($http, $scope) {
           $scope.active.push(replay);
         }
         else if (replay.status == "finished") {
+          replay.passFail = "passed";
           $scope.finished.push(replay);
         }
       })
