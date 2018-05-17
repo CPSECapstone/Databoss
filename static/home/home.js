@@ -22,6 +22,7 @@ app.controller('home', function($scope, $location, $http, activeNavItem) {
             'captureId': captureId
         }
     }).then(function successCallback(response) {
+        populateCapturesAndReplays($http, $scope);
         //$('#confirmModal').modal('hide')
         console.log('success');
     }, function errorCallback(response) {

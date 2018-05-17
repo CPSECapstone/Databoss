@@ -43,33 +43,40 @@ def addMetric(name, bucket, file):
 ########################
 
 def removeFinishedCapture(captureId):
+    print("captureId " + captureId)
 
-    metricId = getMetricByCaptureId(captureId)
-    removeMetric(metricId)
+    # metricId = getMetricByCaptureId(captureId)
+    # print("metricID" + str(metricId))
+    # removeMetric(metricId)
 
-    logfileId = getLogfileByCaptureId(captureId)
-    removeLogfile(logfileId)
+    # logfileId = getLogfileByCaptureId(captureId)
+    # removeLogfile(logfileId)
 
-    for id, in models.Replay.query.filter_by(captureId=captureId):
-        removeFinishedReplay(id)
+    for replay in models.Replay.query.filter_by(captureId=captureId):
+        print("replay id: " + str(replay.id))
+        removeFinishedReplay(replay.id)
 
-    models.Capture.query.filter_by(id=captureId).first().delete()
+    # models.Capture.query.filter_by(id=captureId).first()
+    models.db.session.delete(models.Capture.query.filter_by(id=captureId).first())
     models.db.session.commit()
 
 def removeFinishedReplay(replayId):
+    print("inside removefinishedreplay")
 
-    metricId = getMetricByReplayId(replayId)
-    removeMetric(metricId)
+    # metricId = getMetricByReplayId(replayId)
+    # removeMetric(metricId)
 
-    models.Replay.query.filter_by(id=replayId).first().delete()
+    models.db.session.delete(models.Replay.query.filter_by(id=replayId).first())
     models.db.session.commit()
 
 def removeLogfile(logfileId):
-    models.Logfile.query.filter_by(id=logfileId).first().delete()
+    print("inside removeLogfile")
+    models.db.session.delete(models.Logfile.query.filter_by(id=logfileId).first())
     models.db.session.commit()
 
 def removeMetric(metricId):
-    models.Metric.query.filter_by(id=metricId).first().delete()
+    print("inside removeMEtric")
+    models.db.session.delete(models.Metric.query.filter_by(id=str(metricId)).first())
     models.db.session.commit()
 
 ########################

@@ -34,7 +34,7 @@ class Metric(db.Model):
     name = db.Column(db.String(100))
     bucket = db.Column(db.String(100))
     filename = db.Column(db.String(100))
-    db.UniqueConstraint(bucket, filename)
+    # db.UniqueConstraint(bucket, filename)
     capture = db.relationship('Capture', backref='metric', lazy=True, uselist=False)
     replay = db.relationship('Replay', backref='metric', lazy=True, uselist=False)
 
@@ -57,7 +57,7 @@ class Logfile(db.Model):
     name = db.Column(db.String(100))
     bucket = db.Column(db.String(100))
     filename = db.Column(db.String(100))
-    db.UniqueConstraint(bucket, filename)
+    # db.UniqueConstraint(bucket, filename)
 
     @property
     def serialize(self):
