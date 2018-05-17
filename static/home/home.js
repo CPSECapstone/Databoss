@@ -9,6 +9,70 @@ app.controller('home', function($scope, $location, $http, activeNavItem) {
   $scope.goCapture = function () {
       $location.path('/capture');
   }
+
+
+  $scope.deleteCapture = function(captureId) {
+    $http({
+        method: 'DELETE',
+        url: 'capture/deleteCapture/' + captureId,
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        data: {
+            'captureId': captureId
+        }
+    }).then(function successCallback(response) {
+        populateCapturesAndReplays($http, $scope);
+        //$('#confirmModal').modal('hide')
+        console.log('success');
+    }, function errorCallback(response) {
+        console.log('error');
+    });
+  }
+
+  $scope.deleteReplay = function(replayId) {
+    $http({
+        method: 'DELETE',
+        url: 'replay/deleteReplay/' + replayId,
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        data: {
+            'replayId': replayId
+        }
+    }).then(function successCallback(response) {
+        populateCapturesAndReplays($http, $scope);
+        //$('#confirmModal').modal('hide')
+//        if (replay.status == 'finished') {
+//            //$('#messageModal').modal('show')
+//        }
+        console.log('success');
+    }, function errorCallback(response) {
+        console.log('error');
+    });
+  }
+
+  $scope.delete = function(id) {
+    console.log("DELETE BUTTON PRESSED for " + id);
+  }
+  
+  $scope.viewMetrics = function() {
+    activeNavItem.clearAndMakeItemActive('metricsTab');
+  }
+
+  $scope.viewCaptureProgress = function() {
+    activeNavItem.clearAndMakeItemActive('captureTab');
+  }
+
+  $scope.hoverOn = function() {
+    this.isHovering = true;
+  }
+
+  $scope.hoverOff = function() {
+    this.isHovering = false;
+  }
+
+
   populateCapturesAndReplays($http, $scope);
   populateActiveCaptures($http, $scope);
   // populateFinishedCaptures($http, $scope);

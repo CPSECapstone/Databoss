@@ -1,14 +1,17 @@
 import sqlite3
 import modelsQuery
 from datetime import datetime
-import atexit
 
 from flask import send_file
-from web_app import app, db
+from web_app import app, db, socketio, thread_lock
+from flask_socketio import emit, disconnect, join_room, leave_room, close_room
+import atexit
 import models
 
 import capture
 from views import dbConnection, login, metrics, replay, capture as cap
+
+thread = None
 
 app.register_blueprint(dbConnection.dbc_api, url_prefix="/dbc")
 app.register_blueprint(capture.capture_api, url_prefix="/capture")
@@ -27,8 +30,34 @@ def sqlite_setup():
     conn = sqlite3.connect('database.db')
     conn.close()
 
-    #db.drop_all()
+    # db.drop_all()
     db.create_all()
+
+
+@socketio.on('connect', namespace='')
+def test_connect():
+    print("socketio connected")
+
+
+@socketio.on('disconnect_request', namespace='')
+def disconnect_request():
+    print("socketio disconnect")
+    disconnect()
+
+
+@socketio.on('join', namespace='')
+def join(message):
+    join_room(message['room'])
+
+
+@socketio.on('leave', namespace='')
+def leave(message):
+    leave_room(message['room'])
+
+
+@socketio.on('close_room', namespace='')
+def close(message):
+    close_room(message['room'])
 
 
 def exit_handler():
@@ -44,4 +73,4 @@ atexit.register(exit_handler)
 
 
 if __name__ == "__main__":
-    app.run(debug=True)
+    socketio.run(app, debug=True, port=5000)

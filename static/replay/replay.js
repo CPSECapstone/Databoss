@@ -49,9 +49,11 @@ app.controller('replay', function($scope, $http, $location, activeNavItem) {
       }
     })
     .then(function successCallback(response) {
-      activeNavItem.clearAndMakeItemActive('homeTab');
+      activeNavItem.clearAndMakeItemActive('replayTab');
+      console.log("successful replay post");
       console.log("Some here other replay mode checked")
-      $location.path('home')
+      // $location.path('home')
+      $location.path('replayProgress').search({name : $('#replayName').val()});
     })
   }
 

@@ -15,6 +15,21 @@ def getAllCaptures():
     captures = Capture.query.all()
     return jsonify([i.serialize for i in captures])
 
+@capture_api.route('/deleteCapture/<id>', methods=["DELETE"])
+def deleteCapture(id):
+    print("HERHERHEHREHREHRHER")
+    result = modelsQuery.removeFinishedCapture(id)
+    print("id is " + id)
+    return " "
+
+@capture_api.route('/getCapturesWithBuckets')
+def getCapturesWithBuckets():
+    capturesWithBuckets = modelsQuery.getCapturesWithBuckets()
+    jsonifiedCaptures = []
+    for i in capturesWithBuckets:
+        jsonifiedCaptures.append({"id" : i.Capture.id, "name" : i.Capture.name, "rds" : i.Capture.dbName, "bucket" : i.Logfile.bucket})
+    return jsonify(jsonifiedCaptures)
+
 @capture_api.route('/getSortedCapturesAndReplays')
 def getSortedCapturesAndReplays():
     captures = Capture.query.order_by(Capture.startTime.desc()).all()

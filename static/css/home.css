@@ -76,23 +76,44 @@ a, a:hover, a:visited {
 }
 
 .passBox {
-  border: 2px solid #63FB92;
+  border: 2px solid #7EEE76;
 }
 
 .failBox {
-  border: 2px solid #fc2a2a;
+  border: 2px solid #FF4646;
 }
 
 .passText {
-  color: #63FB92;
+  color: #AEF1AA;
 }
 
 .failText {
-  color: #fc2a2a;
+  color: #EC7777;
 }
 
 .passFail {
   font-size: .7em;
   text-transform: uppercase;
   padding-top: 5px;
+}
+
+.delete-button {
+  float:right;
+  margin-right: 40px;
+  margin-top: 6px;
+}
+
+.tileType {
+  background: #222222;
+  color: #FAFAFA;
+  height:30px;
+  width:30px;
+  text-align: center;
+  padding-top: 2px;
+  margin-top: -7px;
+  margin-left: -7px;
+  border-radius: 50%;
+  /* -moz-border-radius: 30px; */
+   /* border-radius: 30px;  */
+
 }

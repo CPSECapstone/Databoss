@@ -211,7 +211,7 @@ app.controller('capture', function ($scope, $location, $http, buttonDisplay, act
                 'mode' : $('input[name=mode]:checked').val()
             }
         }).then(function successCallback(response) {
-            console.log(response);
+            console.log("Successful response is: ", response.status);
             const inputMode = $('input[name=mode]:checked').val();
             if (inputMode == 'time' || inputMode == 'storage') {
                 activeNavItem.clearAndMakeItemActive('homeTab');
@@ -221,8 +221,16 @@ app.controller('capture', function ($scope, $location, $http, buttonDisplay, act
             else {
                 $location.path('progress').search({name : $('#captureName').val()});
             }
-        }, function errorCallback(response) {
-            $scope.error = "There is not enough allocated storage in your the RDS instance.";
+        },function errorCallback(response) {
+            console.log("The response is: " + response.status);
+            if (response.status === 400) {
+                $scope.error = "There is not enough allocated storage in your the RDS instance.";
+            }
+            else {
+                $scope.error = "Storage cannot be zero or negative";
+            }
+
+
         });
     }
 
