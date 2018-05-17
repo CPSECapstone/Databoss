@@ -58,9 +58,9 @@ def removeFinishedCapture(captureId):
     models.db.session.commit()
 
 def removeFinishedReplay(replayId):
+    metricId = getMetricByReplayId(replayId)
     replay = models.Replay.query.filter_by(id=replayId).first()
     models.db.session.delete(replay)
-    metricId = getMetricByReplayId(replayId)
     removeMetric(metricId)
     models.db.session.commit()
 
