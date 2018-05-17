@@ -21,6 +21,16 @@ app.controller('home', function($scope, $location, $http, activeNavItem) {
   $scope.viewCaptureProgress = function() {
     activeNavItem.clearAndMakeItemActive('captureTab');
   }
+
+  $scope.hoverOn = function() {
+    this.isHovering = true;
+  }
+
+  $scope.hoverOff = function() {
+    this.isHovering = false;
+  }
+
+
   populateCapturesAndReplays($http, $scope);
   populateActiveCaptures($http, $scope);
   // populateFinishedCaptures($http, $scope);
