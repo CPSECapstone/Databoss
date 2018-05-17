@@ -13,6 +13,10 @@ app.controller('home', function($scope, $location, $http, activeNavItem) {
   $scope.delete = function(id) {
     console.log("DELETE BUTTON PRESSED for " + id);
   }
+
+  $scope.viewMetrics = function() {
+    activeNavItem.clearAndMakeItemActive('metricsTab');
+  }
   populateCapturesAndReplays($http, $scope);
   populateActiveCaptures($http, $scope);
   // populateFinishedCaptures($http, $scope);

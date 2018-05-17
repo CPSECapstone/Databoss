@@ -76,7 +76,7 @@
               <i ng-click="delete(item.id)" class="fa fa-times-circle nav-icon"> </i>
             </div>
           <a href="#!/metrics?captureId={{item.id}}">
-            <div class="box" ng-class='{passBox: (item.status == "finished"), failBox: (item.status == "failed")}'>
+            <div ng-click="viewMetrics()" class="box" ng-class='{passBox: (item.status == "finished"), failBox: (item.status == "failed")}'>
               <div class="capture-name text-center">
                 {{item.name}}
               </div>
