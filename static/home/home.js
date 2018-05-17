@@ -9,6 +9,10 @@ app.controller('home', function($scope, $location, $http, activeNavItem) {
   $scope.goCapture = function () {
       $location.path('/capture');
   }
+
+  $scope.delete = function(id) {
+    console.log("DELETE BUTTON PRESSED for " + id);
+  }
   populateCapturesAndReplays($http, $scope);
   populateActiveCaptures($http, $scope);
   // populateFinishedCaptures($http, $scope);
