@@ -76,19 +76,19 @@ a, a:hover, a:visited {
 }
 
 .passBox {
-  border: 2px solid #63FB92;
+  border: 2px solid #7EEE76;
 }
 
 .failBox {
-  border: 2px solid #fc2a2a;
+  border: 2px solid #FF4646;
 }
 
 .passText {
-  color: #63FB92;
+  color: #AEF1AA;
 }
 
 .failText {
-  color: #fc2a2a;
+  color: #EC7777;
 }
 
 .passFail {
