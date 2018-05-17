@@ -43,9 +43,9 @@ app.controller('home', function($scope, $location, $http, activeNavItem) {
     }).then(function successCallback(response) {
         populateCapturesAndReplays($http, $scope);
         //$('#confirmModal').modal('hide')
-        if (replay.status == 'finished') {
-            //$('#messageModal').modal('show')
-        }
+//        if (replay.status == 'finished') {
+//            //$('#messageModal').modal('show')
+//        }
         console.log('success');
     }, function errorCallback(response) {
         console.log('error');
