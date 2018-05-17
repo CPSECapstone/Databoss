@@ -31,6 +31,9 @@
         <div ng-if='item.type == "capture"'>
           <div ng-click="viewCaptureProgress()" class="box">
             <a href="#!/progress?name={{item.name}}">
+              <div class="tileType">
+                C
+              </div>
               <div class="capture-name text-center">
                 {{item.name}}
               </div>
@@ -50,6 +53,9 @@
         <div ng-if='item.type == "replay"'>
           <div class="box">
             <a href="#!/replayProgress?name={{item.name}}">
+              <div class="tileType">
+                R
+              </div>
               <div class="capture-name text-center">
                 {{item.name}}
               </div>
@@ -77,6 +83,9 @@
             </div>
           <a href="#!/metrics?captureId={{item.id}}">
             <div ng-click="viewMetrics()" class="box" ng-class='{passBox: (item.status == "finished"), failBox: (item.status == "failed")}'>
+              <div class="tileType">
+                C
+              </div>
               <div class="capture-name text-center">
                 {{item.name}}
               </div>
@@ -100,6 +109,9 @@
             </div>
             <div class="box" ng-class='{passBox: (item.status == "finished"), failBox: (item.status == "failed")}'>
           <!-- <a href="#!/metrics?captureId={{item.id}}"> -->
+              <div class="tileType">
+                R
+              </div>
               <div class="capture-name text-center">
                 {{item.name}}
               </div>
