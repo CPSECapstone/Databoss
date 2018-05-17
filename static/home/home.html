@@ -1,9 +1,30 @@
 <div>
-  <h1></h1>
+  <div id="filter-container">
+    <div id="filter-button-bar" class="btn-group" role="group" on>
+      <button id="filter-all" ng-click="filterAll()" type="button" class="filter-button btn btn-outline-secondary ">
+        All
+      </button>
+      <button id="filter-captures" ng-click="filterCaptures()" type="button" class="filter-button btn btn-outline-secondary ">
+        Captures
+      </button>
+      <button id="filter-replays" ng-click="filterReplays()" type="button" class="filter-button btn btn-outline-secondary ">
+        Replays
+      </button>
+    </div>
+    <div id="search-container">
+        <!-- <button id="search-button" class="btn btn-outline-secondary btn-sm"><i class="fa fa-search fa-inverse nav-icon"> </i></button> -->
+        <form class="form-inline">
+        <i id="home-search-icon" class="fa fa-search"></i>
+          <input id="home-search" type="text" class="form-control" ng-change="typeSearch()" ng-model="searchText"/>
+        </form>
+
+    </div>
+  </div>
+
   <h3>Scheduled</h3>
   <div class="container2">
     <div class="row" >
-      <div class="col-xs-3" ng-repeat="capture in scheduledCaptures">
+      <div class="col-xs-3" ng-repeat="capture in scheduledCaptures" ng-show="showCaptures || showAll">
 
         <a href="#!/progress?name={{capture.name}}">
           <div class="box">
@@ -28,7 +49,7 @@
   <div class="container2">
     <div class="row" >
       <div class="col-xs-3" ng-repeat="item in active">
-        <div ng-if='item.type == "capture"'>
+        <div ng-if='item.type == "capture"' ng-show="showCaptures || showAll">
           <div ng-click="viewCaptureProgress()" class="box">
             <a href="#!/progress?name={{item.name}}">
               <div class="tileType">
@@ -50,7 +71,7 @@
             </a>
           </div>
         </div>
-        <div ng-if='item.type == "replay"'>
+        <div ng-if='item.type == "replay"' ng-show="showReplays || showAll">
           <div class="box">
             <a href="#!/replayProgress?name={{item.name}}">
               <div class="tileType">
@@ -77,10 +98,10 @@
   <div class="container2">
     <div class="row" >
       <div class="col-xs-3" ng-repeat="item in finished" ng-mouseover="hoverOn()" ng-mouseleave="hoverOff()">
-        <div ng-if='item.type == "capture"'>
-            <div class="delete-button" ng-show="isHovering">
-              <i ng-click="deleteCapture(item.id)" class="fa fa-times-circle nav-icon"> </i>
-            </div>
+        <div ng-if='item.type == "capture"' ng-show="showCaptures || showAll">
+          <div class="delete-button" ng-show="isHovering">
+            <i ng-click="deleteCapture(item.id)" class="fa fa-times-circle nav-icon"> </i>
+          </div>
           <a href="#!/metrics?captureId={{item.id}}">
             <div ng-click="viewMetrics()" class="box" ng-class='{passBox: (item.status == "finished"), failBox: (item.status == "failed")}'>
               <div class="tileType">
@@ -103,32 +124,32 @@
             </div>
           </a>
         </div>
-        <div ng-if='item.type == "replay"'>
-            <div class="delete-button" ng-show="isHovering">
-              <i ng-click="deleteReplay(item.id)"class="fa fa-times-circle nav-icon"> </i>
+        <div ng-if='item.type == "replay"' ng-show="showReplays || showAll">
+          <div class="delete-button" ng-show="isHovering">
+            <i ng-click="deleteReplay(item.id)"class="fa fa-times-circle nav-icon"> </i>
+          </div>
+          <div class="box" ng-class='{passBox: (item.status == "finished"), failBox: (item.status == "failed")}'>
+            <!-- <a href="#!/metrics?captureId={{item.id}}"> -->
+            <div class="tileType">
+              R
             </div>
-            <div class="box" ng-class='{passBox: (item.status == "finished"), failBox: (item.status == "failed")}'>
-          <!-- <a href="#!/metrics?captureId={{item.id}}"> -->
-              <div class="tileType">
-                R
-              </div>
-              <div class="capture-name text-center">
-                {{item.name}}
-              </div>
-              <div class="date-container text-center">
-                <span class="time-label">Total Queries: </span>
-                {{item.totalQueries}}
-              </div>
-              <div class="date-container text-center">
-                <span class="time-label">Successful: </span>
-                {{item.successfulQueries}}
-              </div>
-              <div class="passFail text-center" ng-class='{passText: (item.passFail == "passed")}'>
-                {{item.passFail}}
+            <div class="capture-name text-center">
+              {{item.name}}
+            </div>
+            <div class="date-container text-center">
+              <span class="time-label">Total Queries: </span>
+              {{item.totalQueries}}
+            </div>
+            <div class="date-container text-center">
+              <span class="time-label">Successful: </span>
+              {{item.successfulQueries}}
+            </div>
+            <div class="passFail text-center" ng-class='{passText: (item.passFail == "passed")}'>
+              {{item.passFail}}
 
-              </div>
-          <!-- </a> -->
             </div>
+            <!-- </a> -->
+          </div>
         </div>
       </div>
     </div>
