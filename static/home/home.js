@@ -13,8 +13,8 @@ app.controller('home', function($scope, $location, $http, activeNavItem) {
 
   $scope.deleteCapture = function(captureId) {
     $http({
-        method: 'POST',
-        url: 'modelsQuery/removeCapture',
+        method: 'DELETE',
+        url: 'capture/deleteCapture/' + captureId,
         headers: {
             'Content-Type': 'application/json'
         },
@@ -23,9 +23,6 @@ app.controller('home', function($scope, $location, $http, activeNavItem) {
         }
     }).then(function successCallback(response) {
         //$('#confirmModal').modal('hide')
-        if (capture.status == 'finished') {
-            //$('#messageModal').modal('show')
-        }
         console.log('success');
     }, function errorCallback(response) {
         console.log('error');
@@ -34,8 +31,8 @@ app.controller('home', function($scope, $location, $http, activeNavItem) {
 
   $scope.deleteReplay = function(replayId) {
     $http({
-        method: 'POST',
-        url: 'modelsQuery/removeReplay',
+        method: 'DELETE',
+        url: 'modelsQuery/deleteReplay/' + replayId,
         headers: {
             'Content-Type': 'application/json'
         },

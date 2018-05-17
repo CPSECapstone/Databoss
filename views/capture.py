@@ -15,6 +15,11 @@ def getAllCaptures():
     captures = Capture.query.all()
     return jsonify([i.serialize for i in captures])
 
+@capture_api.route('/deleteCapture/<captureId>', methods=["DELETE"])
+def deleteCapture():
+    data = request.json
+    modelsQuery.removeFinishedCapture(data['captureId'])
+
 @capture_api.route('/getCapturesWithBuckets')
 def getCapturesWithBuckets():
     capturesWithBuckets = modelsQuery.getCapturesWithBuckets()

@@ -1,7 +1,6 @@
 import models
-from flask import Blueprint
 
-models_api = Blueprint('models_api', __name__)
+
 
 # Sets up the tables in the database and their connections. Should be called only once.
 def createTable():
@@ -43,7 +42,6 @@ def addMetric(name, bucket, file):
 # Delete/Remove queries
 ########################
 
-@models_api.route('/deleteCapture', methods=['POST'])
 def removeFinishedCapture(captureId):
 
     metricId = getMetricByCaptureId(captureId)
@@ -52,26 +50,26 @@ def removeFinishedCapture(captureId):
     logfileId = getLogfileByCaptureId(captureId)
     removeLogfile(logfileId)
 
-    models.db.session.execute("DELETE FROM Replay WHERE captureId=?", (captureId, ))
+    for id, in models.Replay.query.filter_by(captureId=captureId):
+        removeFinishedReplay(id)
 
-    models.db.session.execute("DELETE FROM Capture WHERE id=?", (captureId,))
+    models.Capture.query.filter_by(id=captureId).first().delete()
     models.db.session.commit()
 
-@models_api.route('/deleteReplay', methods=['POST'])
 def removeFinishedReplay(replayId):
 
     metricId = getMetricByReplayId(replayId)
     removeMetric(metricId)
 
-    models.db.session.execute("DELETE FROM Replay WHERE id=?", (replayId,))
+    models.Replay.query.filter_by(id=replayId).first().delete()
     models.db.session.commit()
 
 def removeLogfile(logfileId):
-    models.db.session.execute("DELETE FROM Logfile WHERE id=?", (logfileId,))
+    models.Logfile.query.filter_by(id=logfileId).first().delete()
     models.db.session.commit()
 
 def removeMetric(metricId):
-    models.db.session.execute("DELETE FROM Metric WHERE id=?", (metricId,))
+    models.Metric.query.filter_by(id=metricId).first().delete()
     models.db.session.commit()
 
 ########################
