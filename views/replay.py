@@ -45,6 +45,7 @@ def startReplay():
 @replay_api.route('/checkName', methods=["GET"])
 def checkReplayName():
     name = request.args.get('name')
+    name = name.strip()
 
     replay = modelsQuery.getReplayByName(name)
 
