@@ -1,7 +1,7 @@
 <div>
   <div id="filter-container">
     <div id="filter-button-bar" class="btn-group" role="group" on>
-      <button id="filter-all" ng-click="filterAll()" type="button" class="filter-button btn btn-outline-secondary ">
+      <button id="filter-all" ng-click="filterAll()" type="button" class="filter-button btn btn-outline-secondary active">
         All
       </button>
       <button id="filter-captures" ng-click="filterCaptures()" type="button" class="filter-button btn btn-outline-secondary ">
@@ -12,19 +12,17 @@
       </button>
     </div>
     <div id="search-container">
-        <!-- <button id="search-button" class="btn btn-outline-secondary btn-sm"><i class="fa fa-search fa-inverse nav-icon"> </i></button> -->
         <form class="form-inline">
         <i id="home-search-icon" class="fa fa-search"></i>
-          <input id="home-search" type="text" class="form-control" ng-change="typeSearch()" ng-model="searchText"/>
+          <input id="home-search" type="text" class="form-control" ng-model="searchText"/>
         </form>
-
     </div>
   </div>
 
   <h3>Scheduled</h3>
   <div class="container2">
     <div class="row" >
-      <div class="col-xs-3" ng-repeat="capture in scheduledCaptures" ng-show="showCaptures || showAll">
+      <div class="col-xs-3" ng-repeat="capture in scheduledCaptures | filter:{name:searchText}" ng-show="showCaptures || showAll">
 
         <a href="#!/progress?name={{capture.name}}">
           <div class="box">
@@ -48,7 +46,7 @@
   <h3>Active</h3>
   <div class="container2">
     <div class="row" >
-      <div class="col-xs-3" ng-repeat="item in active">
+      <div class="col-xs-3" ng-repeat="item in active | filter:{name:searchText}">
         <div ng-if='item.type == "capture"' ng-show="showCaptures || showAll">
           <div ng-click="viewCaptureProgress()" class="box">
             <a href="#!/progress?name={{item.name}}">
@@ -97,7 +95,7 @@
   <h3>Finished</h3>
   <div class="container2">
     <div class="row" >
-      <div class="col-xs-3" ng-repeat="item in finished" ng-mouseover="hoverOn()" ng-mouseleave="hoverOff()">
+      <div class="col-xs-3" ng-repeat="item in finished | filter:{name:searchText}" ng-mouseover="hoverOn()" ng-mouseleave="hoverOff()">
         <div ng-if='item.type == "capture"' ng-show="showCaptures || showAll">
           <div class="delete-button" ng-show="isHovering">
             <i ng-click="deleteCapture(item.id)" class="fa fa-times-circle nav-icon"> </i>
@@ -129,7 +127,6 @@
             <i ng-click="deleteReplay(item.id)"class="fa fa-times-circle nav-icon"> </i>
           </div>
           <div class="box" ng-class='{passBox: (item.status == "finished"), failBox: (item.status == "failed")}'>
-            <!-- <a href="#!/metrics?captureId={{item.id}}"> -->
             <div class="tileType">
               R
             </div>
@@ -146,34 +143,11 @@
             </div>
             <div class="passFail text-center" ng-class='{passText: (item.passFail == "passed")}'>
               {{item.passFail}}
-
             </div>
-            <!-- </a> -->
           </div>
         </div>
       </div>
     </div>
   </div>
-
-  <!-- <div class="wrapper">
-  <div class="box">
-  <div class="capture-name text-center">
-  {{capture.name}}
-</div>
-<div class="date-container text-center">
-Feb 25, 2018 at 10:16:35
-{{capture.startTime}}
-</div>
-<div class="home-progress text-center">
-<span class="progress-num">{{capture.progress}}</span>
-<span class="progress-percent">%</span>
-</div>
-<div class="home-completed text-center">
-% COMPLETED
-</div>
-</div> -->
-<!-- <div class="four">Four</div> -->
-<!-- <div class="five">Five</div> -->
-<!-- <div class="six">Six</div> -->
 </div>
 </div>
