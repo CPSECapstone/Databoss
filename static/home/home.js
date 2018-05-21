@@ -13,6 +13,23 @@ app.controller('home', function($scope, $location, $http, activeNavItem) {
       $location.path('/capture');
   }
 
+  $scope.promptDelete = function(item) {
+    if (item) {
+        $scope.itemName = item.name;
+        $scope.itemObj = item;
+        $('#deleteModal').modal('show');
+    }
+  }
+
+  $scope.deleteItem = function(item) {
+    if (item.type == "capture") {
+        this.deleteCapture(item.id)
+    }
+    else if (item.type == "replay") {
+        this.deleteReplay(item.id)
+    }
+    $('#deleteModal').modal('hide');
+  }
 
   $scope.deleteCapture = function(captureId) {
     $http({
@@ -26,7 +43,6 @@ app.controller('home', function($scope, $location, $http, activeNavItem) {
         }
     }).then(function successCallback(response) {
         populateCapturesAndReplays($http, $scope);
-        //$('#confirmModal').modal('hide')
         console.log('success');
     }, function errorCallback(response) {
         console.log('error');
@@ -45,18 +61,10 @@ app.controller('home', function($scope, $location, $http, activeNavItem) {
         }
     }).then(function successCallback(response) {
         populateCapturesAndReplays($http, $scope);
-        //$('#confirmModal').modal('hide')
-//        if (replay.status == 'finished') {
-//            //$('#messageModal').modal('show')
-//        }
         console.log('success');
     }, function errorCallback(response) {
         console.log('error');
     });
-  }
-
-  $scope.delete = function(id) {
-    console.log("DELETE BUTTON PRESSED for " + id);
   }
 
   $scope.viewMetrics = function() {

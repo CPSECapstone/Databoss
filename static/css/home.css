@@ -150,3 +150,7 @@ a, a:hover, a:visited {
    /* border-radius: 30px;  */
 
 }
+
+.message {
+    padding-bottom: 10px
+}
