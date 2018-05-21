@@ -2,6 +2,9 @@
 var app = angular.module('MyCRT');
 
 app.controller('home', function($scope, $location, $http, activeNavItem) {
+  $scope.showAll = true;
+  $scope.showCaptures = false;
+  $scope.showReplays = false;
   $scope.setCaptureActive= function(item) {
     activeNavItem.clearAndMakeItemActive('captureTab');
   }
@@ -55,7 +58,7 @@ app.controller('home', function($scope, $location, $http, activeNavItem) {
   $scope.delete = function(id) {
     console.log("DELETE BUTTON PRESSED for " + id);
   }
-  
+
   $scope.viewMetrics = function() {
     activeNavItem.clearAndMakeItemActive('metricsTab');
   }
@@ -72,6 +75,32 @@ app.controller('home', function($scope, $location, $http, activeNavItem) {
     this.isHovering = false;
   }
 
+  $scope.filterAll = function() {
+    $("#filter-captures").removeClass('active');
+    $("#filter-replays").removeClass('active');
+    $("#filter-all").addClass('active');
+    $scope.showAll = true;
+    $scope.showCaptures = false;
+    $scope.showReplays = false;
+  }
+
+  $scope.filterCaptures = function() {
+    $("#filter-captures").addClass('active');
+    $("#filter-replays").removeClass('active');
+    $("#filter-all").removeClass('active');
+    $scope.showAll = false;
+    $scope.showCaptures = true;
+    $scope.showReplays = false;
+  }
+
+  $scope.filterReplays = function() {
+    $("#filter-replays").addClass('active');
+    $("#filter-captures").removeClass('active');
+    $("#filter-all").removeClass('active');
+    $scope.showAll = false;
+    $scope.showCaptures = false;
+    $scope.showReplays = true;
+  }
 
   populateCapturesAndReplays($http, $scope);
   populateActiveCaptures($http, $scope);

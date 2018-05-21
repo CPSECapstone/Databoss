@@ -87,6 +87,7 @@ def endCapture():
 @capture_api.route('/checkName', methods=["GET"])
 def checkName():
     name = request.args.get('name')
+    name = name.strip()
 
     captureId = modelsQuery.getCaptureID(name)
 

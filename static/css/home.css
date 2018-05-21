@@ -11,6 +11,38 @@
   margin: 50px 80px 50px 90px;
 }
 
+#filter-container .active {
+  color: black !important;
+}
+#filter-container {
+  display:grid;
+  grid-template-columns:1fr 1fr 1fr;
+}
+
+#filter-button-bar {
+  margin-left: 70px;
+  margin-bottom: 30px;
+  margin-top: 30px;
+}
+
+.filter-button {
+  color: white;
+  text-transform:  uppercase;
+  letter-spacing: .1em;
+  font-size: .7em;
+}
+
+#search-container {
+  margin-top: 30px;
+  margin-left: 15px;
+}
+
+#home-search {
+  margin-left: 10px;
+  height:30px;
+}
+
+
 h3{
   margin-left: 70px;
   font-weight: 400;

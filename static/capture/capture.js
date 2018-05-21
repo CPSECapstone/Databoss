@@ -187,6 +187,9 @@ app.controller('capture', function ($scope, $location, $http, buttonDisplay, act
             $scope.storageType = "";
         }
 
+        var captureName = $('#captureName').val()
+        captureName = captureName.trim()
+
         $http({
             method: 'POST',
             url: 'capture/startCapture',
@@ -194,7 +197,7 @@ app.controller('capture', function ($scope, $location, $http, buttonDisplay, act
                 'Content-Type' : 'application/json'
             },
             data : {
-                'captureName' : $('#captureName').val(),
+                'captureName' : captureName,
                 'captureBucket' : $('#crBucket').val(),
                 'metricsBucket' : $('#metricsBucket').val(),
                 'rdsInstance' : JSON.parse($('#rdsInstance').val()).DBInstanceIdentifier,
@@ -218,7 +221,7 @@ app.controller('capture', function ($scope, $location, $http, buttonDisplay, act
 
             }
             else {
-                $location.path('progress').search({name : $('#captureName').val()});
+                $location.path('progress').search({name : captureName});
             }
         },function errorCallback(response) {
             console.log("The response is: " + response.status);
