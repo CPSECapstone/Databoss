@@ -12,7 +12,6 @@ app.controller('capture', function ($scope, $location, $http, buttonDisplay, act
     $scope.disabled = true;
     $scope.mode = "interactive";
 
-    //setup
     buttonDisplay.hideButtons(dateContainer, timeContainer, storageContainer);
 
     $('input[name=mode]').on('change', function(event) {
