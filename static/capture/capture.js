@@ -12,7 +12,6 @@ app.controller('capture', function ($scope, $location, $http, buttonDisplay, act
     $scope.disabled = true;
     $scope.mode = "interactive";
 
-    //setup
     buttonDisplay.hideButtons(dateContainer, timeContainer, storageContainer);
 
     $('input[name=mode]').on('change', function(event) {
@@ -47,11 +46,14 @@ app.controller('capture', function ($scope, $location, $http, buttonDisplay, act
     });
 
     $scope.validateInteractive = function() {
+        console.log("validating interactive");
         if ($('#captureName').val() && $('#crBucket').val()
             && $('#metricsBucket').val() && $('#dbName').val()) {
+            console.log("returning false");
             return false;
         }
         else {
+
             return true;
         }
     }
@@ -61,8 +63,9 @@ app.controller('capture', function ($scope, $location, $http, buttonDisplay, act
             $('#startTime').val() == '' || $('#endTime').val() == '') {
             return true;
         }
-        if (Date.parse($('#startDate').val() + $('#startDate').val()) >=
-            Date.parse($('#endDate').val() + $('#endDate').val())) {
+        if (Date.parse($('#startDate').val() + ' ' + $('#startTime').val()) >=
+            Date.parse($('#endDate').val() + ' ' + $('#endTime').val()) ||
+            Date.parse($('#endDate').val() + ' ' + $('#endTime').val()) <= Date.now()) {
             return true;
         }
 
@@ -81,7 +84,7 @@ app.controller('capture', function ($scope, $location, $http, buttonDisplay, act
 
     $scope.disableCaptureButton = function() {
         selectedMode = $("input[name=mode]:checked").val();
-        if ($scope.validateInteractive()) {
+        if (!($scope.validateInteractive())) {
             if (selectedMode === "time") {
                 return $scope.validateTime();
             }
@@ -94,8 +97,6 @@ app.controller('capture', function ($scope, $location, $http, buttonDisplay, act
         }
     }
 
-// ($('#captureName').val() && $('#crBucket').val()
-//            && $('#metricsBucket').val() && $('#dbName').val())
     $scope.getRDSInstances = function() {
         console.log("getting db connections");
 
@@ -186,14 +187,8 @@ app.controller('capture', function ($scope, $location, $http, buttonDisplay, act
             $scope.storageType = "";
         }
 
-        var captureName = $('#captureName').val()
-        captureName = captureName.trim()
-
-        var startDate = $('#startDate').val()
-        var startTime = $('#startTime').val()
-        if (Date.parse(startDate + ' ' + startTime) >= Date.now() - 60000) {
-            var today = new Date()
-        }
+        var captureName = $('#captureName').val();
+        captureName = captureName.trim();
 
         $http({
             method: 'POST',
@@ -233,6 +228,9 @@ app.controller('capture', function ($scope, $location, $http, buttonDisplay, act
             if (response.status === 400) {
                 $scope.error = "There is not enough allocated storage in your the RDS instance.";
             }
+            else if (response.status === 408) {
+                $scope.error = "Invalid end time"
+            }
             else {
                 $scope.error = "Storage cannot be zero or negative";
             }
@@ -269,50 +267,4 @@ app.controller('capture', function ($scope, $location, $http, buttonDisplay, act
         });
     };
 
-    //returns true if capture button should be disabled
-    //returns false if capture button should be enabled
-    //for some reason it's like the modes are one behind everytime.
-    //TRY PULLING THE VALUE OF THE MODE IN A DIFFERENT WAY POSSIBLY?
-    $scope.disableCaptureButton = function() {
-        console.log("IN DISABLE FUNCTION");
-
-        disable = false;
-        captureName = $('#captureName').val();
-        captureBucket = $('#crBucket').val();
-        metricsBucket = $('#metricsBucket').val();
-        rdsInstance = $('#rdsInstance').val();
-        dbName = $('#dbName').val();
-        mode = $('input[name=mode]:checked').val();
-
-
-        console.log("the mode is: " + mode);
-
-        if (!captureName || !captureBucket || !metricsBucket || !rdsInstance) {
-            console.log("should be here everytime");
-            disabled = true;
-        }
-
-        if (mode == 'time') {
-            startDate = $('#startDate').val();
-            endDate = $('#endDate').val();
-            startTime = $('#startTime').val();
-            endTime = $('#endTime').val();
-
-            if (!startDate || !endDate || !startTime || !endTime ||
-                Date.parse(startDate + ' ' + startTime) >= Date.parse(endDate + ' ' + endTime) ||
-                Date.parse(endDate + ' ' + endTime) <= Date.now()) {
-                disable = true;
-            }
-        }
-        if (mode == 'storage') {
-            storageNum = $('#storageNum').val();
-
-            if (!storageNum) {
-                disable = true;
-            }
-        }
-
-        return disable;
-
-    };
 });
