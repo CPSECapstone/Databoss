@@ -176,7 +176,9 @@
       <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content info-modal-content">
           <div class="modal-header info-modal-header">
-            <h5 class="modal-title"><b>Information for {{itemName}}</b></h5>
+            <h5 class="modal-title">Information for
+              <b id="info-item-name">{{itemName}}</b>
+            </h5>
           </div>
           <div class="modal-body info-modal-body" ng-if="infoItem.type == 'capture'">
             <p class="info-type"> <b>{{infoItem.type}}</b></p>

@@ -182,3 +182,7 @@ a, a:hover, a:visited {
   margin-bottom: 15px;
 
 }
+#info-item-name {
+  text-transform: uppercase;
+  font-size: .9em;
+}
