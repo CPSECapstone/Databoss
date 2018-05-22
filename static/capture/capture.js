@@ -12,7 +12,6 @@ app.controller('capture', function ($scope, $location, $http, buttonDisplay, act
     $scope.disabled = true;
     $scope.mode = "interactive";
 
-    //setup
     buttonDisplay.hideButtons(dateContainer, timeContainer, storageContainer);
 
     $('input[name=mode]').on('change', function(event) {
@@ -265,48 +264,49 @@ app.controller('capture', function ($scope, $location, $http, buttonDisplay, act
         });
     };
 
+
     //returns true if capture button should be disabled
     //returns false if capture button should be enabled
     //for some reason it's like the modes are one behind everytime.
     //TRY PULLING THE VALUE OF THE MODE IN A DIFFERENT WAY POSSIBLY?
-    $scope.disableCaptureButton = function() {
-        console.log("IN DISABLE FUNCTION");
-
-        disable = false;
-        captureName = $('#captureName').val();
-        captureBucket = $('#crBucket').val();
-        metricsBucket = $('#metricsBucket').val();
-        rdsInstance = $('#rdsInstance').val();
-        dbName = $('#dbName').val();
-        mode = $('input[name=mode]:checked').val();
-
-
-        console.log("the mode is: " + mode);
-
-        if (!captureName || !captureBucket || !metricsBucket || !rdsInstance) {
-            console.log("should be here everytime");
-            disabled = true;
-        }
-
-        if (mode == 'time') {
-            startDate = $('#startDate').val();
-            endDate = $('#endDate').val();
-            startTime = $('#startTime').val();
-            endTime = $('#endTime').val();
-
-            if (!startDate || !endDate || !startTime || !endTime) {
-                disable = true;
-            }
-        }
-        if (mode == 'storage') {
-            storageNum = $('#storageNum').val();
-
-            if (!storageNum) {
-                disable = true;
-            }
-        }
-
-        return disable;
-
-    };
+//    $scope.disableCaptureButton = function() {
+//        console.log("IN DISABLE FUNCTION");
+//
+//        disable = false;
+//        captureName = $('#captureName').val();
+//        captureBucket = $('#crBucket').val();
+//        metricsBucket = $('#metricsBucket').val();
+//        rdsInstance = $('#rdsInstance').val();
+//        dbName = $('#dbName').val();
+//        mode = $('input[name=mode]:checked').val();
+//
+//
+//        console.log("the mode is: " + mode);
+//
+//        if (!captureName || !captureBucket || !metricsBucket || !rdsInstance) {
+//            console.log("should be here everytime");
+//            disabled = true;
+//        }
+//
+//        if (mode == 'time') {
+//            startDate = $('#startDate').val();
+//            endDate = $('#endDate').val();
+//            startTime = $('#startTime').val();
+//            endTime = $('#endTime').val();
+//
+//            if (!startDate || !endDate || !startTime || !endTime) {
+//                disable = true;
+//            }
+//        }
+//        if (mode == 'storage') {
+//            storageNum = $('#storageNum').val();
+//
+//            if (!storageNum) {
+//                disable = true;
+//            }
+//        }
+//
+//        return disable;
+//
+//    };
 });
