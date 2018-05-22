@@ -28,7 +28,8 @@ def getReplaysWithBuckets():
     replaysWithBuckets = modelsQuery.getReplaysWithBuckets()
     jsonifiedReplays = []
     for i in replaysWithBuckets:
-        jsonifiedReplays.append({"id" : i.Replay.id, "name" : i.Replay.name, "rds" : i.Replay.dbName, "bucket" : i.Metric.bucket, "captureId" : i.Replay.captureId})
+        jsonifiedReplays.append({"id" : i.Replay.id, "name" : i.Replay.name, "rds" : i.Replay.dbName, "bucket" : i.Metric.bucket,
+                                 "captureId" : i.Replay.captureId, "startTime": i.Replay.startTime})
     return jsonify(jsonifiedReplays)
 
 def add(name, startTime, endTime, dbName, logfileId, metricId, captureId):

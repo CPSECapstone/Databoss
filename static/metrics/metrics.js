@@ -138,6 +138,10 @@ app.controller('metrics', function($scope, $location, $http) {
         console.log('Error in retrieving capture bucket from capture name');
     });
    };
+
+
+
+
 });
 
 var addMetricsToChart = function(chart, label, data, time, color) {
@@ -291,8 +295,8 @@ var getCaptures = function($http, $scope) {
         'Content-Type': 'application/json'
         },
     }).then(function successCallback(response) {
-        console.log(response.data);
         $scope.captures = response.data;
+        formatDates($scope.captures);
 //        $scope.captures = response.data.filter(capture =>
 //            capture.status == "finished");
 
@@ -311,7 +315,19 @@ var getReplays = function($http, $scope) {
         },
     }).then(function successCallback(response) {
         $scope.replays = response.data;
+        console.log($scope.replays[0]);
+        formatDates($scope.replays);
     }, function errorCallback(response) {
         console.log('error retrieving replays');
     })
 };
+
+//Format start date
+var formatDates = function(items) {
+  for (var i = 0; i < items.length; i++) {
+    startTime = new Date(items[i].startTime);
+    startTime.setHours(startTime.getHours() + 7);
+    items[i].formattedStart = startTime.toLocaleDateString('en-US', options);
+  }
+};
+
