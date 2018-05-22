@@ -98,6 +98,7 @@
       <div class="col-xs-3" ng-repeat="item in finished | filter:{name:searchText}" ng-mouseover="hoverOn()" ng-mouseleave="hoverOff()">
         <div ng-if='item.type == "capture"' ng-show="showCaptures || showAll">
           <div class="delete-button" ng-show="isHovering">
+            <i ng-click="showInfo(item)" class="fa fa-info-circle nav-icon"> </i>
             <i ng-click="promptDelete(item)" class="fa fa-times-circle nav-icon"> </i>
           </div>
           <a href="#!/metrics?captureId={{item.id}}">
@@ -124,6 +125,7 @@
         </div>
         <div ng-if='item.type == "replay"' ng-show="showReplays || showAll">
           <div class="delete-button" ng-show="isHovering">
+            <i ng-click="showInfo(item)" class="fa fa-info-circle nav-icon"> </i>
             <i ng-click="promptDelete(item)"class="fa fa-times-circle nav-icon"> </i>
           </div>
           <div class="box" ng-class='{passBox: (item.status == "finished"), failBox: (item.status == "failed")}'>
@@ -164,11 +166,43 @@
             <button type="button" class="btn btn-danger"
             ng-click="deleteItem(itemObj)" id="delete">Delete</button>
           </div>
-          
         </div>
       </div>
     </div>
   </div>
 
+  <div class="informationModal">
+    <div class="modal fade" id="informationHomeModal">
+      <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content info-modal-content">
+          <div class="modal-header info-modal-header">
+            <h5 class="modal-title"><b>Information for {{itemName}}</b></h5>
+          </div>
+          <div class="modal-body info-modal-body" ng-if="infoItem.type == 'capture'">
+            <p class="info-type"> <b>{{infoItem.type}}</b></p>
+            <p> <b>Mode: </b>{{infoItem.mode}}</p>
+            <p> <b>Pass/Fail: </b>{{infoItem.passFail}}</p>
+            <p> <b>Database: </b>{{infoItem.dbName}}</p>
+            <p> <b>Start Time: </b>{{infoItem.startTime}}</p>
+            <p> <b>End Time: </b>{{infoItem.endTime}}</p>
+            <button type="button" class="btn btn-primary" data-dismiss="modal">OK</button>
+          </div>
+          <div class="modal-body info-modal-body" ng-if="infoItem.type == 'replay'">
+            <div class="info-type"> <b>{{infoItem.type}}</b></div>
+            <p> <b>Mode: </b>{{infoItem.mode}}</p>
+            <p> <b>Pass/Fail: </b>{{infoItem.passFail}}</p>
+            <p> <b>Database: </b>{{infoItem.dbName}}</p>
+            <p> <b>Start Time: </b>{{infoItem.startTime}}</p>
+            <p> <b>End Time: </b>{{infoItem.endTime}}</p>
+            <p> <b>Total Queries: </b>{{infoItem.totalQueries}}</p>
+            <p> <b>Successful Queries: </b>{{infoItem.successfulQueries}}</p>
+          <!-- <div class="message" ng-if="itemObj.type == 'capture'">All associated replays will be deleted.</div> -->
+            <!-- <div class="message" ng-if="itemObj.type == 'replay'">Are you sure you want to delete replay <b>Hello</b>?</div> -->
+            <button type="button" class="btn btn-primary" data-dismiss="modal">OK</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
 </div>
 </div>
