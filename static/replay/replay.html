@@ -5,7 +5,7 @@
       <div class="center-block">
         <div class="form-group">
           <label for="replayName">Replay Name</label>
-          <input type="text" class="form-control" id="replayName" ng-model="replayName"
+          <input type="text" class="form-control" id="replayName" maxlength="15" ng-model="replayName"
                ng-change="checkReplayName(replayName)">
           <div class="warning" ng-if="uniqueName == 'false'">That replay name is already taken!</div>
         </div>
@@ -40,7 +40,7 @@
               <input type="radio" name="replayMode" autocomplete="off" value="replay-raw" checked> Raw
             </label>
             <label class="btn btn-primary">
-              <input type="radio" name="replayMode" autocomplete="off" value="replay-time">
+              <input type="radio" name="replayMode" autocomplete="off" value="time-preserving">
               Time-Preserving
             </label>
           </div>
@@ -69,6 +69,7 @@
 
           <!-- Modal body -->
           <div class="modal-body">
+            <div class="warning" ng-if="instanceDbs == 'false'">RDS Authentication failed.</div>
             <label for="username">Username:</label>
             <input type="text" class="form-control" id="username" ng-model="username" autofocus>
             <label for="password">Password:</label>
@@ -78,7 +79,7 @@
           <!-- Modal footer -->
           <div class="modal-footer">
             <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
-            <button type="button" class="btn btn-primary" data-dismiss="modal"
+            <button type="button" class="btn btn-primary"
                     ng-click="getInstanceDbs(rdsInstance)" id="authenticate">Authenticate
             </button>
           </div>

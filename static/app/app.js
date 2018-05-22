@@ -98,10 +98,33 @@ app.config(['$routeProvider', function($routeProvider) {
    .when('/help', {
       templateUrl: 'static/help/help.html',
       controller: 'help',
-      //css: 'static/css/progress.css'
-    })
+      css: 'static/css/help.css'
+   })
    //If none of the "when"s are matched then it defaults to the home page.
    .otherwise({
       redirectTo: '/'
    });
 }]);
+
+var namespace;
+var socket;
+
+$(document).ready(function() {
+    namespace = '';
+    socket = io.connect(location.protocol + '//' + document.domain + ':' + location.port + namespace);
+
+    socket.on('replayQuery', function(msg) {
+        if (msg.query && !msg.error) {
+            $('#queryLog tr:last')
+                .after($('<tr/>')
+                .html('<td>' + msg.count + '</td><td class="' + msg.status + '">' + msg.status + '</td><td>'
+                    + msg.query + '</td>'));
+        }
+        else if (msg.query && msg.error) {
+            $('#queryLog tr:last')
+                .after($('<tr/>')
+                .html('<td>' + msg.count + '</td><td class="' + msg.status + '">' + msg.status + '</td><td>'
+                    + msg.query + '<br><span class="Fail">Error: ' + msg.error + '</span></td>'));
+        }
+    });
+});

@@ -1,9 +1,28 @@
 <div>
-  <h1></h1>
+  <div id="filter-container">
+    <div id="filter-button-bar" class="btn-group" role="group" on>
+      <button id="filter-all" ng-click="filterAll()" type="button" class="filter-button btn btn-outline-secondary active">
+        All
+      </button>
+      <button id="filter-captures" ng-click="filterCaptures()" type="button" class="filter-button btn btn-outline-secondary ">
+        Captures
+      </button>
+      <button id="filter-replays" ng-click="filterReplays()" type="button" class="filter-button btn btn-outline-secondary ">
+        Replays
+      </button>
+    </div>
+    <div id="search-container">
+        <form class="form-inline">
+        <i id="home-search-icon" class="fa fa-search"></i>
+          <input id="home-search" type="text" class="form-control" ng-model="searchText"/>
+        </form>
+    </div>
+  </div>
+
   <h3>Scheduled</h3>
   <div class="container2">
     <div class="row" >
-      <div class="col-xs-3" ng-repeat="capture in scheduledCaptures">
+      <div class="col-xs-3" ng-repeat="capture in scheduledCaptures | filter:{name:searchText}" ng-show="showCaptures || showAll">
 
         <a href="#!/progress?name={{capture.name}}">
           <div class="box">
@@ -27,10 +46,13 @@
   <h3>Active</h3>
   <div class="container2">
     <div class="row" >
-      <div class="col-xs-3" ng-repeat="item in active">
-        <div ng-if='item.type == "capture"'>
-          <div class="box">
+      <div class="col-xs-3" ng-repeat="item in active | filter:{name:searchText}">
+        <div ng-if='item.type == "capture"' ng-show="showCaptures || showAll">
+          <div ng-click="viewCaptureProgress()" class="box">
             <a href="#!/progress?name={{item.name}}">
+              <div class="tileType">
+                C
+              </div>
               <div class="capture-name text-center">
                 {{item.name}}
               </div>
@@ -47,18 +69,23 @@
             </a>
           </div>
         </div>
-        <div ng-if='item.type == "replay"'>
+        <div ng-if='item.type == "replay"' ng-show="showReplays || showAll">
           <div class="box">
-            <div class="capture-name text-center">
-              {{item.name}}
-            </div>
-            <div class="date-container text-center">
-              <span class="time-label">Start: </span>
-              {{item.formattedStart}}
-            </div>
-            <div class="box-temp">
-              
-            </div>
+            <a href="#!/replayProgress?name={{item.name}}">
+              <div class="tileType">
+                R
+              </div>
+              <div class="capture-name text-center">
+                {{item.name}}
+              </div>
+              <div class="date-container text-center">
+                <span class="time-label">Start: </span>
+                {{item.formattedStart}}
+              </div>
+              <div class="box-temp">
+
+              </div>
+            </a>
           </div>
         </div>
       </div>
@@ -68,10 +95,16 @@
   <h3>Finished</h3>
   <div class="container2">
     <div class="row" >
-      <div class="col-xs-3" ng-repeat="item in finished">
-        <div ng-if='item.type == "capture"'>
+      <div class="col-xs-3" ng-repeat="item in finished | filter:{name:searchText}" ng-mouseover="hoverOn()" ng-mouseleave="hoverOff()">
+        <div ng-if='item.type == "capture"' ng-show="showCaptures || showAll">
+          <div class="delete-button" ng-show="isHovering">
+            <i ng-click="promptDelete(item)" class="fa fa-times-circle nav-icon"> </i>
+          </div>
           <a href="#!/metrics?captureId={{item.id}}">
-            <div class="box">
+            <div ng-click="viewMetrics()" class="box" ng-class='{passBox: (item.status == "finished"), failBox: (item.status == "failed")}'>
+              <div class="tileType">
+                C
+              </div>
               <div class="capture-name text-center">
                 {{item.name}}
               </div>
@@ -83,52 +116,59 @@
                 <span class="time-label">End: </span>
                 {{item.formattedEnd}}
               </div>
-
+              <div class="passFail text-center" ng-class='{passText: (item.passFail == "passed"), failText: (item.passFail == "failed")}'>
+                {{item.passFail}}
+              </div>
             </div>
           </a>
-
         </div>
-        <div ng-if='item.type == "replay"'>
-          <a href="#!/metrics?captureId={{item.id}}">
-            <div class="box">
-              <div class="capture-name text-center">
-                {{item.name}}
-              </div>
-              <div class="date-container text-center">
-                <span class="time-label">Total Queries: </span>
-                {{item.totalQueries}}
-              </div>
-              <div class="date-container text-center">
-                <span class="time-label">Successful: </span>
-                {{item.successfulQueries}}
-              </div>
-
+        <div ng-if='item.type == "replay"' ng-show="showReplays || showAll">
+          <div class="delete-button" ng-show="isHovering">
+            <i ng-click="promptDelete(item)"class="fa fa-times-circle nav-icon"> </i>
+          </div>
+          <div class="box" ng-class='{passBox: (item.status == "finished"), failBox: (item.status == "failed")}'>
+            <div class="tileType">
+              R
             </div>
-          </a>
+            <div class="capture-name text-center">
+              {{item.name}}
+            </div>
+            <div class="date-container text-center">
+              <span class="time-label">Total Queries: </span>
+              {{item.totalQueries}}
+            </div>
+            <div class="date-container text-center">
+              <span class="time-label">Successful: </span>
+              {{item.successfulQueries}}
+            </div>
+            <div class="passFail text-center" ng-class='{passText: (item.passFail == "passed")}'>
+              {{item.passFail}}
+            </div>
+          </div>
         </div>
       </div>
     </div>
   </div>
 
-  <!-- <div class="wrapper">
-  <div class="box">
-  <div class="capture-name text-center">
-  {{capture.name}}
-</div>
-<div class="date-container text-center">
-Feb 25, 2018 at 10:16:35
-{{capture.startTime}}
-</div>
-<div class="home-progress text-center">
-<span class="progress-num">{{capture.progress}}</span>
-<span class="progress-percent">%</span>
-</div>
-<div class="home-completed text-center">
-% COMPLETED
-</div>
-</div> -->
-<!-- <div class="four">Four</div> -->
-<!-- <div class="five">Five</div> -->
-<!-- <div class="six">Six</div> -->
+  <div class="delete-container">
+    <div class="modal fade" id="deleteModal">
+      <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+
+          <!-- Modal body -->
+          <div class="modal-body">
+            <div class="message" ng-if="itemObj.type == 'replay'">Are you sure you want to delete replay <b>{{itemName}}</b>?</div>
+            <div ng-if="itemObj.type == 'capture'">Are you sure you want to delete capture <b>{{itemName}}</b>?</div>
+            <div class="message" ng-if="itemObj.type == 'capture'">All associated replays will be deleted.</div>
+            <button type="button" class="btn btn-primary" data-dismiss="modal">Cancel</button>
+            <button type="button" class="btn btn-danger"
+            ng-click="deleteItem(itemObj)" id="delete">Delete</button>
+          </div>
+          
+        </div>
+      </div>
+    </div>
+  </div>
+
 </div>
 </div>

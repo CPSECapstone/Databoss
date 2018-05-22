@@ -15,6 +15,13 @@ def getAllCaptures():
     captures = Capture.query.all()
     return jsonify([i.serialize for i in captures])
 
+@capture_api.route('/deleteCapture/<id>', methods=["DELETE"])
+def deleteCapture(id):
+    print("HERHERHEHREHREHRHER")
+    result = modelsQuery.removeFinishedCapture(id)
+    print("id is " + id)
+    return " "
+
 @capture_api.route('/getCapturesWithBuckets')
 def getCapturesWithBuckets():
     capturesWithBuckets = modelsQuery.getCapturesWithBuckets()
@@ -80,6 +87,7 @@ def endCapture():
 @capture_api.route('/checkName', methods=["GET"])
 def checkName():
     name = request.args.get('name')
+    name = name.strip()
 
     captureId = modelsQuery.getCaptureID(name)
 

@@ -17,6 +17,12 @@ def getAllReplays():
    return jsonify([i.serialize for i in replays])
 
 
+@replay_api.route('/deleteReplay/<id>', methods=["DELETE"])
+def deleteReplay(id):
+    result = modelsQuery.removeFinishedReplay(id)
+    print("id is " + id)
+    return " "
+
 @replay_api.route('/getReplaysWithBuckets')
 def getReplaysWithBuckets():
     replaysWithBuckets = modelsQuery.getReplaysWithBuckets()
@@ -39,10 +45,10 @@ def startReplay():
 @replay_api.route('/checkName', methods=["GET"])
 def checkReplayName():
     name = request.args.get('name')
+    name = name.strip()
 
     replay = modelsQuery.getReplayByName(name)
 
     if replay is None:
         return "true"
     return "false"
-

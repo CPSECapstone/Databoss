@@ -2,6 +2,9 @@
 var app = angular.module('MyCRT');
 
 app.controller('home', function($scope, $location, $http, activeNavItem) {
+  $scope.showAll = true;
+  $scope.showCaptures = false;
+  $scope.showReplays = false;
   $scope.setCaptureActive= function(item) {
     activeNavItem.clearAndMakeItemActive('captureTab');
   }
@@ -9,6 +12,104 @@ app.controller('home', function($scope, $location, $http, activeNavItem) {
   $scope.goCapture = function () {
       $location.path('/capture');
   }
+
+  $scope.promptDelete = function(item) {
+    if (item) {
+        $scope.itemName = item.name;
+        $scope.itemObj = item;
+        $('#deleteModal').modal('show');
+    }
+  }
+
+  $scope.deleteItem = function(item) {
+    if (item.type == "capture") {
+        this.deleteCapture(item.id)
+    }
+    else if (item.type == "replay") {
+        this.deleteReplay(item.id)
+    }
+    $('#deleteModal').modal('hide');
+  }
+
+  $scope.deleteCapture = function(captureId) {
+    $http({
+        method: 'DELETE',
+        url: 'capture/deleteCapture/' + captureId,
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        data: {
+            'captureId': captureId
+        }
+    }).then(function successCallback(response) {
+        populateCapturesAndReplays($http, $scope);
+        console.log('success');
+    }, function errorCallback(response) {
+        console.log('error');
+    });
+  }
+
+  $scope.deleteReplay = function(replayId) {
+    $http({
+        method: 'DELETE',
+        url: 'replay/deleteReplay/' + replayId,
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        data: {
+            'replayId': replayId
+        }
+    }).then(function successCallback(response) {
+        populateCapturesAndReplays($http, $scope);
+        console.log('success');
+    }, function errorCallback(response) {
+        console.log('error');
+    });
+  }
+
+  $scope.viewMetrics = function() {
+    activeNavItem.clearAndMakeItemActive('metricsTab');
+  }
+
+  $scope.viewCaptureProgress = function() {
+    activeNavItem.clearAndMakeItemActive('captureTab');
+  }
+
+  $scope.hoverOn = function() {
+    this.isHovering = true;
+  }
+
+  $scope.hoverOff = function() {
+    this.isHovering = false;
+  }
+
+  $scope.filterAll = function() {
+    $("#filter-captures").removeClass('active');
+    $("#filter-replays").removeClass('active');
+    $("#filter-all").addClass('active');
+    $scope.showAll = true;
+    $scope.showCaptures = false;
+    $scope.showReplays = false;
+  }
+
+  $scope.filterCaptures = function() {
+    $("#filter-captures").addClass('active');
+    $("#filter-replays").removeClass('active');
+    $("#filter-all").removeClass('active');
+    $scope.showAll = false;
+    $scope.showCaptures = true;
+    $scope.showReplays = false;
+  }
+
+  $scope.filterReplays = function() {
+    $("#filter-replays").addClass('active');
+    $("#filter-captures").removeClass('active');
+    $("#filter-all").removeClass('active');
+    $scope.showAll = false;
+    $scope.showCaptures = false;
+    $scope.showReplays = true;
+  }
+
   populateCapturesAndReplays($http, $scope);
   populateActiveCaptures($http, $scope);
   // populateFinishedCaptures($http, $scope);
@@ -40,7 +141,11 @@ var populateCapturesAndReplays = function($http, $scope) {
           $scope.active.push(capture);
         }
         else if (capture.status == "finished") {
-          $scope.finished.push(capture)
+          capture.passFail = "passed";
+          $scope.finished.push(capture);
+        } else if (capture.status == "failed") {
+          capture.passFail = "failed";
+          $scope.finished.push(capture);
         }
       })
 
@@ -51,6 +156,7 @@ var populateCapturesAndReplays = function($http, $scope) {
           $scope.active.push(replay);
         }
         else if (replay.status == "finished") {
+          replay.passFail = "passed";
           $scope.finished.push(replay);
         }
       })

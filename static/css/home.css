@@ -11,6 +11,38 @@
   margin: 50px 80px 50px 90px;
 }
 
+#filter-container .active {
+  color: black !important;
+}
+#filter-container {
+  display:grid;
+  grid-template-columns:1fr 1fr 1fr;
+}
+
+#filter-button-bar {
+  margin-left: 70px;
+  margin-bottom: 30px;
+  margin-top: 30px;
+}
+
+.filter-button {
+  color: white;
+  text-transform:  uppercase;
+  letter-spacing: .1em;
+  font-size: .7em;
+}
+
+#search-container {
+  margin-top: 30px;
+  margin-left: 15px;
+}
+
+#home-search {
+  margin-left: 10px;
+  height:30px;
+}
+
+
 h3{
   margin-left: 70px;
   font-weight: 400;
@@ -73,4 +105,52 @@ a, a:hover, a:visited {
 
 .home-completed {
   font-size: .8em;
+}
+
+.passBox {
+  border: 2px solid #7EEE76;
+}
+
+.failBox {
+  border: 2px solid #FF4646;
+}
+
+.passText {
+  color: #AEF1AA;
+}
+
+.failText {
+  color: #EC7777;
+}
+
+.passFail {
+  font-size: .7em;
+  text-transform: uppercase;
+  padding-top: 5px;
+}
+
+.delete-button {
+  float:right;
+  margin-right: 40px;
+  margin-top: 6px;
+}
+
+.tileType {
+  background: #222222;
+  color: #FAFAFA;
+  height:30px;
+  width:30px;
+  text-align: center;
+  padding-top: 2px;
+  margin-top: -7px;
+  margin-left: -7px;
+  border-radius: 50%;
+  font-weight: bolder;
+  /* -moz-border-radius: 30px; */
+   /* border-radius: 30px;  */
+
+}
+
+.message {
+    padding-bottom: 10px
 }
