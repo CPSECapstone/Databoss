@@ -321,13 +321,3 @@ var getReplays = function($http, $scope) {
         console.log('error retrieving replays');
     })
 };
-
-//Format start date
-var formatDates = function(items) {
-  for (var i = 0; i < items.length; i++) {
-    startTime = new Date(items[i].startTime);
-    startTime.setHours(startTime.getHours() + 7);
-    items[i].formattedStart = startTime.toLocaleDateString('en-US', options);
-  }
-};
-
