@@ -61,14 +61,12 @@ app.controller('capture', function ($scope, $location, $http, buttonDisplay, act
             $('#startTime').val() == '' || $('#endTime').val() == '') {
             return true;
         }
-        if ($('#startDate').val() == $('#endDate').val() &&
-            $('#startTime').val() >= $('#endTime').val()) {
+        if (Date.parse($('#startDate').val() + $('#startDate').val()) >=
+            Date.parse($('#endDate').val() + $('#endDate').val())) {
             return true;
         }
 
-        else {
-            return false;
-        }
+        return false;
     }
 
     $scope.validateStorage = function() {
@@ -191,6 +189,12 @@ app.controller('capture', function ($scope, $location, $http, buttonDisplay, act
         var captureName = $('#captureName').val()
         captureName = captureName.trim()
 
+        var startDate = $('#startDate').val()
+        var startTime = $('#startTime').val()
+        if (Date.parse(startDate + ' ' + startTime) >= Date.now() - 60000) {
+            var today = new Date()
+        }
+
         $http({
             method: 'POST',
             url: 'capture/startCapture',
@@ -294,7 +298,9 @@ app.controller('capture', function ($scope, $location, $http, buttonDisplay, act
             startTime = $('#startTime').val();
             endTime = $('#endTime').val();
 
-            if (!startDate || !endDate || !startTime || !endTime) {
+            if (!startDate || !endDate || !startTime || !endTime ||
+                Date.parse(startDate + ' ' + startTime) >= Date.parse(endDate + ' ' + endTime) ||
+                Date.parse(endDate + ' ' + endTime) <= Date.now()) {
                 disable = true;
             }
         }
