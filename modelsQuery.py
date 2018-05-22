@@ -195,3 +195,7 @@ def getLogFileByCapture(captureName):
 def getCapturesWithBuckets():
     capturesWithBuckets = models.db.session.query(models.Capture, models.Logfile).filter(models.Capture.logfileId == models.Logfile.id).all();
     return capturesWithBuckets
+
+def getReplaysWithBuckets():
+    replaysWithBuckets = models.db.session.query(models.Replay, models.Metric).filter(models.Replay.metricId == models.Metric.id).all();
+    return replaysWithBuckets

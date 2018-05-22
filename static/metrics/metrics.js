@@ -305,13 +305,12 @@ var getCaptures = function($http, $scope) {
 var getReplays = function($http, $scope) {
     $http({
         method: 'GET',
-        url: 'replay/getAll',
+        url: 'replay/getReplaysWithBuckets',
         headers: {
         'Content-Type': 'application/json'
         },
     }).then(function successCallback(response) {
         $scope.replays = response.data;
-        console.log('success');
     }, function errorCallback(response) {
         console.log('error retrieving replays');
     })
