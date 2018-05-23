@@ -10,6 +10,7 @@ app.controller('capture', function ($scope, $location, $http, buttonDisplay, act
     var selectedMode = "";
     $scope.required = true;
     $scope.disabled = true;
+    $scope.startBeforeCurrent = false;
     $scope.mode = "interactive";
 
     buttonDisplay.hideButtons(dateContainer, timeContainer, storageContainer);
@@ -19,6 +20,7 @@ app.controller('capture', function ($scope, $location, $http, buttonDisplay, act
 
       if (selectedMode === "interactive") {
         buttonDisplay.hideButtons(dateContainer, timeContainer, storageContainer);
+        $scope.startBeforeCurrent = false;
 
         //Disable or enable capture button
         $scope.$apply(function() {
@@ -37,6 +39,7 @@ app.controller('capture', function ($scope, $location, $http, buttonDisplay, act
       else if (selectedMode === "storage") {
         buttonDisplay.hideButtons(dateContainer, timeContainer);
         buttonDisplay.showButtons(storageContainer);
+        $scope.startBeforeCurrent = false;
 
         //Disable or enable capture button
         $scope.$apply(function() {
@@ -63,6 +66,12 @@ app.controller('capture', function ($scope, $location, $http, buttonDisplay, act
             $('#startTime').val() == '' || $('#endTime').val() == '') {
             return true;
         }
+
+        if (Date.parse($('#startDate').val() + ' ' + $('#startTime').val()) <= Date.now()) {
+            $scope.startBeforeCurrent = true;
+        }
+        else { $scope.startBeforeCurrent = false; }
+
         if (Date.parse($('#startDate').val() + ' ' + $('#startTime').val()) >=
             Date.parse($('#endDate').val() + ' ' + $('#endTime').val()) ||
             Date.parse($('#endDate').val() + ' ' + $('#endTime').val()) <= Date.now()) {
