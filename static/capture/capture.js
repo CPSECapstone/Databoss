@@ -130,7 +130,11 @@ app.controller('capture', function ($scope, $location, $http, buttonDisplay, act
         }
     }
 
-    $("#authenticationModal").on("hide.bs.modal", function () {
+    $('#authenticationModal').on('shown.bs.modal', function () {
+        $('#username').focus();
+    });
+
+    $('#authenticationModal').on('hide.bs.modal', function () {
         console.log("hiding modal");
         console.log(username);
         console.log(password);
