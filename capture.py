@@ -267,6 +267,16 @@ def startCapture(captureName, captureBucket, metricsBucket, rdsInstance, db_name
         startTime = datetime.strptime(startTime, "%H:%M").time()
         endTime = datetime.strptime(endTime, "%H:%M").time()
 
+        print(datetime.combine(startDate, startTime))
+        print(datetime.now() + timedelta(minutes=1))
+        if datetime.combine(startDate, startTime) < datetime.now() + timedelta(minutes=1):
+            startDate = datetime.now().date()
+            startTime = (datetime.now() + timedelta(minutes=1)).time()
+
+            if startDate > endDate or startDate == endDate and startTime >= endTime:
+                print("Invalid end time when start time is before current time")
+                abort(408)
+
     sTimeCombined = datetime.combine(startDate, startTime)
     eTimeCombined = datetime.combine(endDate, endTime)
 

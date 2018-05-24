@@ -10,6 +10,7 @@ app.controller('capture', function ($scope, $location, $http, buttonDisplay, act
     var selectedMode = "";
     $scope.required = true;
     $scope.disabled = true;
+    $scope.startBeforeCurrent = false;
     $scope.mode = "interactive";
 
     buttonDisplay.hideButtons(dateContainer, timeContainer, storageContainer);
@@ -19,6 +20,7 @@ app.controller('capture', function ($scope, $location, $http, buttonDisplay, act
 
       if (selectedMode === "interactive") {
         buttonDisplay.hideButtons(dateContainer, timeContainer, storageContainer);
+        $scope.startBeforeCurrent = false;
 
         //Disable or enable capture button
         $scope.$apply(function() {
@@ -37,6 +39,7 @@ app.controller('capture', function ($scope, $location, $http, buttonDisplay, act
       else if (selectedMode === "storage") {
         buttonDisplay.hideButtons(dateContainer, timeContainer);
         buttonDisplay.showButtons(storageContainer);
+        $scope.startBeforeCurrent = false;
 
         //Disable or enable capture button
         $scope.$apply(function() {
@@ -63,14 +66,19 @@ app.controller('capture', function ($scope, $location, $http, buttonDisplay, act
             $('#startTime').val() == '' || $('#endTime').val() == '') {
             return true;
         }
-        if ($('#startDate').val() == $('#endDate').val() &&
-            $('#startTime').val() >= $('#endTime').val()) {
+
+        if (Date.parse($('#startDate').val() + ' ' + $('#startTime').val()) <= Date.now()) {
+            $scope.startBeforeCurrent = true;
+        }
+        else { $scope.startBeforeCurrent = false; }
+
+        if (Date.parse($('#startDate').val() + ' ' + $('#startTime').val()) >=
+            Date.parse($('#endDate').val() + ' ' + $('#endTime').val()) ||
+            Date.parse($('#endDate').val() + ' ' + $('#endTime').val()) <= Date.now()) {
             return true;
         }
 
-        else {
-            return false;
-        }
+        return false;
     }
 
     $scope.validateStorage = function() {
@@ -188,8 +196,8 @@ app.controller('capture', function ($scope, $location, $http, buttonDisplay, act
             $scope.storageType = "";
         }
 
-        var captureName = $('#captureName').val()
-        captureName = captureName.trim()
+        var captureName = $('#captureName').val();
+        captureName = captureName.trim();
 
         $http({
             method: 'POST',
@@ -229,6 +237,9 @@ app.controller('capture', function ($scope, $location, $http, buttonDisplay, act
             if (response.status === 400) {
                 $scope.error = "There is not enough allocated storage in your the RDS instance.";
             }
+            else if (response.status === 408) {
+                $scope.error = "Invalid end time"
+            }
             else {
                 $scope.error = "Storage cannot be zero or negative";
             }
@@ -264,4 +275,5 @@ app.controller('capture', function ($scope, $location, $http, buttonDisplay, act
 
         });
     };
+
 });
