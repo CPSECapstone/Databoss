@@ -5,7 +5,8 @@ app.controller('home', function($scope, $location, $http, activeNavItem) {
   $scope.showAll = true;
   $scope.showCaptures = false;
   $scope.showReplays = false;
-  $scope.setCaptureActive= function(item) {
+
+  $scope.setCaptureActive = function(item) {
     activeNavItem.clearAndMakeItemActive('captureTab');
   }
 
@@ -50,8 +51,7 @@ app.controller('home', function($scope, $location, $http, activeNavItem) {
             'captureId': captureId
         }
     }).then(function successCallback(response) {
-        populateCapturesAndReplays($http, $scope);
-        console.log('success');
+        populateFinishedCapturesAndReplays($http, $scope);
     }, function errorCallback(response) {
         console.log('error');
     });
@@ -68,8 +68,7 @@ app.controller('home', function($scope, $location, $http, activeNavItem) {
             'replayId': replayId
         }
     }).then(function successCallback(response) {
-        populateCapturesAndReplays($http, $scope);
-        console.log('success');
+        populateFinishedCapturesAndReplays($http, $scope);
     }, function errorCallback(response) {
         console.log('error');
     });
@@ -118,9 +117,8 @@ app.controller('home', function($scope, $location, $http, activeNavItem) {
     $scope.showReplays = true;
   }
 
-  populateCapturesAndReplays($http, $scope);
+  populateFinishedCapturesAndReplays($http, $scope);
   populateActiveCaptures($http, $scope);
-  // populateFinishedCaptures($http, $scope);
   populateScheduledCaptures($http, $scope);
 
 });
@@ -133,7 +131,7 @@ var options = {
 };
 
 
-var populateCapturesAndReplays = function($http, $scope) {
+var populateFinishedCapturesAndReplays = function($http, $scope) {
   $http({
         method: 'GET',
         url: 'capture/getSortedCapturesAndReplays',
@@ -171,10 +169,8 @@ var populateCapturesAndReplays = function($http, $scope) {
       formatDates($scope.finished);
       formatDates($scope.active);
       calculateProgress($scope.active);
-      console.log(response.data.captures);
-      console.log(response.data.replays);
     }, function errorCallback(response) {
-        console.log('error retrieving captures');
+        console.error('error retrieving captures');
     })
 };
 
@@ -188,27 +184,10 @@ var populateActiveCaptures = function($http, $scope) {
     }).then(function successCallback(response) {
         $scope.activeCaptures = response.data;
         calculateProgress($scope.activeCaptures);
-        console.log('success');
     }, function errorCallback(response) {
         console.log('error retrieving captures');
     })
 };
-
-// var populateFinishedCaptures = function($http, $scope) {
-//     $http({
-//         method: 'GET',
-//         url: 'capture/finished',
-//         headers: {
-//         'Content-Type': 'application/json'
-//         },
-//     }).then(function successCallback(response) {
-//         $scope.finishedCaptures = response.data;
-//         formatDates($scope.finishedCaptures);
-//         console.log('success');
-//     }, function errorCallback(response) {
-//         console.log('error retrieving captures');
-//     })
-// };
 
 var populateScheduledCaptures = function($http, $scope) {
     $http({
@@ -220,7 +199,6 @@ var populateScheduledCaptures = function($http, $scope) {
     }).then(function successCallback(response) {
         $scope.scheduledCaptures= response.data;
         formatDates($scope.scheduledCaptures);
-        console.log('success');
     }, function errorCallback(response) {
         console.log('error retrieving captures');
     })
