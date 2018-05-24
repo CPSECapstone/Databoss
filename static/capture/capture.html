@@ -55,6 +55,7 @@
       <span class="time-date-element">Start Date: <input class="form-control" id="startDate" ng-model="startDate" ng-change="validateTime()" /> </span>
       <span>End Date: <input class="form-control" id="endDate" ng-model="endDate" ng-change="validateTime()" /> </span>
     </div>
+          <div ng-if="startBeforeCurrent">Start time will be set to current time on start.</div>
     <div id="time-container" class="row">
       <span class="time-date-element">Start Time: <input class="form-control" id="startTime" ng-model="startTime" ng-change="validateTime()"/> </span> <span>End Time: <input class="form-control" id="endTime" ng-model="endTime" ng-change="validateTime()"/> </span>
     </div>
@@ -99,11 +100,11 @@
           </script>
 
     <div class="text-center">
+      <div class="warning">{{error}}</div>
       <button type="button" ng-model="button" ng-click="startCapture()" class="btn-capture btn btn-success"
               ng-disabled="!captureName || !crBucket || !metricsBucket || !rdsInstance || !dbName ||
                            uniqueName == 'false' || disableCaptureButton()">
       Capture  </button>
-      <div class="warning">{{error}}</div>
     </div>
     </div>
   </div>
