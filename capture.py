@@ -256,7 +256,7 @@ def startCapture(captureName, captureBucket, metricsBucket, rdsInstance, db_name
     metricFileName = captureName + " " + "metric file"
     dbDialect = "mysql"
 
-    if mode != "time" or startDate == "" and endDate == "" and startTime == "" and endTime == "":
+    if mode != "time":
         startDate = datetime.now().date()
         endDate = datetime.now().date() + timedelta(days=1)
         startTime = datetime.now().time()
