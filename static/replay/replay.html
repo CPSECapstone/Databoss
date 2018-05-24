@@ -25,13 +25,13 @@
             <option ng-repeat="db in RDSInstances" value="{{db}}">{{db.DBInstanceIdentifier}}</option>
           </select>
         </div>
-        <div ng-if="rdsInstance != undefined" class="form-group">
-          <label for="dbName">Database:</label>
-          <select class="form-control" id="dbName" ng-model="$parent.dbName">
-            <option disabled selected value> -- Select Database --</option>
-            <option ng-repeat="db in instanceDbs" value="{{db}}">{{db}}</option>
-          </select>
-        </div>
+        <!--<div ng-if="rdsInstance != undefined" class="form-group">-->
+          <!--<label for="dbName">Database:</label>-->
+          <!--<select class="form-control" id="dbName" ng-model="$parent.dbName">-->
+            <!--<option disabled selected value> &#45;&#45; Select Database &#45;&#45;</option>-->
+            <!--<option ng-repeat="db in instanceDbs" value="{{db}}">{{db}}</option>-->
+          <!--</select>-->
+        <!--</div>-->
 
         <h5>Replay Mode:</h5>
         <div id="button-bar" class="text-center">
@@ -49,7 +49,7 @@
         <div class="row">
           <button type="button" ng-click="startReplay()" class="btn center-block btn-success"
                   ng-disabled="uniqueName =='false' || !replayName || !capture ||
-                  !rdsInstance || !dbName">
+                  !rdsInstance">
             Replay</button>
         </div>
       </div>

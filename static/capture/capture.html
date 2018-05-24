@@ -31,13 +31,13 @@
               <option ng-repeat="db in RDSInstances" value="{{db}}">{{db.DBInstanceIdentifier}}</option>
             </select>
           </div>
-          <div ng-if="rdsInstance != undefined" class="form-group">
-            <label for="dbName">Database:</label>
-            <select class="form-control" id="dbName" ng-model="$parent.dbName">
-              <option disabled selected value> -- Select Database -- </option>
-              <option ng-repeat="db in instanceDbs" value="{{db}}">{{db}}</option>
-            </select>
-          </div>
+          <!--<div ng-if="rdsInstance != undefined" class="form-group">-->
+            <!--<label for="dbName">Database:</label>-->
+            <!--<select class="form-control" id="dbName" ng-model="$parent.dbName">-->
+              <!--<option disabled selected value> &#45;&#45; Select Database &#45;&#45; </option>-->
+              <!--<option ng-repeat="db in instanceDbs" value="{{db}}">{{db}}</option>-->
+            <!--</select>-->
+          <!--</div>-->
 
     <h5>Capture Mode:</h5>
     <div id="capture-mode-bar" class="btn-group" data-toggle="buttons">
@@ -100,7 +100,7 @@
 
     <div class="text-center">
       <button type="button" ng-model="button" ng-click="startCapture()" class="btn-capture btn btn-success"
-              ng-disabled="!captureName || !crBucket || !metricsBucket || !rdsInstance || !dbName ||
+              ng-disabled="!captureName || !crBucket || !metricsBucket || !rdsInstance ||
                            uniqueName == 'false' || disableCaptureButton()">
       Capture  </button>
       <div class="warning">{{error}}</div>

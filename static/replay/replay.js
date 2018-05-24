@@ -42,7 +42,7 @@ app.controller('replay', function($scope, $http, $location, activeNavItem) {
       data : {
         'replayName' : replayName,
         'capture' : $('#capture').val(),
-        'dbName' : $('#dbName').val(),
+        'dbName' : 'no longer used',
         'username': $scope.username,
         'password': $scope.password,
         'startDate' : $('#startDate').val(),
@@ -113,7 +113,6 @@ app.controller('replay', function($scope, $http, $location, activeNavItem) {
           'password': $scope.password
         }
       }).then(function successCallback(response) {
-        console.log(response.data);
         $('#authenticationModal').modal('hide');
         $scope.instanceDbs = response.data;
       }, function errorCallback(response) {

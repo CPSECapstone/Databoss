@@ -57,11 +57,10 @@ def executeTimePreserving(queryTable, replayName, captureName, dbName, status_of
     numQueriesFailed = 0
 
     try:
-        conn = pymysql.connect(host=endpoint, user=username, passwd=password, db=dbName,
-                               connect_timeout=5)
+        conn = pymysql.connect(host=endpoint, user=username, passwd=password, connect_timeout=5)
     except:
         logger.error("ERROR: Unexpected error: Could not connect to MySql instance.")
-        conn.close()
+        # conn.close()
         sys.exit()
 
     count = 0
@@ -110,13 +109,12 @@ def timePreserving(replayName, captureObj, dbName, mode, endpoint, status_of_db,
     #logfile = modelsQuery.getLogFileByCapture(captureName)
     with open(captureName + " " + "tempLogFile", "r") as temp:
         try:
-            conn = pymysql.connect(host=endpoint, user=username, passwd=password, db=dbName,
-                                   connect_timeout=5)
+            conn = pymysql.connect(host=endpoint, user=username, passwd=password, connect_timeout=5)
         except:
             logger.error("ERROR: Unexpected error: Could not connect to MySql instance.")
             if os.path.exists(captureName + " " + "tempLogFile"):
                 os.remove(captureName + " " + "tempLogFile")
-            conn.close()
+            # conn.close()
             sys.exit()
         for line in temp:
 
@@ -214,13 +212,12 @@ def executeReplay(replayName, captureName, dbName, status_of_db, endpoint, start
 
     with open(captureName + " " + "tempLogFile", 'r') as tempFile:
         try:
-            conn = pymysql.connect(host=endpoint, user=username, passwd=password, db=dbName,
-                                   connect_timeout=5)
+            conn = pymysql.connect(host=endpoint, user=username, passwd=password, connect_timeout=5)
         except:
             logger.error("ERROR: Unexpected error: Could not connect to MySql instance.")
             if os.path.exists(captureName + " " + "tempLogFile"):
                 os.remove(captureName + " " + "tempLogFile")
-            conn.close()
+            # conn.close()
             sys.exit()
 
         count = 0
