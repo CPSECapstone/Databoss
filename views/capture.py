@@ -30,7 +30,7 @@ def getCapturesWithBuckets():
         jsonifiedCaptures.append({
             "id" : i.Capture.id,
             "name" : i.Capture.name,
-            "dbName" : i.Capture.dbName,
+            "rds" : i.Capture.dbName,
             "bucket" : i.Logfile.bucket,
             "startTime": i.Capture.startTime,
             "endTime":i.Capture.endTime,

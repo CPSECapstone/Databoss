@@ -141,6 +141,14 @@ app.controller('metrics', function($scope, $location, $http) {
 
 
 
+  $scope.showInfo = function(item) {
+    console.log(" i was clicked!!! ");
+    if (item) {
+      $scope.itemName = item.name;
+      $scope.infoItem = item;
+      $('#informationMetricsModal').modal('show');
+    }
+  }
 
 });
 
@@ -296,6 +304,9 @@ var getCaptures = function($http, $scope) {
         },
     }).then(function successCallback(response) {
         $scope.captures = response.data;
+        $scope.captures.map(capture => {
+          capture.type = "capture";
+        });
         formatDates($scope.captures);
 //        $scope.captures = response.data.filter(capture =>
 //            capture.status == "finished");
@@ -315,6 +326,9 @@ var getReplays = function($http, $scope) {
         },
     }).then(function successCallback(response) {
         $scope.replays = response.data;
+        $scope.replays.map(replay => {
+          replay.type = "replay";
+        });
         console.log($scope.replays[0]);
         formatDates($scope.replays);
     }, function errorCallback(response) {
