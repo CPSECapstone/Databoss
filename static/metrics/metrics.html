@@ -27,10 +27,10 @@
                         {{capture.name}} </span>
                     </th>
                     <td>{{capture.formattedStart}}</td>
-                    <td>{{capture.rds}}</td>
                     <td>{{capture.bucket}}</td>
+                    <td>{{capture.rds}}</td>
 
-                    <td><i class="fa fa-info-circle"></i></td>
+                    <td><i ng-click="showInfo(capture)" class="fa fa-info-circle"></i></td>
                     <td>
                         <input id="capture-checkbox{{capture.id}}" type="checkbox" ng-model="captureSelection"
                                ng-change="updateSelection('capture', capture.name, capture.id, captureSelection)">
@@ -40,10 +40,10 @@
                 <tr id="{{ 'collapse' + capture.id }}" ng-repeat="replay in replays | filter:{searchText:name:rds}" ng-if="replay.captureId == capture.id">
                     <td>{{replay.name}}</td>
                     <td>{{replay.formattedStart}}</td>
-                    <td>{{replay.rds}}</td>
                     <td>{{replay.bucket}}</td>
+                    <td>{{replay.rds}}</td>
 
-                    <td><i class="fa fa-info-circle"></i></td>
+                    <td><i ng-click="showInfo(replay)" class="fa fa-info-circle"></i></td>
                     <td><input type="checkbox" ng-model="replaySelection"
                                ng-change="updateSelection('replay', replay.name, replay.id, replaySelection)"></td>
 
@@ -76,3 +76,40 @@
        </div>
    </div>
 </div>
+
+  <div class="informationModal">
+    <div class="modal fade" id="informationMetricsModal">
+      <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content info-modal-content">
+          <div class="modal-header info-modal-header">
+            <h5 class="modal-title">Information for
+              <b id="info-item-name">{{itemName}}</b>
+            </h5>
+          </div>
+          <div class="modal-body info-modal-body" ng-if="infoItem.type == 'capture'">
+            <p class="info-type"> <b>{{infoItem.type}}</b></p>
+            <p> <b>Mode: </b>{{infoItem.mode}}</p>
+            <p> <b>Database: </b>{{infoItem.rds}}</p>
+            <p> <b>S3: </b>{{infoItem.bucket}}</p>
+            <p> <b>Start Time: </b>{{infoItem.startTime}}</p>
+            <p> <b>End Time: </b>{{infoItem.endTime}}</p>
+            <button type="button" class="btn btn-primary" data-dismiss="modal">OK</button>
+          </div>
+          <div class="modal-body info-modal-body" ng-if="infoItem.type == 'replay'">
+            <div class="info-type"> <b>{{infoItem.type}}</b></div>
+            <p> <b>Mode: </b>{{infoItem.mode}}</p>
+            <p> <b>RDS: </b>{{infoItem.rds}}</p>
+            <p> <b>S3: </b>{{infoItem.bucket}}</p>
+            <p> <b>Start Time: </b>{{infoItem.startTime}}</p>
+            <p> <b>End Time: </b>{{infoItem.endTime}}</p>
+            <p> <b>Successful Queries: </b>{{infoItem.successfulQueries}}</p>
+            <p> <b>Failed Queries: </b>{{infoItem.failedQueries}}</p>
+            <p> <b>Total Queries: </b>{{infoItem.totalQueries}}</p>
+          <!-- <div class="message" ng-if="itemObj.type == 'capture'">All associated replays will be deleted.</div> -->
+            <!-- <div class="message" ng-if="itemObj.type == 'replay'">Are you sure you want to delete replay <b>Hello</b>?</div> -->
+            <button type="button" class="btn btn-primary" data-dismiss="modal">OK</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>

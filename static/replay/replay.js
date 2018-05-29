@@ -28,6 +28,7 @@ app.controller('replay', function($scope, $http, $location, activeNavItem) {
   });
 
   $scope.startReplay = function () {
+    $('body').addClass('waiting');
     console.log("STARTING REPLAY-----");
 
     var replayName = $('#replayName').val();
@@ -57,6 +58,7 @@ app.controller('replay', function($scope, $http, $location, activeNavItem) {
       console.log("successful replay post");
       console.log("Some here other replay mode checked")
       // $location.path('home')
+      $('body').removeClass('waiting');
       $location.path('replayProgress').search({name : replayName});
     })
   }

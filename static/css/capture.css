@@ -40,3 +40,7 @@ h5 {
 .time-date-element {
   margin-right: 20px;
 }
+
+body.waiting * {
+    cursor: progress;
+}
