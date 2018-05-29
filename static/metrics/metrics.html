@@ -1,7 +1,14 @@
 <div>
   <h1> Metrics </h1>
-  <div class="tableWrapper">
-          <table class="table center-block">
+
+    <div class="tableWrapper">
+        <div id="search-container">
+        <form class="form-inline">
+        <i id="home-search-icon" class="fa fa-search"></i>
+          <input id="home-search" type="text" class="form-control" ng-model="searchText.$"/>
+        </form>
+        </div>
+          <table class="table table-bordered center-block">
             <thead>
                 <tr>
                   <th>Name</th>
@@ -13,7 +20,7 @@
 
                 </tr>
             </thead>
-              <tbody ng-repeat="capture in captures" on-finish-render="updateSelectionFromQueryParameters">
+              <tbody ng-repeat="capture in captures | filter:searchText:strict" on-finish-render="updateSelectionFromQueryParameters">
                 <tr>
                     <th>
                         <span> </span><i class="fa fa-caret-down" ng-click=toggleReplays(capture.id,$event)></i>
@@ -30,7 +37,7 @@
                     </td>
 
                 </tr>
-                <tr id="{{ 'collapse' + capture.id }}" ng-repeat="replay in replays" ng-if="replay.captureId == capture.id">
+                <tr id="{{ 'collapse' + capture.id }}" ng-repeat="replay in replays | filter:{searchText:name:rds}" ng-if="replay.captureId == capture.id">
                     <td>{{replay.name}}</td>
                     <td>{{replay.formattedStart}}</td>
                     <td>{{replay.bucket}}</td>

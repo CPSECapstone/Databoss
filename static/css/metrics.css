@@ -2,10 +2,13 @@
    overflow : scroll;
    max-height: 300px;
    margin-bottom: 100px;
+   padding-left: 65px;
+   padding-right: 65px;
 }
-.table {
+
+table {
     border: 1px solid white;
-    width: 75%;
+    background-color: #111111;
 }
 
 .chartWrapper {
