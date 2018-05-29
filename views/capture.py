@@ -27,8 +27,16 @@ def getCapturesWithBuckets():
     capturesWithBuckets = modelsQuery.getCapturesWithBuckets()
     jsonifiedCaptures = []
     for i in capturesWithBuckets:
-        jsonifiedCaptures.append({"id" : i.Capture.id, "name" : i.Capture.name, "rds" : i.Capture.dbName,
-                                  "bucket" : i.Logfile.bucket, "startTime": i.Capture.startTime})
+        jsonifiedCaptures.append({
+            "id" : i.Capture.id,
+            "name" : i.Capture.name,
+            "rds" : i.Capture.dbName,
+            "bucket" : i.Logfile.bucket,
+            "startTime": i.Capture.startTime,
+            "endTime":i.Capture.endTime,
+            "mode": i.Capture.mode,
+            "status":i.Capture.status
+            })
     return jsonify(jsonifiedCaptures)
 
 @capture_api.route('/getSortedCapturesAndReplays')

@@ -123,3 +123,7 @@ h2 {
   padding-top: 25px;
   font-size: 1.4em;
 }
+
+body.waiting * {
+    cursor: progress;
+}

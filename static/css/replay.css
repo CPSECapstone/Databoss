@@ -5,3 +5,7 @@
 .modal-dialog > * {
     color: black;
 }
+
+body.waiting * {
+    cursor: progress;
+}

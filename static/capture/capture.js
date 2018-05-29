@@ -191,6 +191,8 @@ app.controller('capture', function ($scope, $location, $http, buttonDisplay, act
 
     // Defaulted mode is interactive when no mode is chosen
     $scope.startCapture = function () {
+        $('body').addClass('waiting');
+
         if (!$scope.storageType) {
             console.log("storage type undefined");
             $scope.storageType = "";
@@ -224,6 +226,8 @@ app.controller('capture', function ($scope, $location, $http, buttonDisplay, act
         }).then(function successCallback(response) {
             console.log("Successful response is: ", response.status);
             const inputMode = $('input[name=mode]:checked').val();
+            $('body').removeClass('waiting');
+
             if (inputMode == 'time' || inputMode == 'storage') {
                 activeNavItem.clearAndMakeItemActive('homeTab');
                 $location.path('home');
@@ -244,7 +248,7 @@ app.controller('capture', function ($scope, $location, $http, buttonDisplay, act
                 $scope.error = "Storage cannot be zero or negative";
             }
 
-
+            $('body').removeClass('waiting');
         });
     }
 
