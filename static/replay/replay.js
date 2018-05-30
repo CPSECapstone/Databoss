@@ -28,7 +28,12 @@ app.controller('replay', function($scope, $http, $location, activeNavItem) {
   });
 
   $scope.startReplay = function () {
+    $('body').addClass('waiting');
     console.log("STARTING REPLAY-----");
+
+    var replayName = $('#replayName').val();
+    replayName = replayName.trim();
+
     $http({
       method: 'POST',
       url: 'replay/startReplay',
@@ -36,7 +41,7 @@ app.controller('replay', function($scope, $http, $location, activeNavItem) {
         'Content-Type' : 'application/json'
       },
       data : {
-        'replayName' : $('#replayName').val(),
+        'replayName' : replayName,
         'capture' : $('#capture').val(),
         'dbName' : $('#dbName').val(),
         'username': $scope.username,
@@ -53,7 +58,8 @@ app.controller('replay', function($scope, $http, $location, activeNavItem) {
       console.log("successful replay post");
       console.log("Some here other replay mode checked")
       // $location.path('home')
-      $location.path('replayProgress').search({name : $('#replayName').val()});
+      $('body').removeClass('waiting');
+      $location.path('replayProgress').search({name : replayName});
     })
   }
 
@@ -110,8 +116,10 @@ app.controller('replay', function($scope, $http, $location, activeNavItem) {
         }
       }).then(function successCallback(response) {
         console.log(response.data);
+        $('#authenticationModal').modal('hide');
         $scope.instanceDbs = response.data;
       }, function errorCallback(response) {
+        $scope.instanceDbs = 'false';
         console.log('error');
       });
     }

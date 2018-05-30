@@ -43,6 +43,7 @@ app.controller('progress', function($scope, $location, $http, activeNavItem) {
   });
 
   $scope.endCapture = function () {
+    $('body').addClass('waiting');
     $('#endCaptureButton').addClass('disabled');
     $http({
       method: 'POST',
@@ -53,8 +54,10 @@ app.controller('progress', function($scope, $location, $http, activeNavItem) {
       data: $scope.capture
     }).then(function successCallback(response) {
       activeNavItem.clearAndMakeItemActive('metricsTab');
+      $('body').removeClass('waiting');
       $location.path('/metrics');
     }, function errorCallback(response) {
+      $('body').removeClass('waiting');
       console.log('error retrieving replays');
     });
   };
