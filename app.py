@@ -3,9 +3,9 @@ import modelsQuery
 from datetime import datetime
 
 from flask import send_file
-from web_app import app, db, socketio, thread_lock
-from flask_socketio import emit, disconnect, join_room, leave_room, close_room
-import atexit
+from web_app import app, db, socketio
+from flask_socketio import disconnect, join_room, leave_room, close_room
+import atexit, os
 import models
 
 import capture
@@ -60,13 +60,25 @@ def close(message):
     close_room(message['room'])
 
 
+# Set captures and replays that are in progress to failed when system exits
 def exit_handler():
     inProgressCaptures = models.Capture.query.filter((models.Capture.status == "active") | (models.Capture.status == "scheduled")).all()
+    inProgressReplays = models.Replay.query.filter((models.Replay.status == "active")).all()
 
     for failedCap in inProgressCaptures:
         failedCap.status = "failed"
 
+    for failedRep in inProgressReplays:
+        failedRep.status = "failed"
+
     models.db.session.commit()
+
+    # Remove replay temp files
+    directory = os.listdir(".")
+    for item in directory:
+        if item.endswith("tempLogFile"):
+            print(item)
+            os.remove(item)
 
 
 atexit.register(exit_handler)

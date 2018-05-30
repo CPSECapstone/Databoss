@@ -24,11 +24,7 @@ app.controller('progress', function($scope, $location, $http, activeNavItem) {
     },
   }).then(function successCallback(response) {
     $scope.capture = response.data;
-    if ($scope.capture.mode == "storage") {
-      console.log("Disabling end capture button");
-      $('#endCaptureButton').addClass('disabled');
-    }
-    else if ($scope.capture.status !== "scheduled") {
+    if ($scope.capture.status !== "scheduled") {
       calculateProgressCapture($scope.capture, $location);
     }
     else {
@@ -44,7 +40,6 @@ app.controller('progress', function($scope, $location, $http, activeNavItem) {
 
   $scope.endCapture = function () {
     $('body').addClass('waiting');
-    $('#endCaptureButton').addClass('disabled');
     $http({
       method: 'POST',
       url: 'capture/endCapture',
