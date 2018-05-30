@@ -44,7 +44,7 @@
                     <td>{{replay.rds}}</td>
 
                     <td><i ng-click="showInfo(replay)" class="fa fa-info-circle"></i></td>
-                    <td><input type="checkbox" ng-model="replaySelection"
+                    <td><input id="replay-checkbox{{replay.id}}" type="checkbox" ng-model="replaySelection"
                                ng-change="updateSelection('replay', replay.name, replay.id, replaySelection)"></td>
 
                 </tr>

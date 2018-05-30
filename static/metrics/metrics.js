@@ -74,9 +74,12 @@ app.controller('metrics', function($scope, $location, $http) {
 
    $scope.$on('updateSelectionFromQueryParameters', function(ngRepeatFinishedEvent) {
      var captureId = $location.search()['captureId'];
-
+     var replayId = $location.search()['replayId'];
      if (captureId) {
        $('#capture-checkbox' + captureId).click();
+     }
+     else (replayId) {
+       $('#replay-checkbox' +  replayId).click();
      }
   });
 
