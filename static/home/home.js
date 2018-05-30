@@ -31,6 +31,14 @@ app.controller('home', function($scope, $location, $http, activeNavItem) {
     $('#deleteModal').modal('hide');
   }
 
+  $scope.showInfo = function(item) {
+    if (item) {
+      $scope.itemName = item.name;
+      $scope.infoItem = item;
+      $('#informationHomeModal').modal('show');
+    }
+  }
+
   $scope.deleteCapture = function(captureId) {
     $http({
         method: 'DELETE',
