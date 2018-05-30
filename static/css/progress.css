@@ -98,6 +98,7 @@ h2 {
     font-family: arial, sans-serif;
     border-collapse: collapse;
     width: 100%;
+    background-color: white;
 }
 
 #queryLog td, #queryLog th {
