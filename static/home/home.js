@@ -23,7 +23,7 @@ app.controller('home', function($scope, $location, $http, activeNavItem) {
   }
 
   $scope.deleteItem = function(item) {
-    if (item.type == "capture") {
+    if (item.status == "scheduled" || item.type == "capture") {
       this.deleteCapture(item.id)
     }
     else if (item.type == "replay") {
@@ -52,6 +52,7 @@ app.controller('home', function($scope, $location, $http, activeNavItem) {
       }
     }).then(function successCallback(response) {
       populateFinishedCapturesAndReplays($http, $scope);
+      populateScheduledCaptures($http, $scope);
     }, function errorCallback(response) {
       console.log('error');
     });
