@@ -1,14 +1,9 @@
 <div>
   <h1> Metrics </h1>
+    <div class="table-wrapper">
 
-    <div class="tableWrapper">
-        <div id="search-container">
-        <form class="form-inline">
-        <i id="home-search-icon" class="fa fa-search"></i>
-          <input id="home-search" type="text" class="form-control" placeholder="Search" ng-model="searchText"/>
-        </form>
-        </div>
-          <table class="table table-bordered center-block">
+        <div class="table-header">
+          <table>
             <thead>
                 <tr>
                   <th>Name</th>
@@ -20,8 +15,12 @@
 
                 </tr>
             </thead>
-              <tbody ng-repeat="capture in captures | filter:searchText" on-finish-render="updateSelectionFromQueryParameters">
-                  <tr>
+          </table>
+        </div>
+        <div class="table-content">
+            <table>
+                <tbody ng-repeat="capture in captures | filter:searchText" on-finish-render="updateSelectionFromQueryParameters">
+                    <tr>
                       <th>
                           <span> </span><i class="fa fa-caret-down" ng-click=toggleReplays(capture.id,$event)></i>
                           {{capture.name}} </span>
@@ -49,9 +48,9 @@
 
                 </tr>
               </tbody>
-        </table>
-
-   </div>
+            </table>
+           </div>
+    </div>
 
    <div class="container">
        <div class="row">
@@ -113,3 +112,5 @@
       </div>
     </div>
   </div>
+
+
