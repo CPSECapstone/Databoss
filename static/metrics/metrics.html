@@ -5,7 +5,7 @@
         <div id="search-container">
         <form class="form-inline">
         <i id="home-search-icon" class="fa fa-search"></i>
-          <input id="home-search" type="text" class="form-control" ng-model="searchText.$"/>
+          <input id="home-search" type="text" class="form-control" placeholder="Search" ng-model="searchText"/>
         </form>
         </div>
           <table class="table table-bordered center-block">
@@ -20,24 +20,24 @@
 
                 </tr>
             </thead>
-              <tbody ng-repeat="capture in captures | filter:searchText:strict" on-finish-render="updateSelectionFromQueryParameters">
-                <tr>
-                    <th>
-                        <span> </span><i class="fa fa-caret-down" ng-click=toggleReplays(capture.id,$event)></i>
-                        {{capture.name}} </span>
-                    </th>
-                    <td>{{capture.formattedStart}}</td>
-                    <td>{{capture.bucket}}</td>
-                    <td>{{capture.rds}}</td>
+              <tbody ng-repeat="capture in captures | filter:searchText" on-finish-render="updateSelectionFromQueryParameters">
+                  <tr>
+                      <th>
+                          <span> </span><i class="fa fa-caret-down" ng-click=toggleReplays(capture.id,$event)></i>
+                          {{capture.name}} </span>
+                      </th>
+                      <td>{{capture.formattedStart}}</td>
+                      <td>{{capture.bucket}}</td>
+                      <td>{{capture.rds}}</td>
 
-                    <td><i ng-click="showInfo(capture)" class="fa fa-info-circle"></i></td>
-                    <td>
-                        <input id="capture-checkbox{{capture.id}}" type="checkbox" ng-model="captureSelection"
-                               ng-change="updateSelection('capture', capture.name, capture.id, captureSelection)">
-                    </td>
+                      <td><i ng-click="showInfo(capture)" class="fa fa-info-circle"></i></td>
+                      <td>
+                          <input id="capture-checkbox{{capture.id}}" type="checkbox" ng-model="captureSelection"
+                                 ng-change="updateSelection('capture', capture.name, capture.id, captureSelection)">
+                      </td>
+                  </tr>
 
-                </tr>
-                <tr id="{{ 'collapse' + capture.id }}" ng-repeat="replay in replays | filter:searchText:strict" ng-if="replay.captureId == capture.id">
+                <tr class="{{ 'collapse' + capture.id }}" ng-repeat="replay in replays | filter:searchText" ng-if="replay.captureId == capture.id">
                     <td>{{replay.name}}</td>
                     <td>{{replay.formattedStart}}</td>
                     <td>{{replay.bucket}}</td>
