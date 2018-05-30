@@ -37,7 +37,7 @@
                     </td>
 
                 </tr>
-                <tr id="{{ 'collapse' + capture.id }}" ng-repeat="replay in replays | filter:{searchText:name:rds}" ng-if="replay.captureId == capture.id">
+                <tr id="{{ 'collapse' + capture.id }}" ng-repeat="replay in replays | filter:searchText:strict" ng-if="replay.captureId == capture.id">
                     <td>{{replay.name}}</td>
                     <td>{{replay.formattedStart}}</td>
                     <td>{{replay.bucket}}</td>
