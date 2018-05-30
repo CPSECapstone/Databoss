@@ -14,8 +14,10 @@ logger.setLevel(logging.INFO)
 STORAGE_CONVERSION = (10**6)
 
 storageResult = False
+t = None
 
 def scheduleStorageCapture(startTime, storageLimit, freeSpace, captureName):
+    global t
     captureObj = modelsQuery.getCaptureByName(captureName)
 
     if (storageResult == False):
@@ -32,17 +34,21 @@ def pollStorage(startTime, userStorageInput, maxSpace, captureName, captureObj):
                                      Period=60,
                                      Statistics=['Average']
                                      )
-    print("storage metrics: ")
-    print(storageMetrics)
+    #print("storage metrics: ")
+    #print(storageMetrics)
     for element in storageMetrics['Datapoints'][0:]:
         mbVal = (element['Average'])/(STORAGE_CONVERSION)
-        print("mbVal: ", mbVal)
-        print(maxSpace - mbVal)
+        #print("mbVal: ", mbVal)
+        #print(maxSpace - mbVal)
         if ((maxSpace - mbVal) >= userStorageInput):
             storageResult = True
-
             endCapture(captureObj, startTime, datetime.now())
-    scheduleStorageCapture(startTime, userStorageInput, maxSpace, captureName)
+
+    if (storageResult == False):
+        time.sleep(5)
+        captureObj = modelsQuery.getCaptureByName(captureName)
+        pollStorage(startTime, userStorageInput, maxSpace, captureName, captureObj)
+
 
 def scheduleCapture(captureName):
     captureObj = modelsQuery.getCaptureByName(captureName)
@@ -53,7 +59,7 @@ def scheduleCapture(captureName):
     whenToEnd = (endTime - datetime.now()).total_seconds()
 
     t1 = Timer(whenToStart, startCapture, args={captureObj})
-    t2 = Timer(whenToEnd, endCapture, [captureObj, startTime, endTime])
+    t2 = Timer(whenToEnd, endCapture, ['time', captureObj, startTime, endTime])
     t1.start()
     t2.start()
 
@@ -77,5 +83,5 @@ def endCapture(captureObj, startTime, endTime):
 
     startTime = datetime.strftime(startTime.replace(tzinfo=pytz.utc), '%a, %d %b %Y %H:%M:%S %Z')
 
-    capture.stopCapture(rdsInstance, database, startTime, endTime, captureObj.name, captureObj.logfileId,
+    capture.stopCapture('time', rdsInstance, database, startTime, endTime, captureObj.name, captureObj.logfileId,
                         captureObj.metricId, captureFileName, metricFileName)

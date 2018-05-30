@@ -44,6 +44,7 @@ inProgressCaptures = []
 
 
 def addInProgressCapture(captureName, username, password):
+    print("Adds in progress")
     inProgressCaptures.append({'captureName': captureName, 'username': username, 'password': password})
 
 
@@ -256,7 +257,7 @@ def startCapture(captureName, captureBucket, metricsBucket, rdsInstance, db_name
     metricFileName = captureName + " " + "metric file"
     dbDialect = "mysql"
 
-    if startDate == "" and endDate == "" and startTime == "" and endTime == "":
+    if mode != "time":
         startDate = datetime.now().date()
         endDate = datetime.now().date() + timedelta(days=1)
         startTime = datetime.now().time()
@@ -277,6 +278,7 @@ def startCapture(captureName, captureBucket, metricsBucket, rdsInstance, db_name
                 print("Invalid end time when start time is before current time")
                 abort(408)
 
+    #creates date and time
     sTimeCombined = datetime.combine(startDate, startTime)
     eTimeCombined = datetime.combine(endDate, endTime)
 
@@ -284,6 +286,7 @@ def startCapture(captureName, captureBucket, metricsBucket, rdsInstance, db_name
         updateDatabase(sTimeCombined, eTimeCombined, captureName, captureBucket, metricsBucket,
                        captureFileName, metricFileName, dbDialect, rdsInstance, db_name, port, username, mode, "scheduled")
         scheduler.scheduleCapture(captureName)
+        addInProgressCapture(captureName, username, password)
 
     else:
         if status_of_db != "available":
@@ -292,6 +295,7 @@ def startCapture(captureName, captureBucket, metricsBucket, rdsInstance, db_name
             )
         else:
             if mode == "storage":
+                print("come in storage")
                 # convert gb to mb
                 storage_limit = float(storageNum)
                 if (storageType == 'gb-button'):
@@ -300,12 +304,9 @@ def startCapture(captureName, captureBucket, metricsBucket, rdsInstance, db_name
                 if (storage_limit > storage_max_db):
                     print("STORAGE ERROR")
                     abort(400)
-                    #return Response("Storage is too large", status=400)
                 if (storage_limit <= 0):
                     print("Storage cannot be negative")
-
                     abort(406)
-                    #return Response("Storage cannot be negative", status=406)
                 else:
 
                     updateDatabase(sTimeCombined, eTimeCombined, captureName, captureBucket, metricsBucket,
@@ -321,17 +322,21 @@ def startCapture(captureName, captureBucket, metricsBucket, rdsInstance, db_name
                                                                               )
                     freeSpace = (storageMetrics['Datapoints'][0]['Average']) / (STORAGE_CONVERSION)
                     scheduler.scheduleStorageCapture(datetime.now(), storage_limit, freeSpace, captureName)
+                    addInProgressCapture(captureName, username, password)
 
 
         if mode != "storage":
             updateDatabase(sTimeCombined, eTimeCombined, captureName, captureBucket, metricsBucket,
                        captureFileName, metricFileName, dbDialect, rdsInstance, db_name, port, username, mode, "active")
-    print("Makes it here")
-    addInProgressCapture(captureName, username, password)
+            print("Makes it here")
+            addInProgressCapture(captureName, username, password)
 
 
-def stopCapture(rdsInstance, dbName, startTime, endTime, captureName,
+def stopCapture(mode, rdsInstance, dbName, startTime, endTime, captureName,
                 captureBucket, metricBucket, captureFileName, metricFileName):
+    if mode == 'storage':
+        scheduler.storageResult = True
+        scheduler.t.cancel()
     captureFileName = captureName + " " + "capture file"
     metricFileName = captureName + " " + "metric file"
 

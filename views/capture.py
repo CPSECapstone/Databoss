@@ -27,8 +27,16 @@ def getCapturesWithBuckets():
     capturesWithBuckets = modelsQuery.getCapturesWithBuckets()
     jsonifiedCaptures = []
     for i in capturesWithBuckets:
-        jsonifiedCaptures.append({"id" : i.Capture.id, "name" : i.Capture.name, "rds" : i.Capture.dbName,
-                                  "bucket" : i.Logfile.bucket, "startTime": i.Capture.startTime})
+        jsonifiedCaptures.append({
+            "id" : i.Capture.id,
+            "name" : i.Capture.name,
+            "rds" : i.Capture.dbName,
+            "bucket" : i.Logfile.bucket,
+            "startTime": i.Capture.startTime,
+            "endTime":i.Capture.endTime,
+            "mode": i.Capture.mode,
+            "status":i.Capture.status
+            })
     return jsonify(jsonifiedCaptures)
 
 @capture_api.route('/getSortedCapturesAndReplays')
@@ -69,6 +77,8 @@ def startCapture():
 @capture_api.route('/endCapture', methods=["POST"])
 def endCapture():
     data = request.json
+    print("comes in end cap & prints data:")
+    print(data)
     captureName = data.get('name')
     dbName = data.get('dbName')
     rdsInstance, database = dbName.split("/")
@@ -77,9 +87,10 @@ def endCapture():
     metricBucket = data.get('metricId')
     captureFileName = data.get('captureFileName')
     metricFileName = data.get('metricFileName')
+    mode = data.get('mode')
     endTime = datetime.now()
 
-    capture.stopCapture(rdsInstance, database, startTime, endTime, captureName,
+    capture.stopCapture(mode, rdsInstance, database, startTime, endTime, captureName,
                 captureBucket, metricBucket, captureFileName, metricFileName)
 
     return "ok"

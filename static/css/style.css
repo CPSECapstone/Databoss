@@ -10,18 +10,11 @@ body {
   color: white;
 }
 
-.tableWrapper {
-    padding-left: 10px;
-}
-
-.tableWrapper .table{
-    width: 50%;
-}
-
 .center-block {
   margin-left: auto;
   margin-right: auto;
 }
+
 #my-crt-logo {
   font-size: 1.1em;
   padding-top: 15px;
