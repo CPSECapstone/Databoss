@@ -50,7 +50,7 @@ def download_file(replayName, bucketName, fileName):
         else:
             raise
 
-def executeTimePreserving(queryTable, replayName, captureName, dbName, status_of_db, totalQueries, endpoint, username, password, start_time):
+def executeTimePreserving(queryTable, replayName, captureName, dbName, status_of_db, totalQueries, endpoint, username, password, start_time, lastTime):
     metricBucket = modelsQuery.getCaptureMetricBucket(captureName)
     #totalQueries = 0
     numQueriesExecuted = 0
@@ -91,6 +91,8 @@ def executeTimePreserving(queryTable, replayName, captureName, dbName, status_of
                 socketio.emit('replayQuery',
                               {'query': executableQuery.lower(), 'status': status, 'error': error, 'count': count},
                               namespace='', room='replayQuery')
+    if (lastTime != 0):
+        time.sleep(lastTime)
 
     print("~~~~~~ finished time preserving replay ~~~~~~")
     endTime = datetime.now()
@@ -136,7 +138,14 @@ def setupQueryTable(temp, queryTable):
                 break
         return flag
 
-def timePreserving(replayName, captureObj, dbName, mode, endpoint, status_of_db, username, password):
+def calculateLastTime(queryTable, captureLength):
+    start = queryTable[0]['timestamp']
+    end = queryTable[len(queryTable)-1]['timestamp']
+    entireQueryTime = end - start
+    lastTimeDiff = captureLength.total_seconds() - entireQueryTime
+    return lastTimeDiff
+
+def timePreserving(capLength, replayName, captureObj, dbName, mode, endpoint, status_of_db, username, password):
     flag = False
     queryTable = []
     captureName = captureObj['name']
@@ -156,8 +165,12 @@ def timePreserving(replayName, captureObj, dbName, mode, endpoint, status_of_db,
         totalQueries = len(queryTable)
 
         if (flag == False):
+            #calculating time diff from all queries
             calculateTimeDiff(queryTable)
-            t3 = Timer(0, executeTimePreserving, [queryTable, replayName, captureName, dbName, status_of_db, totalQueries, endpoint, username, password, datetime.now()])
+            #function that adds up all the times and gets the diff between last query ran and entire cap length
+            lastTime = calculateLastTime(queryTable, capLength)
+
+            t3 = Timer(0, executeTimePreserving, [queryTable, replayName, captureName, dbName, status_of_db, totalQueries, endpoint, username, password, datetime.now(), lastTime])
             t3.start()
         else:
             endTime = datetime.now()
@@ -198,9 +211,12 @@ def startReplay(replayName, captureObj, dbName, mode, username, password):
 
     download_file(captureName, captureBucket, filename)
     if mode == 'time-preserving':
+        timeDifference = captureEndTime - captureStartTime
+        print('timeDiff in capture: ')
+        print(timeDifference)
         modelsQuery.addReplay(replayName, replayStartTime, None, dbName, metricID, captureID, mode, "active")
         addInProgressReplay(replayName, username, password)
-        timePreserving(replayName, captureObj, dbName, mode, endpoint, status_of_db, username, password)
+        timePreserving(timeDifference, replayName, captureObj, dbName, mode, endpoint, status_of_db, username, password)
     else:
         modelsQuery.addReplay(replayName, replayStartTime, None, dbName, metricID, captureID, mode, "active")
         addInProgressReplay(replayName, username, password)
