@@ -14,6 +14,11 @@ app.controller('capture', function ($scope, $location, $http, buttonDisplay, act
     $scope.mode = "interactive";
     $scope.startCaptureClicked = false;
 
+    var username;
+    var password;
+    var previousRds = $scope.rdsInstance;
+    var authenticated = false;
+
     buttonDisplay.hideButtons(dateContainer, timeContainer, storageContainer);
 
     $('input[name=mode]').on('change', function(event) {
@@ -52,8 +57,7 @@ app.controller('capture', function ($scope, $location, $http, buttonDisplay, act
     $scope.validateInteractive = function() {
         console.log("validating interactive");
         if ($('#captureName').val() && $('#crBucket').val()
-            && $('#metricsBucket').val() && $('#dbName').val()) {
-            console.log("returning false");
+            && $('#metricsBucket').val()) {
             return false;
         }
         else {
@@ -128,10 +132,35 @@ app.controller('capture', function ($scope, $location, $http, buttonDisplay, act
 
     $scope.authenticateInstance = function(instance) {
         if (instance) {
+            console.log("current rds: " + $scope.currentRDSInstance);
             $scope.currentRDSInstance = JSON.parse(instance).DBInstanceIdentifier;
             $('#authenticationModal').modal('show');
+            authenticated = false;
         }
     }
+
+    $('#authenticationModal').on('shown.bs.modal', function () {
+        $('#username').focus();
+    });
+
+    $('#authenticationModal').on('hide.bs.modal', function () {
+        console.log("hiding modal");
+        console.log(username);
+        console.log(password);
+        console.log($scope.username);
+        console.log($scope.password);
+
+        if (!authenticated) {
+            console.log("Revert back to previous rds");
+            $scope.$apply(function() {
+                $scope.rdsInstance = previousRds;
+            });
+        }
+
+        if ($scope.rdsInstance) {
+            authenticated = true;
+        }
+    });
 
     $scope.getInstanceDbs = function(instance) {
         if (instance) {
@@ -147,9 +176,14 @@ app.controller('capture', function ($scope, $location, $http, buttonDisplay, act
                     'password': $scope.password
                 }
             }).then(function successCallback(response) {
-                console.log(response.data);
                 $scope.instanceDbs = response.data;
+                username = $scope.username;
+                password = $scope.password;
+                $scope.username = undefined;
+                $scope.password = undefined;
+                authenticated = true;
                 $('#authenticationModal').modal('hide');
+                previousRds = $scope.rdsInstance;
                 console.log('success');
             }, function errorCallback(response) {
                 $scope.instanceDbs = 'false';
@@ -214,9 +248,9 @@ app.controller('capture', function ($scope, $location, $http, buttonDisplay, act
                 'captureBucket' : $('#crBucket').val(),
                 'metricsBucket' : $('#metricsBucket').val(),
                 'rdsInstance' : JSON.parse($('#rdsInstance').val()).DBInstanceIdentifier,
-                'dbName': $('#dbName').val(),
-                'username': $scope.username,
-                'password': $scope.password,
+                'dbName': 'no longer used',
+                'username': username,
+                'password': password,
                 'startDate' : $('#startDate').val(),
                 'endDate' : $('#endDate').val(),
                 'startTime' : $('#startTime').val(),

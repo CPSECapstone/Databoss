@@ -56,11 +56,10 @@ def executeTimePreserving(queryTable, replayName, captureName, dbName, status_of
     numQueriesExecuted = 0
     numQueriesFailed = 0
     try:
-        conn = pymysql.connect(host=endpoint, user=username, passwd=password, db=dbName,
-                               connect_timeout=5)
+        conn = pymysql.connect(host=endpoint, user=username, passwd=password, connect_timeout=5)
     except:
         logger.error("ERROR: Unexpected error: Could not connect to MySql instance.")
-        conn.close()
+        # conn.close()
         sys.exit()
 
     count = 0
@@ -152,13 +151,12 @@ def timePreserving(capLength, replayName, captureObj, dbName, mode, endpoint, st
 
     with open(captureName + " " + "tempLogFile", "r") as temp:
         try:
-            conn = pymysql.connect(host=endpoint, user=username, passwd=password, db=dbName,
-                                   connect_timeout=5)
+            conn = pymysql.connect(host=endpoint, user=username, passwd=password, connect_timeout=5)
         except:
             logger.error("ERROR: Unexpected error: Could not connect to MySql instance.")
             if os.path.exists(captureName + " " + "tempLogFile"):
                 os.remove(captureName + " " + "tempLogFile")
-            conn.close()
+            # conn.close()
             sys.exit()
 
         flag = setupQueryTable(temp, queryTable)
@@ -185,7 +183,7 @@ def startReplay(replayName, captureObj, dbName, mode, username, password):
     captureName = captureObj['name']
     print("name: " + captureName)
     logfile = modelsQuery.getLogFileByCapture(captureName)
-    rdsInstance = captureObj['dbName'].split("/")[0]
+    rdsInstance = captureObj['dbName']
     endpoint = capture.get_list_of_instances(rdsInstance)['DBInstances'][0]['Endpoint']['Address']
     status_of_db = capture.get_list_of_instances(rdsInstance)['DBInstances'][0]['DBInstanceStatus']
 
@@ -237,13 +235,12 @@ def executeReplay(replayName, captureName, dbName, status_of_db, endpoint, start
 
     with open(captureName + " " + "tempLogFile", 'r') as tempFile:
         try:
-            conn = pymysql.connect(host=endpoint, user=username, passwd=password, db=dbName,
-                                   connect_timeout=5)
+            conn = pymysql.connect(host=endpoint, user=username, passwd=password, connect_timeout=5)
         except:
             logger.error("ERROR: Unexpected error: Could not connect to MySql instance.")
             if os.path.exists(captureName + " " + "tempLogFile"):
                 os.remove(captureName + " " + "tempLogFile")
-            conn.close()
+            # conn.close()
             sys.exit()
 
         count = 0

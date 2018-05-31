@@ -7,6 +7,11 @@ app.controller('replay', function($scope, $http, $location, activeNavItem) {
   const storageContainer = $('#storage-container');
   $scope.startReplayClicked = false;
 
+  var username;
+  var password;
+  var previousRds = $scope.rdsInstance;
+  var authenticated = false;
+
   var today = new Date(new Date().getFullYear(), new Date().getMonth(), new Date().getDate());
   $('#startDate').datepicker({
     iconsLibrary: 'fontawesome',
@@ -45,9 +50,9 @@ app.controller('replay', function($scope, $http, $location, activeNavItem) {
       data : {
         'replayName' : replayName,
         'capture' : $('#capture').val(),
-        'dbName' : $('#dbName').val(),
-        'username': $scope.username,
-        'password': $scope.password,
+        'dbName' : 'no longer used',
+        'username': username,
+        'password': password,
         'startDate' : $('#startDate').val(),
         'endDate' : $('#endDate').val(),
         'startTime' : $('#startTime').val(),
@@ -84,8 +89,32 @@ app.controller('replay', function($scope, $http, $location, activeNavItem) {
     if (instance) {
       $scope.currentRDSInstance = JSON.parse(instance).DBInstanceIdentifier;
       $('#authenticationModal').modal('show');
+      authenticated = false;
     }
   };
+
+  $('#authenticationModal').on('shown.bs.modal', function () {
+        $('#username').focus();
+    });
+
+  $('#authenticationModal').on('hide.bs.modal', function () {
+      console.log("hiding modal");
+      console.log(username);
+      console.log(password);
+      console.log($scope.username);
+      console.log($scope.password);
+
+      if (!authenticated) {
+          console.log("Revert back to previous rds");
+          $scope.$apply(function() {
+              $scope.rdsInstance = previousRds;
+          });
+      }
+
+      if ($scope.rdsInstance) {
+          authenticated = true;
+      }
+  });
 
   $scope.getRDSInstances = function() {
     $http({
@@ -117,9 +146,15 @@ app.controller('replay', function($scope, $http, $location, activeNavItem) {
           'password': $scope.password
         }
       }).then(function successCallback(response) {
-        console.log(response.data);
-        $('#authenticationModal').modal('hide');
         $scope.instanceDbs = response.data;
+        username = $scope.username;
+        password = $scope.password;
+        $scope.username = undefined;
+        $scope.password = undefined;
+        authenticated = true;
+        $('#authenticationModal').modal('hide');
+        previousRds = $scope.rdsInstance;
+        console.log('success');
       }, function errorCallback(response) {
         $scope.instanceDbs = 'false';
         console.log('error');
