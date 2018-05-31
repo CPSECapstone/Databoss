@@ -10,7 +10,8 @@ metrics_api = Blueprint('metrics_api', __name__)
 def getMetrics():
     id = request.args.get('id')
     type = request.args.get('type')
-
+    print("id: "  + id)
+    print("type: " + type)
     # get the bucket and file name of the metrics file corresponding with the capture/replay
     if type == 'capture':
         metric = Metric.query.filter(Metric.capture.has(id=id)).first()
