@@ -59,7 +59,7 @@ def scheduleCapture(captureName):
     whenToEnd = (endTime - datetime.now()).total_seconds()
 
     t1 = Timer(whenToStart, startCapture, args={captureObj})
-    t2 = Timer(whenToEnd, endCapture, ['time', captureObj, startTime, endTime])
+    t2 = Timer(whenToEnd, endCapture, [captureObj, startTime, endTime])
     t1.start()
     t2.start()
 
