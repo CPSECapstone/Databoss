@@ -44,3 +44,10 @@ h5 {
 body.waiting * {
     cursor: progress;
 }
+
+i.gj-icon.chevron-right {
+    color: black;
+}
+i.gj-icon.chevron-left {
+    color: black;
+}
