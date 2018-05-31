@@ -4,6 +4,10 @@
    padding-right: 65px;
    display:block;
 }
+.search-container {
+    float: right;
+    margin-bottom: 10px;
+}
 .table-header table {
     background-color: grey;
 }
@@ -12,21 +16,20 @@
     overflow-x: auto;
     margin-top: 0px;
 }
-th {
+.metrics-table th {
     padding: 20px 15px;
     text-align: left;
 }
-td {
+.metrics-table td {
     padding: 15px;
     text-align: left;
     vertical-align: middle;
 }
-table {
+.metrics-table {
     width: 100%;
     table-layout: fixed;
     background-color: #111111;
 }
-
 .table-content::-webkit-scrollbar {
     width: 5px;
     height: 2px;
@@ -37,7 +40,6 @@ table {
 .table-content::-webkit-scrollbar-thumb {
     background: white;
 }
-
 .chartWrapper {
     max-width: 800px;
     margin-bottom: 100px;
@@ -45,7 +47,6 @@ table {
     margin-top: 0px;
     padding-bottom:10px;
 }
-
 i {
     color: white
 }
