@@ -103,7 +103,7 @@ app.controller('metrics', function($scope, $location, $http) {
         event.target.classList.replace('fa-caret-down', 'fa-caret-right');
       }
 
-      $('#collapse' + captureId).toggle();
+      $('.collapse' + captureId).toggle();
    };
 
    $scope.downloadLogFile = function(capture) {
