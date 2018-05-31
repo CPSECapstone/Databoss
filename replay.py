@@ -183,7 +183,7 @@ def startReplay(replayName, captureObj, dbName, mode, username, password):
     captureName = captureObj['name']
     print("name: " + captureName)
     logfile = modelsQuery.getLogFileByCapture(captureName)
-    rdsInstance = captureObj['dbName'].split("/")[0]
+    rdsInstance = captureObj['dbName']
     endpoint = capture.get_list_of_instances(rdsInstance)['DBInstances'][0]['Endpoint']['Address']
     status_of_db = capture.get_list_of_instances(rdsInstance)['DBInstances'][0]['DBInstanceStatus']
 

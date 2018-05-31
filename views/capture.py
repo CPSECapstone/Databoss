@@ -80,8 +80,8 @@ def endCapture():
     print("comes in end cap & prints data:")
     print(data)
     captureName = data.get('name')
-    dbName = data.get('dbName')
-    rdsInstance, database = dbName.split("/")
+    database = None
+    rdsInstance = data.get('dbName')
     startTime = data.get('startTime')
     captureBucket = data.get('logfileId')
     metricBucket = data.get('metricId')

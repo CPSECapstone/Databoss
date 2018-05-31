@@ -239,10 +239,10 @@ def updateDatabase(sTime, eTime, cName, cBucket, mBucket, cFile, mFile, dialect,
     endpoint = get_list_of_instances(rdsInstance)['DBInstances'][0]['Endpoint']['Address']
     modelsQuery.addLogfile(cFile, cBucket, None)
     modelsQuery.addMetric(mFile, mBucket, None)
-    modelsQuery.addDBConnection(dialect, str(rdsInstance + "/" + dbName), endpoint, port, dbName, username)
+    modelsQuery.addDBConnection(dialect, rdsInstance, endpoint, port, dbName, username)
     metricID = modelsQuery.getMetricIDByNameAndBucket(mFile, mBucket)
     logfileID = modelsQuery.getLogFileIdByNameAndBucket(cFile, cBucket)
-    modelsQuery.addCapture(cName, sTime, eTime, str(rdsInstance + "/" + dbName), logfileID, metricID, mode, status)
+    modelsQuery.addCapture(cName, sTime, eTime, rdsInstance, logfileID, metricID, mode, status)
 
 
 def startCapture(captureName, captureBucket, metricsBucket, rdsInstance, db_name, username, password,

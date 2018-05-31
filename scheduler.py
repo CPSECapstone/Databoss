@@ -64,7 +64,7 @@ def scheduleCapture(captureName):
     t2.start()
 
 def startCapture(captureObj):
-    rdsInstance = captureObj.dbName.split("/")[0]
+    rdsInstance = captureObj.dbName
     status_of_db = capture.get_list_of_instances(rdsInstance)['DBInstances'][0]['DBInstanceStatus']
 
     if status_of_db != "available":
@@ -79,7 +79,8 @@ def endCapture(captureObj, startTime, endTime):
     metricFileName = captureObj.name + " " + "metric file"
     modelsQuery.updateCaptureStatus(captureObj.name, "finished")
 
-    rdsInstance, database = captureObj.dbName.split("/")
+    rdsInstance = captureObj.dbName
+    database = None
 
     startTime = datetime.strftime(startTime.replace(tzinfo=pytz.utc), '%a, %d %b %Y %H:%M:%S %Z')
 
