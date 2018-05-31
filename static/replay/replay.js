@@ -5,6 +5,7 @@ app.controller('replay', function($scope, $http, $location, activeNavItem) {
   const dateContainer = $('#date-container');
   const timeContainer = $('#time-container');
   const storageContainer = $('#storage-container');
+  $scope.startReplayClicked = false;
 
   var today = new Date(new Date().getFullYear(), new Date().getMonth(), new Date().getDate());
   $('#startDate').datepicker({
@@ -29,6 +30,7 @@ app.controller('replay', function($scope, $http, $location, activeNavItem) {
 
   $scope.startReplay = function () {
     $('body').addClass('waiting');
+    $scope.startReplayClicked = true;
     console.log("STARTING REPLAY-----");
 
     var replayName = $('#replayName').val();

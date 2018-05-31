@@ -12,6 +12,7 @@ app.controller('capture', function ($scope, $location, $http, buttonDisplay, act
     $scope.disabled = true;
     $scope.startBeforeCurrent = false;
     $scope.mode = "interactive";
+    $scope.startCaptureClicked = false;
 
     buttonDisplay.hideButtons(dateContainer, timeContainer, storageContainer);
 
@@ -192,6 +193,7 @@ app.controller('capture', function ($scope, $location, $http, buttonDisplay, act
     // Defaulted mode is interactive when no mode is chosen
     $scope.startCapture = function () {
         $('body').addClass('waiting');
+        $scope.startCaptureClicked = true;
 
         if (!$scope.storageType) {
             console.log("storage type undefined");
@@ -237,6 +239,7 @@ app.controller('capture', function ($scope, $location, $http, buttonDisplay, act
                 $location.path('progress').search({name : captureName});
             }
         },function errorCallback(response) {
+            $scope.startCaptureClicked = false;
             console.log("The response is: " + response.status);
             if (response.status === 400) {
                 $scope.error = "There is not enough allocated storage in your the RDS instance.";
