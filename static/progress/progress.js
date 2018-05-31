@@ -6,6 +6,7 @@ app.controller('progress', function($scope, $location, $http, activeNavItem) {
   $scope.startTime = null;
   $scope.endDate = null;
   $scope.endTime = null;
+  $scope.endCaptureClicked = false;
 
 
   var options = {
@@ -40,6 +41,7 @@ app.controller('progress', function($scope, $location, $http, activeNavItem) {
 
   $scope.endCapture = function () {
     $('body').addClass('waiting');
+    $scope.endCaptureClicked = true;
     $http({
       method: 'POST',
       url: 'capture/endCapture',
