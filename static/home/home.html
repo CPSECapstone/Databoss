@@ -101,7 +101,7 @@
             <i ng-click="showInfo(item)" class="fa fa-info-circle nav-icon"> </i>
             <i ng-click="promptDelete(item)" class="fa fa-times-circle nav-icon"> </i>
           </div>
-          <a href="#!/metrics?captureId={{item.id}}">
+          <a href="#!/metrics?id={{item.id}}&type='capture'">
             <div ng-click="viewMetrics()" class="box" ng-class='{passBox: (item.status == "finished"), failBox: (item.status == "failed")}'>
               <div class="tileType">
                 C
@@ -128,7 +128,7 @@
             <i ng-click="showInfo(item)" class="fa fa-info-circle nav-icon"> </i>
             <i ng-click="promptDelete(item)"class="fa fa-times-circle nav-icon"> </i>
           </div>
-          <a href="#!/metrics?replayId={{item.id}}">
+          <a href="#!/metrics?id={{item.id}}&type='replay'">
             <div class="box" ng-class='{passBox: (item.status == "finished"), failBox: (item.status == "failed")}'>
               <div class="tileType">
                 R

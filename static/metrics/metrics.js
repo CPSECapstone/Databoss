@@ -78,8 +78,11 @@ app.controller('metrics', function($scope, $location, $http) {
      if (captureId) {
        $('#capture-checkbox' + captureId).click();
      }
-     else (replayId) {
+     else if (replayId) {
        $('#replay-checkbox' +  replayId).click();
+     }
+     else {
+       return null;
      }
   });
 
