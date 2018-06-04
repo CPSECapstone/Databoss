@@ -50,7 +50,7 @@ app.controller('replay', function($scope, $http, $location, activeNavItem) {
       data : {
         'replayName' : replayName,
         'capture' : $('#capture').val(),
-        'dbName' : 'no longer used',
+        'rdsInstance' : JSON.parse($('#rdsInstance').val()).DBInstanceIdentifier,
         'username': username,
         'password': password,
         'startDate' : $('#startDate').val(),

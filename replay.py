@@ -177,13 +177,11 @@ def timePreserving(capLength, replayName, captureObj, dbName, mode, endpoint, st
             modelsQuery.updateReplayEndTime(replayName, endTime)
 
 
-def startReplay(replayName, captureObj, dbName, mode, username, password):
+def startReplay(replayName, captureObj, rdsInstance, mode, username, password):
     captureObj = json.loads(captureObj)
-    print(captureObj)
     captureName = captureObj['name']
     print("name: " + captureName)
     logfile = modelsQuery.getLogFileByCapture(captureName)
-    rdsInstance = captureObj['dbName']
     dbName = rdsInstance
     endpoint = capture.get_list_of_instances(rdsInstance)['DBInstances'][0]['Endpoint']['Address']
     status_of_db = capture.get_list_of_instances(rdsInstance)['DBInstances'][0]['DBInstanceStatus']
@@ -209,6 +207,9 @@ def startReplay(replayName, captureObj, dbName, mode, username, password):
     print("Current system time: " + replayStartTime.strftime('%m/%d/%Y% :H:%M'))
 
     download_file(captureName, captureBucket, filename)
+
+    modelsQuery.addDBConnection('mysql', rdsInstance, endpoint, 3306, dbName, username)
+
     if mode == 'time-preserving':
         timeDifference = captureEndTime - captureStartTime
         print('timeDiff in capture: ')
