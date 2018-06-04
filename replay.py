@@ -275,7 +275,7 @@ def executeReplay(replayName, captureName, dbName, status_of_db, endpoint, start
                             count += 1
                             socketio.emit('replayQuery',
                                           {'query': executableQuery.lower(), 'status': status, 'error': error, 'count': count},
-                                          namespace='', room='replayQuery')
+                                          namespace='', room=replayName)
 
     print("~~~~~~ finished replay ~~~~~~")
 

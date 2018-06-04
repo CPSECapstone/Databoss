@@ -32,11 +32,11 @@ app.controller('replayProgress', function($scope, $location, $http) {
   };
 
   $(document).ready(function() {
-    socket.emit('join', {room: 'replayQuery'});
+    socket.emit('join', {room: replayName});
 
     $scope.$on('$locationChangeStart', function (event) {
-      socket.emit('leave', {room: 'replayQuery'});
-      socket.emit('close_room', {room: 'replayQuery'});
+      socket.emit('leave', {room: replayName});
+      socket.emit('close_room', {room: replayName});
     });
   });
 
