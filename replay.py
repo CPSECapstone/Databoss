@@ -61,6 +61,7 @@ def executeTimePreserving(queryTable, replayName, captureName, dbName, status_of
         pass
 
     print("Replay detects user has connected and will now start replaying")
+    emitNumQueries(replayName, totalQueries, numQueriesExecuted, numQueriesFailed)
 
     try:
         conn = pymysql.connect(host=endpoint, user=username, passwd=password, connect_timeout=5)
@@ -246,6 +247,7 @@ def executeReplay(replayName, captureName, dbName, status_of_db, endpoint, start
         pass
 
     print("Replay detects user has connected and will now start replaying")
+    emitNumQueries(replayName, totalQueries, numQueriesExecuted, numQueriesFailed)
 
     with open(captureName + " " + "tempLogFile", 'r') as tempFile:
         try:
@@ -265,7 +267,7 @@ def executeReplay(replayName, captureName, dbName, status_of_db, endpoint, start
             totalQueries = len(queryList)
 
             for i in range(totalQueries):
-                dict = entireList[i]
+                dict = queryList[i]
                 if dict['message'].startswith('Query'):
                     executableQuery = dict['message'][7:]
                     if str(status_of_db) == "available":
