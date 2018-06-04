@@ -95,6 +95,7 @@ def executeTimePreserving(queryTable, replayName, captureName, dbName, status_of
 
                 count += 1
                 emitLiveQuery(replayName, executableQuery, status, error, count)
+                emitNumQueries(replayName, totalQueries, numQueriesExecuted, numQueriesFailed)
 
     if (lastTime != 0):
         time.sleep(lastTime)
@@ -260,7 +261,9 @@ def executeReplay(replayName, captureName, dbName, status_of_db, endpoint, start
         print("~~~~~~~ starting raw replay ~~~~~~")
         for line in tempFile:
             entireList = literal_eval(line)
-            totalQueries = len(entireList)
+            queryList = [entry for entry in entireList if entry['message'].startswith('Query')]
+            totalQueries = len(queryList)
+
             for i in range(totalQueries):
                 dict = entireList[i]
                 if dict['message'].startswith('Query'):
@@ -285,6 +288,7 @@ def executeReplay(replayName, captureName, dbName, status_of_db, endpoint, start
 
                             count += 1
                             emitLiveQuery(replayName, executableQuery, status, error, count)
+                            emitNumQueries(replayName, totalQueries, numQueriesExecuted, numQueriesFailed)
 
     print("~~~~~~ finished replay ~~~~~~")
 
@@ -305,6 +309,20 @@ def emitLiveQuery(room, executableQuery, status, error, count):
     socketio.emit('replayQuery',
                   {'query': executableQuery.lower(), 'status': status, 'error': error, 'count': count},
                   namespace='', room=room)
+
+
+def emitNumQueries(room, total, successful, failed):
+    socketio.emit('replayNumQueries',
+                  {'total': total, 'successful': successful, 'failed': failed},
+                  namespace='', room=room)
+
+#
+# def emitNumSuccessfulQueries(room, successful):
+#     socketio.emit('replayNumQueries', {'successful': total}, namespace='', room=room)
+#
+#
+# def emitNumFailedQueries(room, failed):
+#     socketio.emit('replayNumQueries', {'failed': failed}, namespace='', room=room)
 
 
 def checkUserConnected(replayName):
