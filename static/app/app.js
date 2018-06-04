@@ -127,4 +127,10 @@ $(document).ready(function() {
                     + msg.query + '<br><span class="Fail">Error: ' + msg.error + '</span></td>'));
         }
     });
+
+    socket.on('replayNumQueries', function(msg) {
+        $('#numTotalQueries').text(msg.total);
+        $('#numSuccessfulQueries').text(msg.successful);
+        $('#numFailedQueries').text(msg.failed);
+    });
 });

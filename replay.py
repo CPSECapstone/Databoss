@@ -24,7 +24,7 @@ inProgressReplays = []
 
 
 def addInProgressReplay(replayName, username, password):
-    inProgressReplays.append({'replayName': replayName, 'username': username, 'password': password})
+    inProgressReplays.append({'replayName': replayName, 'username': username, 'password': password, 'connected': False})
 
 
 def getInProgressReplay(replayName):
@@ -55,6 +55,14 @@ def executeTimePreserving(queryTable, replayName, captureName, dbName, status_of
     #totalQueries = 0
     numQueriesExecuted = 0
     numQueriesFailed = 0
+
+    # wait for client to connect for first time before executing
+    while not checkUserConnected(replayName):
+        pass
+
+    print("Replay detects user has connected and will now start replaying")
+    emitNumQueries(replayName, totalQueries, numQueriesExecuted, numQueriesFailed)
+
     try:
         conn = pymysql.connect(host=endpoint, user=username, passwd=password, connect_timeout=5)
     except:
@@ -87,13 +95,17 @@ def executeTimePreserving(queryTable, replayName, captureName, dbName, status_of
                     error = str(error).replace('(', '').replace(')', '').strip()
 
                 count += 1
-                socketio.emit('replayQuery',
-                              {'query': executableQuery.lower(), 'status': status, 'error': error, 'count': count},
-                              namespace='', room='replayQuery')
+                emitLiveQuery(replayName, executableQuery, status, error, count)
+                emitNumQueries(replayName, totalQueries, numQueriesExecuted, numQueriesFailed)
+
     if (lastTime != 0):
         time.sleep(lastTime)
 
     print("~~~~~~ finished time preserving replay ~~~~~~")
+
+    if os.path.exists(captureName + " " + "tempLogFile"):
+        os.remove(captureName + " " + "tempLogFile")
+        
     endTime = datetime.now()
     modelsQuery.updateReplayStatus(replayName, "finished")
     modelsQuery.updateReplayQueries(replayName, totalQueries, numQueriesExecuted, numQueriesFailed)
@@ -177,13 +189,11 @@ def timePreserving(capLength, replayName, captureObj, dbName, mode, endpoint, st
             modelsQuery.updateReplayEndTime(replayName, endTime)
 
 
-def startReplay(replayName, captureObj, dbName, mode, username, password):
+def startReplay(replayName, captureObj, rdsInstance, mode, username, password):
     captureObj = json.loads(captureObj)
-    print(captureObj)
     captureName = captureObj['name']
     print("name: " + captureName)
     logfile = modelsQuery.getLogFileByCapture(captureName)
-    rdsInstance = captureObj['dbName']
     dbName = rdsInstance
     endpoint = capture.get_list_of_instances(rdsInstance)['DBInstances'][0]['Endpoint']['Address']
     status_of_db = capture.get_list_of_instances(rdsInstance)['DBInstances'][0]['DBInstanceStatus']
@@ -209,16 +219,18 @@ def startReplay(replayName, captureObj, dbName, mode, username, password):
     print("Current system time: " + replayStartTime.strftime('%m/%d/%Y% :H:%M'))
 
     download_file(captureName, captureBucket, filename)
+
+    modelsQuery.addDBConnection('mysql', rdsInstance, endpoint, 3306, dbName, username)
+    addInProgressReplay(replayName, username, password)
+
     if mode == 'time-preserving':
         timeDifference = captureEndTime - captureStartTime
         print('timeDiff in capture: ')
         print(timeDifference)
         modelsQuery.addReplay(replayName, replayStartTime, None, dbName, metricID, captureID, mode, "active")
-        addInProgressReplay(replayName, username, password)
         timePreserving(timeDifference, replayName, captureObj, dbName, mode, endpoint, status_of_db, username, password)
     else:
         modelsQuery.addReplay(replayName, replayStartTime, None, dbName, metricID, captureID, mode, "active")
-        addInProgressReplay(replayName, username, password)
         t2 = Timer(0, executeReplay, [replayName, captureName, dbName, status_of_db, endpoint, datetime.now()])
         t2.start()
 
@@ -234,6 +246,13 @@ def executeReplay(replayName, captureName, dbName, status_of_db, endpoint, start
     numQueriesExecuted = 0
     numQueriesFailed = 0
 
+    # wait for client to connect for first time before executing
+    while not checkUserConnected(replayName):
+        pass
+
+    print("Replay detects user has connected and will now start replaying")
+    emitNumQueries(replayName, totalQueries, numQueriesExecuted, numQueriesFailed)
+
     with open(captureName + " " + "tempLogFile", 'r') as tempFile:
         try:
             conn = pymysql.connect(host=endpoint, user=username, passwd=password, connect_timeout=5)
@@ -248,9 +267,11 @@ def executeReplay(replayName, captureName, dbName, status_of_db, endpoint, start
         print("~~~~~~~ starting raw replay ~~~~~~")
         for line in tempFile:
             entireList = literal_eval(line)
-            totalQueries = len(entireList)
+            queryList = [entry for entry in entireList if entry['message'].startswith('Query')]
+            totalQueries = len(queryList)
+
             for i in range(totalQueries):
-                dict = entireList[i]
+                dict = queryList[i]
                 if dict['message'].startswith('Query'):
                     executableQuery = dict['message'][7:]
                     if str(status_of_db) == "available":
@@ -272,9 +293,8 @@ def executeReplay(replayName, captureName, dbName, status_of_db, endpoint, start
                                 error = str(error).replace('(', '').replace(')', '').strip()
 
                             count += 1
-                            socketio.emit('replayQuery',
-                                          {'query': executableQuery.lower(), 'status': status, 'error': error, 'count': count},
-                                          namespace='', room='replayQuery')
+                            emitLiveQuery(replayName, executableQuery, status, error, count)
+                            emitNumQueries(replayName, totalQueries, numQueriesExecuted, numQueriesFailed)
 
     print("~~~~~~ finished replay ~~~~~~")
 
@@ -289,3 +309,28 @@ def executeReplay(replayName, captureName, dbName, status_of_db, endpoint, start
     capture.sendMetrics(metricID, replayName + " " + "metric file", startTime, endTime)
 
     conn.close()
+
+
+def emitLiveQuery(room, executableQuery, status, error, count):
+    socketio.emit('replayQuery',
+                  {'query': executableQuery.lower(), 'status': status, 'error': error, 'count': count},
+                  namespace='', room=room)
+
+
+def emitNumQueries(room, total, successful, failed):
+    socketio.emit('replayNumQueries',
+                  {'total': total, 'successful': successful, 'failed': failed},
+                  namespace='', room=room)
+
+#
+# def emitNumSuccessfulQueries(room, successful):
+#     socketio.emit('replayNumQueries', {'successful': total}, namespace='', room=room)
+#
+#
+# def emitNumFailedQueries(room, failed):
+#     socketio.emit('replayNumQueries', {'failed': failed}, namespace='', room=room)
+
+
+def checkUserConnected(replayName):
+    replay = getInProgressReplay(replayName)
+    return replay.get('connected')
