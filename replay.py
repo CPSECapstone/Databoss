@@ -24,7 +24,7 @@ inProgressReplays = []
 
 
 def addInProgressReplay(replayName, username, password):
-    inProgressReplays.append({'replayName': replayName, 'username': username, 'password': password})
+    inProgressReplays.append({'replayName': replayName, 'username': username, 'password': password, 'connected': False})
 
 
 def getInProgressReplay(replayName):
@@ -55,6 +55,13 @@ def executeTimePreserving(queryTable, replayName, captureName, dbName, status_of
     #totalQueries = 0
     numQueriesExecuted = 0
     numQueriesFailed = 0
+
+    # wait for client to connect for first time before executing
+    while not checkUserConnected(replayName):
+        pass
+
+    print("Replay detects user has connected and will now start replaying")
+
     try:
         conn = pymysql.connect(host=endpoint, user=username, passwd=password, connect_timeout=5)
     except:
@@ -208,17 +215,16 @@ def startReplay(replayName, captureObj, rdsInstance, mode, username, password):
     download_file(captureName, captureBucket, filename)
 
     modelsQuery.addDBConnection('mysql', rdsInstance, endpoint, 3306, dbName, username)
+    addInProgressReplay(replayName, username, password)
 
     if mode == 'time-preserving':
         timeDifference = captureEndTime - captureStartTime
         print('timeDiff in capture: ')
         print(timeDifference)
         modelsQuery.addReplay(replayName, replayStartTime, None, dbName, metricID, captureID, mode, "active")
-        addInProgressReplay(replayName, username, password)
         timePreserving(timeDifference, replayName, captureObj, dbName, mode, endpoint, status_of_db, username, password)
     else:
         modelsQuery.addReplay(replayName, replayStartTime, None, dbName, metricID, captureID, mode, "active")
-        addInProgressReplay(replayName, username, password)
         t2 = Timer(0, executeReplay, [replayName, captureName, dbName, status_of_db, endpoint, datetime.now()])
         t2.start()
 
@@ -233,6 +239,12 @@ def executeReplay(replayName, captureName, dbName, status_of_db, endpoint, start
     totalQueries = 0
     numQueriesExecuted = 0
     numQueriesFailed = 0
+
+    # wait for client to connect for first time before executing
+    while not checkUserConnected(replayName):
+        pass
+
+    print("Replay detects user has connected and will now start replaying")
 
     with open(captureName + " " + "tempLogFile", 'r') as tempFile:
         try:
@@ -293,3 +305,8 @@ def emitLiveQuery(room, executableQuery, status, error, count):
     socketio.emit('replayQuery',
                   {'query': executableQuery.lower(), 'status': status, 'error': error, 'count': count},
                   namespace='', room=room)
+
+
+def checkUserConnected(replayName):
+    replay = getInProgressReplay(replayName)
+    return replay.get('connected')

@@ -47,7 +47,14 @@ def disconnect_request():
 
 @socketio.on('join', namespace='')
 def join(message):
+    from replay import getInProgressReplay
+
     join_room(message['room'])
+    current_replay = getInProgressReplay(message['room'])
+
+    if current_replay:
+        current_replay['connected'] = True
+        print("User has connected to room", message['room'])
 
 
 @socketio.on('leave', namespace='')
