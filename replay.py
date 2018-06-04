@@ -102,6 +102,10 @@ def executeTimePreserving(queryTable, replayName, captureName, dbName, status_of
         time.sleep(lastTime)
 
     print("~~~~~~ finished time preserving replay ~~~~~~")
+
+    if os.path.exists(captureName + " " + "tempLogFile"):
+        os.remove(captureName + " " + "tempLogFile")
+        
     endTime = datetime.now()
     modelsQuery.updateReplayStatus(replayName, "finished")
     modelsQuery.updateReplayQueries(replayName, totalQueries, numQueriesExecuted, numQueriesFailed)
