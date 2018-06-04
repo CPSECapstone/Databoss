@@ -3,6 +3,7 @@ from parseMetrics import ParsedMetrics
 from models import Metric
 import modelsQuery
 import capture
+import boto3
 
 metrics_api = Blueprint('metrics_api', __name__)
 
@@ -32,14 +33,18 @@ def getS3Metrics(bucket, file):
     obj = capture.s3.Object(bucket, file).get()
     return ParsedMetrics(obj['Body'].read().decode('utf-8'))
 
-@metrics_api.route("/getLogfileObj", methods=["GET"])
-def getLogFileObject():
+@metrics_api.route("/downloadLogFile", methods=["GET"])
+def downloadLogFile():
     logfileId = request.args.get('logfileId')
     logfileObj = modelsQuery.getLogfile(logfileId)
-    return jsonify(bucket=logfileObj.bucket, filename=logfileObj.filename)
+    s3 = boto3.resource('s3')
+    s3.Bucket(logfileObj.bucket).download_file(logfileObj.filename, '../' + logfileObj.filename + '.csv')
+    return "success"
 
-@metrics_api.route("/getMetricFileObj", methods=["GET"])
-def getMetricFileObject():
-    metricFileId = request.args.get('metricId')
-    metricFileObj = modelsQuery.getMetricById(metricFileId)
-    return jsonify(bucket=metricFileObj.bucket, filename=metricFileObj.filename)
+@metrics_api.route("/downloadMetricFile", methods=["GET"])
+def downloadMetricFile():
+    metricId = request.args.get('metricId')
+    metricObj = modelsQuery.getMetricById(metricId)
+    s3 = boto3.resource('s3')
+    s3.Bucket(metricObj.bucket).download_file(metricObj.filename, '../' + metricObj.filename + '.csv')
+    return "success"
