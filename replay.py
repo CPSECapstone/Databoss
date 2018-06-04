@@ -87,9 +87,8 @@ def executeTimePreserving(queryTable, replayName, captureName, dbName, status_of
                     error = str(error).replace('(', '').replace(')', '').strip()
 
                 count += 1
-                socketio.emit('replayQuery',
-                              {'query': executableQuery.lower(), 'status': status, 'error': error, 'count': count},
-                              namespace='', room='replayQuery')
+                emitLiveQuery(replayName, executableQuery, status, error, count)
+
     if (lastTime != 0):
         time.sleep(lastTime)
 
@@ -273,9 +272,7 @@ def executeReplay(replayName, captureName, dbName, status_of_db, endpoint, start
                                 error = str(error).replace('(', '').replace(')', '').strip()
 
                             count += 1
-                            socketio.emit('replayQuery',
-                                          {'query': executableQuery.lower(), 'status': status, 'error': error, 'count': count},
-                                          namespace='', room=replayName)
+                            emitLiveQuery(replayName, executableQuery, status, error, count)
 
     print("~~~~~~ finished replay ~~~~~~")
 
@@ -290,3 +287,9 @@ def executeReplay(replayName, captureName, dbName, status_of_db, endpoint, start
     capture.sendMetrics(metricID, replayName + " " + "metric file", startTime, endTime)
 
     conn.close()
+
+
+def emitLiveQuery(room, executableQuery, status, error, count):
+    socketio.emit('replayQuery',
+                  {'query': executableQuery.lower(), 'status': status, 'error': error, 'count': count},
+                  namespace='', room=room)
