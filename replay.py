@@ -260,9 +260,11 @@ def executeReplay(replayName, captureName, dbName, status_of_db, endpoint, start
         print("~~~~~~~ starting raw replay ~~~~~~")
         for line in tempFile:
             entireList = literal_eval(line)
-            totalQueries = len(entireList)
+            queryList = [entry for entry in entireList if entry['message'].startswith('Query')]
+            totalQueries = len(queryList)
+
             for i in range(totalQueries):
-                dict = entireList[i]
+                dict = queryList[i]
                 if dict['message'].startswith('Query'):
                     executableQuery = dict['message'][7:]
                     if str(status_of_db) == "available":
