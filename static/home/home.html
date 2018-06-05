@@ -12,10 +12,10 @@
       </button>
     </div>
     <div id="search-container">
-        <form class="form-inline">
+      <form class="form-inline">
         <i id="home-search-icon" class="fa fa-search"></i>
-          <input id="home-search" type="text" class="form-control" ng-model="searchText"/>
-        </form>
+        <input id="home-search" type="text" class="form-control" ng-model="searchText"/>
+      </form>
     </div>
   </div>
 
@@ -102,7 +102,7 @@
             <i ng-click="showInfo(item)" class="fa fa-info-circle nav-icon"> </i>
             <i ng-click="promptDelete(item)" class="fa fa-times-circle nav-icon"> </i>
           </div>
-          <a href="#!/metrics?captureId={{item.id}}">
+          <a href="#!/metrics?id={{item.id}}&type='capture'">
             <div ng-click="viewMetrics()" class="box" ng-class='{passBox: (item.status == "finished"), failBox: (item.status == "failed")}'>
               <div class="tileType">
                 C
@@ -129,25 +129,27 @@
             <i ng-click="showInfo(item)" class="fa fa-info-circle nav-icon"> </i>
             <i ng-click="promptDelete(item)"class="fa fa-times-circle nav-icon"> </i>
           </div>
-          <div class="box" ng-class='{passBox: (item.status == "finished"), failBox: (item.status == "failed")}'>
-            <div class="tileType">
-              R
+          <a href="#!/metrics?replayId={{item.id}}">
+            <div class="box" ng-class='{passBox: (item.status == "finished"), failBox: (item.status == "failed")}'>
+              <div class="tileType">
+                R
+              </div>
+              <div class="capture-name text-center">
+                {{item.name}}
+              </div>
+              <div class="date-container text-center">
+                <span class="time-label">Total Queries: </span>
+                {{item.totalQueries}}
+              </div>
+              <div class="date-container text-center">
+                <span class="time-label">Successful: </span>
+                {{item.successfulQueries}}
+              </div>
+              <div class="passFail text-center" ng-class='{passText: (item.passFail == "passed")}'>
+                {{item.passFail}}
+              </div>
             </div>
-            <div class="capture-name text-center">
-              {{item.name}}
-            </div>
-            <div class="date-container text-center">
-              <span class="time-label">Total Queries: </span>
-              {{item.totalQueries}}
-            </div>
-            <div class="date-container text-center">
-              <span class="time-label">Successful: </span>
-              {{item.successfulQueries}}
-            </div>
-            <div class="passFail text-center" ng-class='{passText: (item.passFail == "passed")}'>
-              {{item.passFail}}
-            </div>
-          </div>
+          </a>
         </div>
       </div>
     </div>
@@ -200,7 +202,7 @@
             <p> <b>End Time: </b>{{infoItem.endTime}}</p>
             <p> <b>Total Queries: </b>{{infoItem.totalQueries}}</p>
             <p> <b>Successful Queries: </b>{{infoItem.successfulQueries}}</p>
-          <!-- <div class="message" ng-if="itemObj.type == 'capture'">All associated replays will be deleted.</div> -->
+            <!-- <div class="message" ng-if="itemObj.type == 'capture'">All associated replays will be deleted.</div> -->
             <!-- <div class="message" ng-if="itemObj.type == 'replay'">Are you sure you want to delete replay <b>Hello</b>?</div> -->
             <button type="button" class="btn btn-primary" data-dismiss="modal">OK</button>
           </div>
