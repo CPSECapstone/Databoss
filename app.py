@@ -29,7 +29,7 @@ def sqlite_setup():
     print("Running sqlite.py setup")
     conn = sqlite3.connect('database.db')
     conn.close()
-
+    capture.aws_config()
     #db.drop_all()
     db.create_all()
 
