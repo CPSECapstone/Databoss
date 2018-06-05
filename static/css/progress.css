@@ -25,9 +25,6 @@
   margin-top: 50px;
 }
 
-#test {
-}
-
 #progressStartTime {
   color: #51FF89;
 }
@@ -128,4 +125,25 @@ h2 {
 
 body.waiting * {
     cursor: progress;
+}
+
+.query-text {
+  color: white;
+  text-transform: uppercase;
+  letter-spacing: .1em;
+  font-weight: 500;
+  padding: 6px;
+}
+
+#numTotalQueries {
+  color: white;
+}
+
+#numSuccessfulQueries {
+  color: #7EEE76;
+}
+
+
+#numFailedQueries {
+  color: #FF4646;
 }
