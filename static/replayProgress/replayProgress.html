@@ -1,45 +1,5 @@
 <div>
   <h1 class="text-center">Progress Page for {{replay.name}}</h1>
-  <!--<div id="progress-block" class="container center-block">-->
-    <!--<div class="row progress">-->
-      <!--&lt;!&ndash; progress-bar-animated &ndash;&gt;-->
-      <!--<div class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar" style="width: 50%" aria-valuenow="10" aria-valuemin="0" aria-valuemax="1000">-->
-      <!--</div>-->
-    <!--</div>-->
-    <!--<div class="row text-center center-block">-->
-      <!--Progress: Some percentage-->
-    <!--</div>-->
-  <!--</div>-->
-  <div class="col-xs-3">
-    <div class="tile">
-      <div class="tile-title text-center">
-        Total
-      </div>
-      <div id="totalQueries" class="type-container text-center">
-        <p id="numTotalQueries">0</p>
-      </div>
-    </div>
-  </div>
-  <div class="col-xs-3">
-    <div class="tile">
-      <div class="tile-title text-center">
-        Successful
-      </div>
-      <div id="successfulQueries" class="type-container text-center">
-        <p id="numSuccessfulQueries">0</p>
-      </div>
-    </div>
-  </div>
-  <div class="col-xs-3">
-    <div class="tile">
-      <div class="tile-title text-center">
-        Failed
-      </div>
-      <div id="failedQueries" class="type-container text-center">
-        <p id="numFailedQueries">0</p>
-      </div>
-    </div>
-  </div>
 
   <div id="queryLogContainer" class="container">
     <table id="queryLog">
@@ -56,19 +16,22 @@
 
   <div class="container">
     <div id="progress-details-container" class="row justify-content-md-center" >
-      <!--<div class="col-xs-3">-->
-        <!--<div class="tile">-->
-          <!--<div class="tile-title text-center">-->
-            <!--Total Queries-->
-          <!--</div>-->
-          <!--<div id="total-queries" class="text-center">-->
-            <!--{{replay.totalQueries}}-->
-          <!--</div>-->
-          <!--<div id="progressEndTime" class="progress-time-container text-center">-->
-
-          <!--</div>-->
-        <!--</div>-->
-      <!--</div>-->
+  <div class="col-xs-3">
+    <div class="tile">
+      <div class="query-text">
+        <span>Total: </span>
+        <span id="numTotalQueries">0</span>
+      </div>
+      <div class="query-text">
+        <span>Successful: </span>
+        <span id="numSuccessfulQueries">0</span>
+      </div>
+      <div class="query-text">
+        <span>Failed: </span>
+        <span id="numFailedQueries">0</span>
+      </div>
+    </div>
+  </div>
       <div class="col-xs-3">
         <div class="tile">
           <div class="tile-title text-center">
