@@ -74,11 +74,17 @@ app.controller('metrics', function($scope, $location, $http) {
 
    $scope.$on('updateSelectionFromQueryParameters', function(ngRepeatFinishedEvent) {
      var captureId = $location.search()['captureId'];
+     var replayId = $location.search()['replayId'];
 
      if (captureId) {
        $('#capture-checkbox' + captureId).click();
      }
+     else if (replayId) {
+       $('#replay-checkbox' + replayId).click();
+     }
   });
+
+
 
    // Function that is called whenever a checkbox is checked or unchecked
    // Handles calling the appropriate functions for updating the charts

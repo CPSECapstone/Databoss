@@ -3,7 +3,7 @@
     <div class="table-wrapper">
         <div class="search-container">
             <form class="form-inline">
-                <input id="home-search" type="text" class="form-control" placeholder="Search" ng-model="searchText"/>
+                <input type="text" class="form-control" placeholder="Search" ng-model="metricsSearch.name"/>
             </form>
         </div>
 
@@ -24,7 +24,7 @@
         </div>
         <div class="table-content">
             <table class="metrics-table">
-                <tbody ng-repeat="capture in captures | filter:searchText" on-finish-render="updateSelectionFromQueryParameters">
+                <tbody ng-repeat="capture in captures | filter: metricsSearch" on-finish-render="updateSelectionFromQueryParameters">
                     <tr>
                       <th>
                           <span> </span><i class="fa fa-caret-down" ng-click=toggleReplays(capture.id,$event)></i>
@@ -48,7 +48,7 @@
                     <td>{{replay.rds}}</td>
 
                     <td><i ng-click="showInfo(replay)" class="fa fa-info-circle"></i></td>
-                    <td><input type="checkbox" ng-model="replaySelection"
+                    <td><input id="replay-checkbox{{replay.id}}" type="checkbox" ng-model="replaySelection"
                                ng-change="updateSelection('replay', replay.name, replay.id, replaySelection)"></td>
 
                 </tr>
@@ -117,5 +117,3 @@
       </div>
     </div>
   </div>
-
-
